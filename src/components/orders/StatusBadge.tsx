@@ -11,7 +11,7 @@ const StatusBadge = ({ status }: StatusBadgeProps) => {
     case "new":
       return <span className="status-badge status-new">New Order</span>;
     case "received":
-      return <span className="status-badge status-received">Orders Received</span>;
+      return <span className="status-badge status-received">Order Received</span>;
     case "in-progress":
       return <span className="status-badge status-in-progress">In Progress</span>;
     case "ready-for-collect":
@@ -19,9 +19,9 @@ const StatusBadge = ({ status }: StatusBadgeProps) => {
     case "delivered":
       return <span className="status-badge status-delivered">Order Delivered</span>;
     case "collected":
-      return <span className="status-badge status-collected">Orders collected</span>;
+      return <span className="status-badge status-collected">Order collected</span>;
     case "cancelled":
-      return <span className="status-badge status-cancelled">Orders cancelled</span>;
+      return <span className="status-badge status-cancelled">Order cancelled</span>;
     default:
       return null;
   }
