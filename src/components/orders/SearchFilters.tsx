@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Filter, Search, CalendarIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -21,6 +21,7 @@ interface SearchFiltersProps {
   onDateChange?: (date: Date | undefined) => void;
   onDateRangeChange?: (range: { start: Date; end: Date } | null) => void;
   onWashTypeChange?: (washType: WashType | 'all') => void;
+  selectedDate?: Date;
 }
 
 const SearchFilters = ({ 
@@ -28,12 +29,12 @@ const SearchFilters = ({
   onSearchChange,
   onDateChange,
   onDateRangeChange,
-  onWashTypeChange 
+  onWashTypeChange,
+  selectedDate 
 }: SearchFiltersProps) => {
   const [washType, setWashType] = useState<WashType | 'all'>('all');
   const [dateFilter, setDateFilter] = useState<string>('all');
-  const [customDate, setCustomDate] = useState<Date | undefined>(undefined);
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const dateFilters: DateRangeFilter[] = [
     {
@@ -92,6 +93,13 @@ const SearchFilters = ({
     }
   ];
 
+  useEffect(() => {
+    // When dateFilter is set to custom, open the calendar
+    if (dateFilter === 'custom') {
+      setCalendarOpen(true);
+    }
+  }, [dateFilter]);
+
   const handleWashTypeChange = (value: string) => {
     const selectedWashType = value as WashType | 'all';
     setWashType(selectedWashType);
@@ -104,7 +112,7 @@ const SearchFilters = ({
     setDateFilter(value);
     
     if (value === 'custom') {
-      setShowCalendar(true);
+      setCalendarOpen(true);
       return;
     }
     
@@ -115,12 +123,10 @@ const SearchFilters = ({
   };
 
   const handleCustomDateChange = (date: Date | undefined) => {
-    setCustomDate(date);
-    setShowCalendar(false);
-    
-    if (date && onDateChange) {
+    if (onDateChange) {
       onDateChange(date);
     }
+    setTimeout(() => setCalendarOpen(false), 100);
   };
 
   return (
@@ -137,35 +143,30 @@ const SearchFilters = ({
       
       <div className="flex gap-3 flex-1 justify-end">
         <div className="relative">
-          <Select value={dateFilter} onValueChange={handleDateFilterChange}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Date Filter" />
-            </SelectTrigger>
-            <SelectContent>
-              {dateFilters.map(filter => (
-                <SelectItem key={filter.value} value={filter.value}>
-                  {filter.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
-          {dateFilter === 'custom' && showCalendar && (
-            <Popover open={showCalendar} onOpenChange={setShowCalendar}>
-              <PopoverTrigger asChild>
-                <div></div>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 z-50" align="end">
-                <Calendar
-                  mode="single"
-                  selected={customDate}
-                  onSelect={handleCustomDateChange}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-          )}
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <Select value={dateFilter} onValueChange={handleDateFilterChange}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Date Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                {dateFilters.map(filter => (
+                  <SelectItem key={filter.value} value={filter.value}>
+                    {filter.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <PopoverContent className="w-auto p-0 z-50" align="end" side="bottom">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleCustomDateChange}
+                initialFocus
+                className="pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         
         <Select value={washType} onValueChange={handleWashTypeChange}>

@@ -108,6 +108,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
           onDateChange={handleDateChange}
           onDateRangeChange={handleDateRangeChange}
           onWashTypeChange={handleWashTypeChange}
+          selectedDate={selectedDate}
         />
         
         {/* Tabs section */}
