@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Eye, Check, X } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from './StatusBadge';
 import { Order } from './types';
@@ -47,12 +47,6 @@ const OrderTableRow = ({
       <td className="table-cell font-medium">{formatCurrency(order.total)}</td>
       <td className="table-cell">{order.status === 'delivered' || order.status === 'collected' ? formatDate(order.deliveryDate) : 'N/A'}</td>
       <td className="table-cell">{order.driver}</td>
-      <td className="table-cell">
-        {order.assigned ? 
-          <Check size={18} className="text-green-500 mx-auto" /> : 
-          <X size={18} className="text-red-500 mx-auto" />
-        }
-      </td>
       <td className="table-cell">
         <Button
           variant="outline"

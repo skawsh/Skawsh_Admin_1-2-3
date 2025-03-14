@@ -31,7 +31,6 @@ const OrdersTableContent = ({
             <th className="table-head">Total</th>
             <th className="table-head">Delivery Date</th>
             <th className="table-head">Driver</th>
-            <th className="table-head">Assigned</th>
             <th className="table-head">Actions</th>
           </tr>
         </thead>
@@ -49,7 +48,7 @@ const OrdersTableContent = ({
             ))
           ) : (
             <tr>
-              <td colSpan={12} className="py-8 text-center text-gray-500">
+              <td colSpan={11} className="py-8 text-center text-gray-500">
                 No orders found matching your criteria
               </td>
             </tr>

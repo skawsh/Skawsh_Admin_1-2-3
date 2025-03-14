@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { OrderStatus, OrdersTableProps } from './types';
+import { OrderStatus, OrdersTableProps, WashType } from './types';
 import { sampleOrders } from './mockData';
 import { formatDate, formatCurrency } from './formatUtils';
 import SearchFilters from './SearchFilters';
@@ -14,80 +14,61 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
   const [activeTab, setActiveTab] = useState<'all' | OrderStatus | 'assigned'>('all');
   const [filteredOrders, setFilteredOrders] = useState(sampleOrders);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedWashType, setSelectedWashType] = useState<WashType | 'all'>('all');
+
+  useEffect(() => {
+    applyFilters();
+  }, [activeTab, searchQuery, selectedDate, selectedWashType]);
+
+  const applyFilters = () => {
+    let result = [...sampleOrders];
+    
+    // Filter by tab (status)
+    if (activeTab !== 'all') {
+      if (activeTab === 'assigned') {
+        result = result.filter(order => order.assigned === true);
+      } else {
+        result = result.filter(order => order.status === activeTab);
+      }
+    }
+    
+    // Filter by search query
+    if (searchQuery) {
+      result = result.filter(order => 
+        order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        order.customer.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Filter by date
+    if (selectedDate) {
+      const dateStr = formatDate(selectedDate.toISOString());
+      result = result.filter(order => formatDate(order.orderDate) === dateStr);
+    }
+    
+    // Filter by wash type
+    if (selectedWashType !== 'all') {
+      result = result.filter(order => order.washType === selectedWashType);
+    }
+    
+    setFilteredOrders(result);
+  };
 
   const filterOrders = (tab: 'all' | OrderStatus | 'assigned') => {
     setActiveTab(tab);
-    
-    if (tab === 'all') {
-      setFilteredOrders(
-        searchQuery ? 
-          sampleOrders.filter(order => 
-            order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.customer.toLowerCase().includes(searchQuery.toLowerCase())
-          ) : 
-          sampleOrders
-      );
-    } else if (tab === 'assigned') {
-      setFilteredOrders(
-        sampleOrders.filter(order => 
-          order.assigned === true && 
-          (searchQuery ? 
-            order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.customer.toLowerCase().includes(searchQuery.toLowerCase()) :
-            true
-          )
-        )
-      );
-    } else {
-      setFilteredOrders(
-        sampleOrders.filter(order => 
-          order.status === tab && 
-          (searchQuery ? 
-            order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.customer.toLowerCase().includes(searchQuery.toLowerCase()) :
-            true
-          )
-        )
-      );
-    }
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    
-    if (activeTab === 'all') {
-      setFilteredOrders(
-        query ? 
-          sampleOrders.filter(order => 
-            order.id.toLowerCase().includes(query.toLowerCase()) ||
-            order.customer.toLowerCase().includes(query.toLowerCase())
-          ) : 
-          sampleOrders
-      );
-    } else if (activeTab === 'assigned') {
-      setFilteredOrders(
-        sampleOrders.filter(order => 
-          order.assigned === true && 
-          (query ? 
-            order.id.toLowerCase().includes(query.toLowerCase()) ||
-            order.customer.toLowerCase().includes(query.toLowerCase()) :
-            true
-          )
-        )
-      );
-    } else {
-      setFilteredOrders(
-        sampleOrders.filter(order => 
-          order.status === activeTab && 
-          (query ? 
-            order.id.toLowerCase().includes(query.toLowerCase()) ||
-            order.customer.toLowerCase().includes(query.toLowerCase()) :
-            true
-          )
-        )
-      );
-    }
+    setSearchQuery(e.target.value);
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    setSelectedDate(date);
+  };
+
+  const handleWashTypeChange = (washType: WashType | 'all') => {
+    setSelectedWashType(washType);
   };
 
   const handleViewDetails = (orderId: string) => {
@@ -104,6 +85,8 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
         <SearchFilters
           searchQuery={searchQuery}
           onSearchChange={handleSearch}
+          onDateChange={handleDateChange}
+          onWashTypeChange={handleWashTypeChange}
         />
         
         {/* Tabs section */}
