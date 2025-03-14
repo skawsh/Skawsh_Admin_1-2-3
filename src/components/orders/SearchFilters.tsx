@@ -1,14 +1,25 @@
 
 import React, { useState } from 'react';
-import { Filter, Search } from 'lucide-react';
+import { Filter, Search, CalendarIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WashType } from './types';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays } from 'date-fns';
+
+interface DateRangeFilter {
+  label: string;
+  value: string;
+  getDateRange: () => { start: Date; end: Date } | null;
+}
 
 interface SearchFiltersProps {
   searchQuery: string;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDateChange?: (date: Date | undefined) => void;
+  onDateRangeChange?: (range: { start: Date; end: Date } | null) => void;
   onWashTypeChange?: (washType: WashType | 'all') => void;
 }
 
@@ -16,15 +27,99 @@ const SearchFilters = ({
   searchQuery, 
   onSearchChange,
   onDateChange,
+  onDateRangeChange,
   onWashTypeChange 
 }: SearchFiltersProps) => {
   const [washType, setWashType] = useState<WashType | 'all'>('all');
+  const [dateFilter, setDateFilter] = useState<string>('all');
+  const [customDate, setCustomDate] = useState<Date | undefined>(undefined);
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  const dateFilters: DateRangeFilter[] = [
+    {
+      label: 'All Dates',
+      value: 'all',
+      getDateRange: () => null
+    },
+    {
+      label: 'Today',
+      value: 'today',
+      getDateRange: () => {
+        const today = new Date();
+        return { 
+          start: startOfDay(today), 
+          end: endOfDay(today) 
+        };
+      }
+    },
+    {
+      label: 'Yesterday',
+      value: 'yesterday',
+      getDateRange: () => {
+        const yesterday = subDays(new Date(), 1);
+        return { 
+          start: startOfDay(yesterday), 
+          end: endOfDay(yesterday) 
+        };
+      }
+    },
+    {
+      label: 'This Week',
+      value: 'this-week',
+      getDateRange: () => {
+        const today = new Date();
+        return { 
+          start: startOfWeek(today, { weekStartsOn: 1 }), 
+          end: endOfWeek(today, { weekStartsOn: 1 }) 
+        };
+      }
+    },
+    {
+      label: 'This Month',
+      value: 'this-month',
+      getDateRange: () => {
+        const today = new Date();
+        return { 
+          start: startOfMonth(today), 
+          end: endOfMonth(today) 
+        };
+      }
+    },
+    {
+      label: 'Custom Date',
+      value: 'custom',
+      getDateRange: () => null
+    }
+  ];
 
   const handleWashTypeChange = (value: string) => {
     const selectedWashType = value as WashType | 'all';
     setWashType(selectedWashType);
     if (onWashTypeChange) {
       onWashTypeChange(selectedWashType);
+    }
+  };
+
+  const handleDateFilterChange = (value: string) => {
+    setDateFilter(value);
+    
+    if (value === 'custom') {
+      setShowCalendar(true);
+      return;
+    }
+    
+    const selectedFilter = dateFilters.find(filter => filter.value === value);
+    if (selectedFilter && onDateRangeChange) {
+      onDateRangeChange(selectedFilter.getDateRange());
+    }
+  };
+
+  const handleCustomDateChange = (date: Date | undefined) => {
+    setCustomDate(date);
+    setShowCalendar(false);
+    
+    if (date && onDateChange) {
+      onDateChange(date);
     }
   };
 
@@ -41,6 +136,38 @@ const SearchFilters = ({
       </div>
       
       <div className="flex gap-3 flex-1 justify-end">
+        <div className="relative">
+          <Select value={dateFilter} onValueChange={handleDateFilterChange}>
+            <SelectTrigger className="w-full md:w-[180px]">
+              <SelectValue placeholder="Date Filter" />
+            </SelectTrigger>
+            <SelectContent>
+              {dateFilters.map(filter => (
+                <SelectItem key={filter.value} value={filter.value}>
+                  {filter.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          {dateFilter === 'custom' && showCalendar && (
+            <Popover open={showCalendar} onOpenChange={setShowCalendar}>
+              <PopoverTrigger asChild>
+                <div></div>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 z-50" align="end">
+                <Calendar
+                  mode="single"
+                  selected={customDate}
+                  onSelect={handleCustomDateChange}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+          )}
+        </div>
+        
         <Select value={washType} onValueChange={handleWashTypeChange}>
           <SelectTrigger className="w-full md:w-[180px]">
             <SelectValue placeholder="Wash Type" />

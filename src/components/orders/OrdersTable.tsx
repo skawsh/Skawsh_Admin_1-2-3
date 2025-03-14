@@ -9,17 +9,19 @@ import SearchFilters from './SearchFilters';
 import OrderStatusTabs from './OrderStatusTabs';
 import OrdersTableContent from './OrdersTableContent';
 import './OrdersBadge.css';
+import { startOfDay, endOfDay, isWithinInterval, parseISO } from 'date-fns';
 
 const OrdersTable = ({ className }: OrdersTableProps) => {
   const [activeTab, setActiveTab] = useState<'all' | OrderStatus | 'assigned'>('all');
   const [filteredOrders, setFilteredOrders] = useState(sampleOrders);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date } | null>(null);
   const [selectedWashType, setSelectedWashType] = useState<WashType | 'all'>('all');
 
   useEffect(() => {
     applyFilters();
-  }, [activeTab, searchQuery, selectedDate, selectedWashType]);
+  }, [activeTab, searchQuery, selectedDate, dateRange, selectedWashType]);
 
   const applyFilters = () => {
     let result = [...sampleOrders];
@@ -41,10 +43,22 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
       );
     }
     
-    // Filter by date
+    // Filter by specific date
     if (selectedDate) {
-      const dateStr = formatDate(selectedDate.toISOString());
-      result = result.filter(order => formatDate(order.orderDate) === dateStr);
+      const start = startOfDay(selectedDate);
+      const end = endOfDay(selectedDate);
+      result = result.filter(order => {
+        const orderDate = parseISO(order.orderDate);
+        return isWithinInterval(orderDate, { start, end });
+      });
+    }
+    
+    // Filter by date range
+    if (dateRange) {
+      result = result.filter(order => {
+        const orderDate = parseISO(order.orderDate);
+        return isWithinInterval(orderDate, { start: dateRange.start, end: dateRange.end });
+      });
     }
     
     // Filter by wash type
@@ -65,6 +79,12 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
 
   const handleDateChange = (date: Date | undefined) => {
     setSelectedDate(date);
+    setDateRange(null); // Clear date range when selecting a specific date
+  };
+
+  const handleDateRangeChange = (range: { start: Date; end: Date } | null) => {
+    setDateRange(range);
+    setSelectedDate(undefined); // Clear selected date when selecting a date range
   };
 
   const handleWashTypeChange = (washType: WashType | 'all') => {
@@ -86,6 +106,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
           searchQuery={searchQuery}
           onSearchChange={handleSearch}
           onDateChange={handleDateChange}
+          onDateRangeChange={handleDateRangeChange}
           onWashTypeChange={handleWashTypeChange}
         />
         
