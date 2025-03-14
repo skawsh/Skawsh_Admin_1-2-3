@@ -49,7 +49,7 @@ const OrderMetricsCard = ({
     )}>
       <div className="flex justify-between items-start mb-3">
         <span className="text-gray-600 font-medium text-sm">{title}</span>
-        <div className="h-10 w-10 rounded-full flex items-center justify-center bg-gray-50 shadow-sm">
+        <div className="h-10 w-10 rounded-full flex items-center justify-center bg-gray-50">
           {getIcon()}
         </div>
       </div>
