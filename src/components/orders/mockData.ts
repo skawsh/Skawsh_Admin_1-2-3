@@ -1,54 +1,54 @@
 
 import { Order } from './types';
 
-// Sample order data
+// Sample order data for Hyderabad, India region
 export const sampleOrders: Order[] = [
   {
     id: 'ORD-0001',
     orderDate: '2023-03-12',
-    customer: 'John Smith',
+    customer: 'Rajesh Kumar',
     status: 'collected',
-    studio: 'Downtown Studio',
-    driver: 'Michael Davis',
-    total: 45.99,
+    studio: 'Madhapur Studio',
+    driver: 'Anand Reddy',
+    total: 950,
     deliveryDate: '2023-03-14',
   },
   {
     id: 'ORD-0002',
     orderDate: '2023-03-13',
-    customer: 'Emma Johnson',
+    customer: 'Priya Sharma',
     status: 'in-progress',
-    studio: 'Westside Studio',
-    driver: 'Sarah Wilson',
-    total: 32.50,
+    studio: 'Hitech City Studio',
+    driver: 'Kavya Singh',
+    total: 755,
     deliveryDate: null,
   },
   {
     id: 'ORD-0003',
     orderDate: '2023-03-13',
-    customer: 'James Brown',
+    customer: 'Arun Verma',
     status: 'ready-for-collect',
-    studio: 'Eastside Studio',
-    driver: 'Robert Miller',
-    total: 78.25,
+    studio: 'Gachibowli Studio',
+    driver: 'Ravi Teja',
+    total: 1200,
     deliveryDate: null,
   },
   {
     id: 'ORD-0004',
     orderDate: '2023-03-14',
-    customer: 'Olivia Davis',
+    customer: 'Deepika Patel',
     status: 'new',
-    studio: 'Downtown Studio',
+    studio: 'Madhapur Studio',
     driver: 'Unassigned',
-    total: 54.75,
+    total: 890,
     deliveryDate: null,
   },
   {
     id: 'ORD-0005',
     orderDate: '2023-03-11',
-    customer: 'William Taylor',
+    customer: 'Venkat Rao',
     status: 'cancelled',
-    studio: 'Northside Studio',
+    studio: 'Jubilee Hills Studio',
     driver: 'Cancelled',
     total: 0,
     deliveryDate: null,
@@ -56,31 +56,66 @@ export const sampleOrders: Order[] = [
   {
     id: 'ORD-0006',
     orderDate: '2023-03-15',
-    customer: 'Sophia Martinez',
+    customer: 'Sneha Reddy',
     status: 'received',
-    studio: 'Downtown Studio',
+    studio: 'Madhapur Studio',
     driver: 'Pending Assignment',
-    total: 29.99,
+    total: 675,
     deliveryDate: null,
   },
   {
     id: 'ORD-0007',
     orderDate: '2023-03-10',
-    customer: 'Daniel Johnson',
+    customer: 'Rahul Mehta',
     status: 'delivered',
-    studio: 'Southside Studio',
-    driver: 'Thomas Rodriguez',
-    total: 63.45,
+    studio: 'Banjara Hills Studio',
+    driver: 'Srinivas Kumar',
+    total: 1450,
     deliveryDate: '2023-03-12',
   },
   {
     id: 'ORD-0008',
     orderDate: '2023-03-09',
-    customer: 'Olivia Wilson',
+    customer: 'Neha Singh',
     status: 'delivered',
-    studio: 'Downtown Studio',
-    driver: 'Michael Davis',
-    total: 42.30,
+    studio: 'Madhapur Studio',
+    driver: 'Anand Reddy',
+    total: 875,
     deliveryDate: '2023-03-11',
+  },
+  {
+    id: 'ORD-0009',
+    orderDate: '2023-03-08',
+    customer: 'Kiran Reddy',
+    status: 'collected',
+    studio: 'Hitech City Studio',
+    driver: 'Ravi Teja',
+    total: 1100,
+    deliveryDate: '2023-03-10',
+  },
+  {
+    id: 'ORD-0010',
+    orderDate: '2023-03-07',
+    customer: 'Ananya Desai',
+    status: 'delivered',
+    studio: 'Gachibowli Studio',
+    driver: 'Srinivas Kumar',
+    total: 1150,
+    deliveryDate: '2023-03-09',
   }
 ];
+
+// Calculate the total orders
+export const totalOrders = sampleOrders.length;
+
+// Calculate in-progress orders
+export const inProgressOrders = sampleOrders.filter(order => 
+  order.status === 'in-progress' || order.status === 'received' || order.status === 'ready-for-collect'
+).length;
+
+// Calculate total revenue
+export const totalRevenue = sampleOrders.reduce((sum, order) => sum + order.total, 0);
+
+// Calculate average order value
+export const avgOrderValue = totalOrders > 0 ? (totalRevenue / totalOrders) : 0;
+

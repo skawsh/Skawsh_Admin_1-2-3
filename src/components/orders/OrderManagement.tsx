@@ -4,6 +4,8 @@ import { DownloadIcon, Users } from 'lucide-react';
 import OrderMetricsCard from './OrderMetricsCard';
 import OrdersTable from './OrdersTable';
 import { Button } from '@/components/ui/button';
+import { totalOrders, inProgressOrders, totalRevenue, avgOrderValue } from './mockData';
+import { formatCurrency } from './formatUtils';
 
 const OrderManagement = () => {
   return (
@@ -42,28 +44,28 @@ const OrderManagement = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <OrderMetricsCard 
           title="Total Orders"
-          value="100"
+          value={totalOrders.toString()}
           changePercent={12}
           icon="orders"
         />
         
         <OrderMetricsCard 
           title="In Progress"
-          value="43"
+          value={inProgressOrders.toString()}
           changePercent={5}
           icon="progress"
         />
         
         <OrderMetricsCard 
           title="Total Revenue"
-          value="$9045.50"
+          value={formatCurrency(totalRevenue)}
           changePercent={8.5}
           icon="revenue"
         />
         
         <OrderMetricsCard 
           title="Avg. Order Value"
-          value="$108.98"
+          value={formatCurrency(avgOrderValue)}
           changePercent={2.3}
           icon="average"
         />
