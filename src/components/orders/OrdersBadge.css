@@ -1,0 +1,50 @@
+
+.status-badge {
+  @apply text-xs font-medium px-2 py-1 rounded-full inline-flex items-center justify-center;
+}
+
+.status-new {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.status-received {
+  @apply bg-indigo-100 text-indigo-800;
+}
+
+.status-in-progress {
+  @apply bg-amber-100 text-amber-800;
+}
+
+.status-ready {
+  @apply bg-emerald-100 text-emerald-800;
+}
+
+.status-delivered {
+  @apply bg-teal-100 text-teal-800;
+}
+
+.status-collected {
+  @apply bg-green-100 text-green-800;
+}
+
+.status-cancelled {
+  @apply bg-red-100 text-red-800;
+}
+
+.table-head {
+  @apply px-5 py-3 text-xs font-semibold tracking-wider text-left uppercase border-b;
+}
+
+.table-cell {
+  @apply px-5 py-4 whitespace-nowrap text-sm;
+}
+
+/* Add custom scrollbar styles for the tabs */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
