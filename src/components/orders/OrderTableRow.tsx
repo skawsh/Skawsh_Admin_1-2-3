@@ -34,7 +34,6 @@ const OrderTableRow = ({
       <td className="table-cell">{order.customer}</td>
       <td className="table-cell"><StatusBadge status={order.status} /></td>
       <td className="table-cell">{order.studio}</td>
-      <td className="table-cell">{order.driver}</td>
       <td className="table-cell">
         <span className={cn(
           "px-2 py-1 rounded-md text-xs font-medium",
@@ -47,6 +46,7 @@ const OrderTableRow = ({
       </td>
       <td className="table-cell font-medium">{formatCurrency(order.total)}</td>
       <td className="table-cell">{order.status === 'delivered' ? formatDate(order.deliveryDate) : 'N/A'}</td>
+      <td className="table-cell">{order.driver}</td>
       <td className="table-cell">
         <Button
           variant="outline"

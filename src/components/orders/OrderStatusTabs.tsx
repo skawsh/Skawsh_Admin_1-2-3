@@ -50,16 +50,16 @@ const OrderStatusTabs = ({ activeTab, onTabChange }: OrderStatusTabsProps) => {
               Ready for collection
             </TabsTrigger>
             <TabsTrigger 
-              value="delivered" 
-              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
-            >
-              Orders Delivered
-            </TabsTrigger>
-            <TabsTrigger 
               value="collected" 
               className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
               Orders collected
+            </TabsTrigger>
+            <TabsTrigger 
+              value="delivered" 
+              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+            >
+              Orders Delivered
             </TabsTrigger>
             <TabsTrigger 
               value="cancelled" 
