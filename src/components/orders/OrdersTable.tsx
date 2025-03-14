@@ -181,6 +181,25 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-6">Orders Overview</h2>
         
+        {/* Search and Filter section - moved above tabs */}
+        <div className="flex mb-6 justify-between items-center">
+          <div className="relative w-full max-w-md">
+            <Input
+              placeholder="Search orders..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="pl-10 pr-4 py-2"
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          </div>
+          
+          <Button variant="outline" className="flex items-center gap-2 ml-4">
+            <Filter className="h-4 w-4" />
+            Filters
+          </Button>
+        </div>
+        
+        {/* Tabs section - now below search */}
         <div className="flex flex-col space-y-4 md:flex-row md:justify-between md:space-y-0 mb-6">
           <Tabs defaultValue="all" className="w-full" onValueChange={(value) => filterOrders(value as 'all' | OrderStatus)}>
             <TabsList className="bg-gray-100 h-auto p-1 w-full md:w-auto">
@@ -222,23 +241,6 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
               </TabsTrigger>
             </TabsList>
           </Tabs>
-        </div>
-        
-        <div className="flex mb-6 justify-end space-x-4">
-          <div className="relative max-w-md w-full">
-            <Input
-              placeholder="Search orders..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="pl-10 pr-4 py-2"
-            />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          </div>
-          
-          <Button variant="outline" className="flex items-center gap-2">
-            <Filter className="h-4 w-4" />
-            Filters
-          </Button>
         </div>
         
         <div className="mt-6">
