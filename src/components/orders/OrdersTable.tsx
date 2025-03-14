@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { Filter, Search } from 'lucide-react';
+import { Filter, Search, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 // Order status types
 type OrderStatus = 'pending' | 'in-progress' | 'in-delivery' | 'completed' | 'cancelled';
@@ -168,6 +169,11 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
     }
   };
 
+  const handleViewDetails = (orderId: string) => {
+    console.log(`Viewing details for order: ${orderId}`);
+    // This would typically navigate to an order details page
+  };
+
   return (
     <div className={cn("bg-white border border-gray-200 rounded-md shadow-sm animate-slide-up", className)}>
       <div className="p-4 border-b border-gray-200">
@@ -265,9 +271,15 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                   <td className="table-cell font-medium">{formatCurrency(order.total)}</td>
                   <td className="table-cell">{formatDate(order.deliveryDate)}</td>
                   <td className="table-cell">
-                    <button className="px-3 py-1 text-xs font-medium text-laundry-blue hover:text-laundry-blue-dark transition-colors">
-                      View
-                    </button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewDetails(order.id)}
+                      className="flex items-center gap-1 text-laundry-blue hover:text-laundry-blue-dark hover:bg-blue-50 border-gray-200"
+                    >
+                      <Eye size={14} />
+                      View Details
+                    </Button>
                   </td>
                 </tr>
               ))
