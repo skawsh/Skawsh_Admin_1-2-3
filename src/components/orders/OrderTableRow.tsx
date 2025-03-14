@@ -35,6 +35,16 @@ const OrderTableRow = ({
       <td className="table-cell"><StatusBadge status={order.status} /></td>
       <td className="table-cell">{order.studio}</td>
       <td className="table-cell">{order.driver}</td>
+      <td className="table-cell">
+        <span className={cn(
+          "px-2 py-1 rounded-md text-xs font-medium",
+          order.washType === 'standard' ? "bg-blue-100 text-blue-800" :
+          order.washType === 'express' ? "bg-orange-100 text-orange-800" :
+          "bg-purple-100 text-purple-800"
+        )}>
+          {order.washType.charAt(0).toUpperCase() + order.washType.slice(1)}
+        </span>
+      </td>
       <td className="table-cell font-medium">{formatCurrency(order.total)}</td>
       <td className="table-cell">{order.status === 'delivered' ? formatDate(order.deliveryDate) : 'N/A'}</td>
       <td className="table-cell">

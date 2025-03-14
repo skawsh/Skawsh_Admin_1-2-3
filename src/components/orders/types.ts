@@ -2,6 +2,9 @@
 // Order status types
 export type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'delivered' | 'collected' | 'cancelled';
 
+// Wash type options
+export type WashType = 'standard' | 'express' | 'both';
+
 // Order data structure
 export interface Order {
   id: string;
@@ -12,6 +15,7 @@ export interface Order {
   driver: string;
   total: number;
   deliveryDate: string | null;
+  washType: WashType;
 }
 
 // Component props types

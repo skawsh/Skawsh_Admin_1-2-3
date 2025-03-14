@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { BarChart2, Clock, DollarSign, Package, TrendingDown, TrendingUp } from 'lucide-react';
+import { BarChart2, DollarSign, Package, TrendingDown, TrendingUp, Truck, Check } from 'lucide-react';
 
 interface OrderMetricsCardProps {
   title: string;
   value: string | number;
   changePercent: number;
-  icon: 'orders' | 'progress' | 'revenue' | 'average';
+  icon: 'orders' | 'delivered' | 'collected' | 'revenue' | 'average' | 'progress';
   className?: string;
 }
 
@@ -24,8 +24,12 @@ const OrderMetricsCard = ({
     switch (icon) {
       case 'orders':
         return <Package size={20} className="text-indigo-500" />;
+      case 'delivered':
+        return <Truck size={20} className="text-green-500" />;
+      case 'collected':
+        return <Check size={20} className="text-blue-500" />;
       case 'progress':
-        return <Clock size={20} className="text-blue-500" />;
+        return <Package size={20} className="text-orange-500" />;
       case 'revenue':
         return <DollarSign size={20} className="text-emerald-500" />;
       case 'average':

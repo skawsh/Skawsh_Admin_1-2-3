@@ -12,6 +12,7 @@ export const sampleOrders: Order[] = [
     driver: 'Anand Reddy',
     total: 950,
     deliveryDate: '2024-07-30',
+    washType: 'standard',
   },
   {
     id: 'ORD-0002',
@@ -22,6 +23,7 @@ export const sampleOrders: Order[] = [
     driver: 'Kavya Singh',
     total: 755,
     deliveryDate: null,
+    washType: 'express',
   },
   {
     id: 'ORD-0003',
@@ -32,6 +34,7 @@ export const sampleOrders: Order[] = [
     driver: 'Ravi Teja',
     total: 1200,
     deliveryDate: null,
+    washType: 'both',
   },
   {
     id: 'ORD-0004',
@@ -42,6 +45,7 @@ export const sampleOrders: Order[] = [
     driver: 'Unassigned',
     total: 890,
     deliveryDate: null,
+    washType: 'standard',
   },
   {
     id: 'ORD-0005',
@@ -52,6 +56,7 @@ export const sampleOrders: Order[] = [
     driver: 'Cancelled',
     total: 0,
     deliveryDate: null,
+    washType: 'express',
   },
   {
     id: 'ORD-0006',
@@ -62,6 +67,7 @@ export const sampleOrders: Order[] = [
     driver: 'Pending Assignment',
     total: 675,
     deliveryDate: null,
+    washType: 'standard',
   },
   {
     id: 'ORD-0007',
@@ -72,6 +78,7 @@ export const sampleOrders: Order[] = [
     driver: 'Srinivas Kumar',
     total: 1450,
     deliveryDate: '2024-07-28',
+    washType: 'both',
   },
   {
     id: 'ORD-0008',
@@ -82,6 +89,7 @@ export const sampleOrders: Order[] = [
     driver: 'Anand Reddy',
     total: 875,
     deliveryDate: '2024-07-27',
+    washType: 'standard',
   },
   {
     id: 'ORD-0009',
@@ -92,6 +100,7 @@ export const sampleOrders: Order[] = [
     driver: 'Ravi Teja',
     total: 1100,
     deliveryDate: '2024-07-26',
+    washType: 'express',
   },
   {
     id: 'ORD-0010',
@@ -102,11 +111,22 @@ export const sampleOrders: Order[] = [
     driver: 'Srinivas Kumar',
     total: 1150,
     deliveryDate: '2024-07-25',
+    washType: 'both',
   }
 ];
 
 // Calculate the total orders
 export const totalOrders = sampleOrders.length;
+
+// Calculate delivered orders
+export const deliveredOrders = sampleOrders.filter(order => 
+  order.status === 'delivered'
+).length;
+
+// Calculate collected orders
+export const collectedOrders = sampleOrders.filter(order => 
+  order.status === 'collected'
+).length;
 
 // Calculate in-progress orders
 export const inProgressOrders = sampleOrders.filter(order => 

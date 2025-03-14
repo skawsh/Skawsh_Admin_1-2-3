@@ -4,7 +4,7 @@ import { DownloadIcon, Users } from 'lucide-react';
 import OrderMetricsCard from './OrderMetricsCard';
 import OrdersTable from './OrdersTable';
 import { Button } from '@/components/ui/button';
-import { totalOrders, inProgressOrders, totalRevenue, avgOrderValue } from './mockData';
+import { totalOrders, deliveredOrders, collectedOrders, inProgressOrders, totalRevenue, avgOrderValue } from './mockData';
 import { formatCurrency } from './formatUtils';
 
 const OrderManagement = () => {
@@ -50,17 +50,17 @@ const OrderManagement = () => {
         />
         
         <OrderMetricsCard 
-          title="In Progress"
-          value={inProgressOrders.toString()}
-          changePercent={5}
-          icon="progress"
+          title="Orders Delivered"
+          value={deliveredOrders.toString()}
+          changePercent={8}
+          icon="delivered"
         />
         
         <OrderMetricsCard 
-          title="Total Revenue"
-          value={formatCurrency(totalRevenue)}
-          changePercent={8.5}
-          icon="revenue"
+          title="Orders Collected"
+          value={collectedOrders.toString()}
+          changePercent={5}
+          icon="collected"
         />
         
         <OrderMetricsCard 
