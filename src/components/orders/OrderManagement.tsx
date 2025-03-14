@@ -4,7 +4,13 @@ import { DownloadIcon, Users } from 'lucide-react';
 import OrderMetricsCard from './OrderMetricsCard';
 import OrdersTable from './OrdersTable';
 import { Button } from '@/components/ui/button';
-import { totalOrders, deliveredOrders, collectedOrders, inProgressOrders, totalRevenue, avgOrderValue } from './mockData';
+import { 
+  totalOrders, 
+  newOrders, 
+  inProgressOrders, 
+  readyForCollectOrders, 
+  deliveredOrders 
+} from './mockData';
 import { formatCurrency } from './formatUtils';
 
 const OrderManagement = () => {
@@ -41,7 +47,7 @@ const OrderManagement = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
         <OrderMetricsCard 
           title="Total Orders"
           value={totalOrders.toString()}
@@ -50,24 +56,31 @@ const OrderManagement = () => {
         />
         
         <OrderMetricsCard 
-          title="Orders Delivered"
-          value={deliveredOrders.toString()}
+          title="New Orders"
+          value={newOrders.toString()}
           changePercent={8}
-          icon="delivered"
+          icon="orders"
         />
         
         <OrderMetricsCard 
-          title="Orders Collected"
-          value={collectedOrders.toString()}
+          title="In Progress"
+          value={inProgressOrders.toString()}
           changePercent={5}
+          icon="progress"
+        />
+        
+        <OrderMetricsCard 
+          title="Ready for Collection"
+          value={readyForCollectOrders.toString()}
+          changePercent={15}
           icon="collected"
         />
         
         <OrderMetricsCard 
-          title="Avg. Order Value"
-          value={formatCurrency(avgOrderValue)}
+          title="Delivered"
+          value={deliveredOrders.toString()}
           changePercent={2.3}
-          icon="average"
+          icon="delivered"
         />
       </div>
       

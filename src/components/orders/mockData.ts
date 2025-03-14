@@ -68,7 +68,7 @@ export const sampleOrders: Order[] = [
     orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Deepika Reddy',
     status: 'new',
-    studio: 'UClean Laundry',
+    studio: 'UClean',
     driver: 'Unassigned',
     total: 890,
     deliveryDate: null,
@@ -90,7 +90,7 @@ export const sampleOrders: Order[] = [
     orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Sneha Reddy',
     status: 'received',
-    studio: 'Washmart Laundry',
+    studio: 'Washmart',
     driver: 'Pending Assignment',
     total: 675,
     deliveryDate: null,
@@ -114,6 +114,8 @@ const orderDate7 = getRandomDate(lastMonth, today);
 const orderDate8 = getRandomDate(lastMonth, today);
 const orderDate9 = getRandomDate(lastMonth, today);
 const orderDate10 = getRandomDate(lastMonth, today);
+const orderDate11 = getRandomDate(lastMonth, today);
+const orderDate12 = getRandomDate(lastMonth, today);
 
 sampleOrders.push(
   {
@@ -143,7 +145,7 @@ sampleOrders.push(
     orderDate: formatDateString(orderDate9),
     customer: 'Kiran Reddy',
     status: 'collected',
-    studio: 'FABO Laundry',
+    studio: 'FABO',
     driver: 'Ravi Teja',
     total: 1100,
     deliveryDate: formatDateString(getDeliveryDate(orderDate9)),
@@ -154,16 +156,43 @@ sampleOrders.push(
     orderDate: formatDateString(orderDate10),
     customer: 'Ananya Desai',
     status: 'delivered',
-    studio: 'Sunshine Dry Cleaners',
+    studio: 'Sunshine',
     driver: 'Srinivas Kumar',
     total: 1150,
     deliveryDate: formatDateString(getDeliveryDate(orderDate10)),
     washType: 'both',
+  },
+  {
+    id: 'ORD-0011',
+    orderDate: formatDateString(orderDate11),
+    customer: 'Vikram Malhotra',
+    status: 'new',
+    studio: 'Bhavani BAND BOX',
+    driver: 'Unassigned',
+    total: 780,
+    deliveryDate: null,
+    washType: 'standard',
+  },
+  {
+    id: 'ORD-0012',
+    orderDate: formatDateString(orderDate12),
+    customer: 'Aarti Patel',
+    status: 'ready-for-collect',
+    studio: 'Balus Modern',
+    driver: 'Kavya Singh',
+    total: 1320,
+    deliveryDate: null,
+    washType: 'express',
   }
 );
 
 // Calculate the total orders
 export const totalOrders = sampleOrders.length;
+
+// Calculate new orders
+export const newOrders = sampleOrders.filter(order => 
+  order.status === 'new'
+).length;
 
 // Calculate delivered orders
 export const deliveredOrders = sampleOrders.filter(order => 
@@ -177,7 +206,12 @@ export const collectedOrders = sampleOrders.filter(order =>
 
 // Calculate in-progress orders
 export const inProgressOrders = sampleOrders.filter(order => 
-  order.status === 'in-progress' || order.status === 'received' || order.status === 'ready-for-collect'
+  order.status === 'in-progress'
+).length;
+
+// Calculate ready-for-collect orders
+export const readyForCollectOrders = sampleOrders.filter(order => 
+  order.status === 'ready-for-collect'
 ).length;
 
 // Calculate total revenue
