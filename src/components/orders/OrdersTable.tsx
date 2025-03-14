@@ -269,6 +269,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
             <table className="w-full text-left">
               <thead className="text-xs uppercase bg-gray-50">
                 <tr>
+                  <th className="table-head">S.No</th>
                   <th className="table-head">Order ID</th>
                   <th className="table-head">Ordered Date</th>
                   <th className="table-head">Customer</th>
@@ -290,6 +291,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                         index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
                       )}
                     >
+                      <td className="table-cell text-center">{index + 1}</td>
                       <td className="table-cell font-medium">{order.id}</td>
                       <td className="table-cell">{formatDate(order.orderDate)}</td>
                       <td className="table-cell">{order.customer}</td>
@@ -313,7 +315,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={9} className="py-8 text-center text-gray-500">
+                    <td colSpan={10} className="py-8 text-center text-gray-500">
                       No orders found matching your criteria
                     </td>
                   </tr>
