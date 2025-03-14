@@ -1,5 +1,5 @@
 
-// Format date to readable format
+// Format date to readable format for Indian locale
 export const formatDate = (dateString: string | null) => {
   if (!dateString) return 'N/A';
   const date = new Date(dateString);
@@ -18,4 +18,3 @@ export const formatCurrency = (amount: number) => {
     maximumFractionDigits: 0
   }).format(amount);
 };
-
