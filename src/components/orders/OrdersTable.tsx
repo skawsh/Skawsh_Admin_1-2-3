@@ -200,7 +200,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
       case "collected":
         return <span className="status-badge status-collected">Orders collected</span>;
       case "cancelled":
-        return <span className="status-badge status-cancelled">Cancelled</span>;
+        return <span className="status-badge status-cancelled">Orders cancelled</span>;
       default:
         return null;
     }
@@ -285,7 +285,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                   value="cancelled" 
                   className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
                 >
-                  Cancelled
+                  Orders cancelled
                 </TabsTrigger>
               </TabsList>
             </div>
