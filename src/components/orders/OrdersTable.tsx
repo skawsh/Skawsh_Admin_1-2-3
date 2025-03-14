@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Filter, Search, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Order status types
 type OrderStatus = 'pending' | 'in-progress' | 'in-delivery' | 'completed' | 'cancelled';
@@ -175,123 +177,128 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
   };
 
   return (
-    <div className={cn("bg-white border border-gray-200 rounded-md shadow-sm animate-slide-up", className)}>
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-xl font-bold">Orders Overview</h2>
-      </div>
-      
-      <div className="px-4 py-2 border-b border-gray-200 flex flex-col md:flex-row gap-4 md:items-center justify-between">
-        <div className="flex overflow-x-auto hide-scrollbar space-x-2">
-          <button
-            onClick={() => filterOrders('all')}
-            className={cn("order-tab", activeTab === 'all' ? "active" : "hover:bg-gray-100")}
-          >
-            All Orders
-          </button>
-          <button
-            onClick={() => filterOrders('pending')}
-            className={cn("order-tab", activeTab === 'pending' ? "active" : "hover:bg-gray-100")}
-          >
-            Pending
-          </button>
-          <button
-            onClick={() => filterOrders('in-progress')}
-            className={cn("order-tab", activeTab === 'in-progress' ? "active" : "hover:bg-gray-100")}
-          >
-            In Progress
-          </button>
-          <button
-            onClick={() => filterOrders('in-delivery')}
-            className={cn("order-tab", activeTab === 'in-delivery' ? "active" : "hover:bg-gray-100")}
-          >
-            In Delivery
-          </button>
-          <button
-            onClick={() => filterOrders('completed')}
-            className={cn("order-tab", activeTab === 'completed' ? "active" : "hover:bg-gray-100")}
-          >
-            Completed
-          </button>
-          <button
-            onClick={() => filterOrders('cancelled')}
-            className={cn("order-tab", activeTab === 'cancelled' ? "active" : "hover:bg-gray-100")}
-          >
-            Cancelled
-          </button>
+    <div className={cn("bg-white rounded-md shadow-sm animate-slide-up", className)}>
+      <div className="p-6">
+        <h2 className="text-2xl font-bold mb-6">Orders Overview</h2>
+        
+        <div className="flex flex-col space-y-4 md:flex-row md:justify-between md:space-y-0 mb-6">
+          <Tabs defaultValue="all" className="w-full" onValueChange={(value) => filterOrders(value as 'all' | OrderStatus)}>
+            <TabsList className="bg-gray-100 h-auto p-1 w-full md:w-auto">
+              <TabsTrigger 
+                value="all" 
+                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
+              >
+                All Orders
+              </TabsTrigger>
+              <TabsTrigger 
+                value="pending" 
+                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
+              >
+                Pending
+              </TabsTrigger>
+              <TabsTrigger 
+                value="in-progress" 
+                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
+              >
+                In Progress
+              </TabsTrigger>
+              <TabsTrigger 
+                value="in-delivery" 
+                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
+              >
+                In Delivery
+              </TabsTrigger>
+              <TabsTrigger 
+                value="completed" 
+                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
+              >
+                Completed
+              </TabsTrigger>
+              <TabsTrigger 
+                value="cancelled" 
+                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
+              >
+                Cancelled
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
         
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
+        <div className="flex mb-6 justify-end space-x-4">
+          <div className="relative max-w-md w-full">
+            <Input
               placeholder="Search orders..."
               value={searchQuery}
               onChange={handleSearch}
-              className="pl-10 pr-3 py-2 border border-gray-200 rounded-md text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-laundry-blue focus:border-transparent"
+              className="pl-10 pr-4 py-2"
             />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           </div>
-          <button className="p-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
-            <Filter size={18} className="text-gray-500" />
-          </button>
+          
+          <Button variant="outline" className="flex items-center gap-2">
+            <Filter className="h-4 w-4" />
+            Filters
+          </Button>
         </div>
-      </div>
-      
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="table-head">Order ID</th>
-              <th className="table-head">Ordered Date</th>
-              <th className="table-head">Customer</th>
-              <th className="table-head">Status</th>
-              <th className="table-head">Studio</th>
-              <th className="table-head">Driver</th>
-              <th className="table-head">Total</th>
-              <th className="table-head">Delivered Date</th>
-              <th className="table-head">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredOrders.length > 0 ? (
-              filteredOrders.map((order, index) => (
-                <tr 
-                  key={order.id} 
-                  className={cn(
-                    "hover:bg-gray-50 transition-colors",
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
-                  )}
-                >
-                  <td className="table-cell font-medium">{order.id}</td>
-                  <td className="table-cell">{formatDate(order.orderDate)}</td>
-                  <td className="table-cell">{order.customer}</td>
-                  <td className="table-cell">{getStatusBadge(order.status)}</td>
-                  <td className="table-cell">{order.studio}</td>
-                  <td className="table-cell">{order.driver}</td>
-                  <td className="table-cell font-medium">{formatCurrency(order.total)}</td>
-                  <td className="table-cell">{formatDate(order.deliveryDate)}</td>
-                  <td className="table-cell">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewDetails(order.id)}
-                      className="flex items-center gap-1 text-laundry-blue hover:text-laundry-blue-dark hover:bg-blue-50 border-gray-200"
-                    >
-                      <Eye size={14} />
-                      View Details
-                    </Button>
-                  </td>
+        
+        <div className="mt-6">
+          <div className="relative overflow-x-auto mt-4 border border-gray-100 rounded-lg">
+            <table className="w-full text-left">
+              <thead className="text-xs uppercase bg-gray-50">
+                <tr>
+                  <th className="table-head">Order ID</th>
+                  <th className="table-head">Ordered Date</th>
+                  <th className="table-head">Customer</th>
+                  <th className="table-head">Status</th>
+                  <th className="table-head">Studio</th>
+                  <th className="table-head">Driver</th>
+                  <th className="table-head">Total</th>
+                  <th className="table-head">Delivered Date</th>
+                  <th className="table-head">Actions</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={9} className="py-8 text-center text-gray-500">
-                  No orders found matching your criteria
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredOrders.length > 0 ? (
+                  filteredOrders.map((order, index) => (
+                    <tr 
+                      key={order.id} 
+                      className={cn(
+                        "hover:bg-gray-50 transition-colors",
+                        index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                      )}
+                    >
+                      <td className="table-cell font-medium">{order.id}</td>
+                      <td className="table-cell">{formatDate(order.orderDate)}</td>
+                      <td className="table-cell">{order.customer}</td>
+                      <td className="table-cell">{getStatusBadge(order.status)}</td>
+                      <td className="table-cell">{order.studio}</td>
+                      <td className="table-cell">{order.driver}</td>
+                      <td className="table-cell font-medium">{formatCurrency(order.total)}</td>
+                      <td className="table-cell">{formatDate(order.deliveryDate)}</td>
+                      <td className="table-cell">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewDetails(order.id)}
+                          className="flex items-center gap-1 text-laundry-blue hover:text-laundry-blue-dark hover:bg-blue-50 border-gray-200"
+                        >
+                          <Eye size={14} />
+                          View Details
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={9} className="py-8 text-center text-gray-500">
+                      No orders found matching your criteria
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
