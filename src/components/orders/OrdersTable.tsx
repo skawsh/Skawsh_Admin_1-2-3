@@ -190,7 +190,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
       case "new":
         return <span className="status-badge status-new">New Order</span>;
       case "received":
-        return <span className="status-badge status-received">Order Received</span>;
+        return <span className="status-badge status-received">Orders Received</span>;
       case "in-progress":
         return <span className="status-badge status-in-progress">In Progress</span>;
       case "ready-for-collect":
@@ -198,7 +198,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
       case "delivered":
         return <span className="status-badge status-delivered">Order Delivered</span>;
       case "collected":
-        return <span className="status-badge status-collected">Order collected</span>;
+        return <span className="status-badge status-collected">Orders collected</span>;
       case "cancelled":
         return <span className="status-badge status-cancelled">Cancelled</span>;
       default:
@@ -270,16 +270,16 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                   Ready for collection
                 </TabsTrigger>
                 <TabsTrigger 
+                  value="collected" 
+                  className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+                >
+                  Orders collected
+                </TabsTrigger>
+                <TabsTrigger 
                   value="delivered" 
                   className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
                 >
                   Orders Delivered
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="collected" 
-                  className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
-                >
-                  Order collected
                 </TabsTrigger>
                 <TabsTrigger 
                   value="cancelled" 
