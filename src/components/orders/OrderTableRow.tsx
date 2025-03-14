@@ -45,7 +45,7 @@ const OrderTableRow = ({
         </span>
       </td>
       <td className="table-cell font-medium">{formatCurrency(order.total)}</td>
-      <td className="table-cell">{order.status === 'delivered' || order.status === 'collected' ? formatDate(order.deliveryDate) : 'N/A'}</td>
+      <td className="table-cell">{order.status === 'delivered' ? formatDate(order.deliveryDate) : 'N/A'}</td>
       <td className="table-cell">{order.driver}</td>
       <td className="table-cell">
         <Button
