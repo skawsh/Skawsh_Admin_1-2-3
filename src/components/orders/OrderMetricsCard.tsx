@@ -1,23 +1,13 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { 
-  BarChart2, 
-  DollarSign, 
-  Package, 
-  TrendingDown, 
-  TrendingUp, 
-  Truck, 
-  Check, 
-  AlertTriangle,
-  UserCheck
-} from 'lucide-react';
+import { BarChart2, DollarSign, Package, TrendingDown, TrendingUp, Truck, Check } from 'lucide-react';
 
 interface OrderMetricsCardProps {
   title: string;
   value: string | number;
   changePercent: number;
-  icon: 'orders' | 'delivered' | 'collected' | 'revenue' | 'average' | 'progress' | 'cancelled' | 'assigned';
+  icon: 'orders' | 'delivered' | 'collected' | 'revenue' | 'average' | 'progress';
   className?: string;
 }
 
@@ -44,10 +34,6 @@ const OrderMetricsCard = ({
         return <DollarSign size={20} className="text-emerald-500" />;
       case 'average':
         return <BarChart2 size={20} className="text-purple-500" />;
-      case 'cancelled':
-        return <AlertTriangle size={20} className="text-red-500" />;
-      case 'assigned':
-        return <UserCheck size={20} className="text-teal-500" />;
       default:
         return null;
     }
@@ -74,7 +60,7 @@ const OrderMetricsCard = ({
             "text-sm font-medium",
             isPositiveChange ? "text-green-500" : "text-red-500"
           )}>
-            {isPositiveChange && '+'}{changePercent}%
+            {isPositiveChange && '+'}{changePercent}% vs. last period
           </span>
         </div>
       </div>

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Eye, CheckCircle, XCircle } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from './StatusBadge';
 import { Order } from './types';
@@ -43,19 +43,6 @@ const OrderTableRow = ({
         )}>
           {order.washType.charAt(0).toUpperCase() + order.washType.slice(1)}
         </span>
-      </td>
-      <td className="table-cell">
-        {order.assigned ? (
-          <span className="flex items-center text-green-600">
-            <CheckCircle size={16} className="mr-1" />
-            <span className="text-xs">Assigned</span>
-          </span>
-        ) : (
-          <span className="flex items-center text-red-600">
-            <XCircle size={16} className="mr-1" />
-            <span className="text-xs">Unassigned</span>
-          </span>
-        )}
       </td>
       <td className="table-cell font-medium">{formatCurrency(order.total)}</td>
       <td className="table-cell">{order.status === 'delivered' ? formatDate(order.deliveryDate) : 'N/A'}</td>

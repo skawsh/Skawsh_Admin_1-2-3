@@ -16,7 +16,6 @@ export interface Order {
   total: number;
   deliveryDate: string | null;
   washType: WashType;
-  assigned: boolean;
 }
 
 // Component props types
