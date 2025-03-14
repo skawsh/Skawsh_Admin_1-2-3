@@ -1,25 +1,42 @@
 
 import { Order } from './types';
 
-// Sample order data for Hyderabad, India region with current dates
+// Get current date for reference
+const today = new Date();
+
+// Calculate a date from the last month (30 days ago)
+const lastMonth = new Date(today);
+lastMonth.setDate(today.getDate() - 30);
+
+// Helper function to get a random date between two dates
+const getRandomDate = (start: Date, end: Date) => {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+};
+
+// Helper function to format date to YYYY-MM-DD
+const formatDateString = (date: Date) => {
+  return date.toISOString().split('T')[0];
+};
+
+// Sample order data for Hyderabad, India region with realistic dates within the last month
 export const sampleOrders: Order[] = [
   {
     id: 'ORD-0001',
-    orderDate: '2024-07-28',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Rajesh Kumar',
     status: 'collected',
-    studio: 'Madhapur Studio',
+    studio: 'PKC Laundries - Nallagandla',
     driver: 'Anand Reddy',
     total: 950,
-    deliveryDate: '2024-07-30',
+    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
     washType: 'standard',
   },
   {
     id: 'ORD-0002',
-    orderDate: '2024-07-29',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Priya Sharma',
     status: 'in-progress',
-    studio: 'Hitech City Studio',
+    studio: 'MagicKlean - Masab Tank',
     driver: 'Kavya Singh',
     total: 755,
     deliveryDate: null,
@@ -27,10 +44,10 @@ export const sampleOrders: Order[] = [
   },
   {
     id: 'ORD-0003',
-    orderDate: '2024-07-29',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Arun Verma',
     status: 'ready-for-collect',
-    studio: 'Gachibowli Studio',
+    studio: 'Cleanovo - Film Nagar',
     driver: 'Ravi Teja',
     total: 1200,
     deliveryDate: null,
@@ -38,10 +55,10 @@ export const sampleOrders: Order[] = [
   },
   {
     id: 'ORD-0004',
-    orderDate: '2024-07-30',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Deepika Reddy',
     status: 'new',
-    studio: 'Banjara Hills Studio',
+    studio: 'UClean Laundry - Himayatnagar',
     driver: 'Unassigned',
     total: 890,
     deliveryDate: null,
@@ -49,10 +66,10 @@ export const sampleOrders: Order[] = [
   },
   {
     id: 'ORD-0005',
-    orderDate: '2024-07-27',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Venkat Rao',
     status: 'cancelled',
-    studio: 'Jubilee Hills Studio',
+    studio: 'Tumbledry - Jubilee Hills',
     driver: 'Cancelled',
     total: 0,
     deliveryDate: null,
@@ -60,10 +77,10 @@ export const sampleOrders: Order[] = [
   },
   {
     id: 'ORD-0006',
-    orderDate: '2024-07-31',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Sneha Reddy',
     status: 'received',
-    studio: 'Ameerpet Studio',
+    studio: 'Washmart Laundry - Kukatpally',
     driver: 'Pending Assignment',
     total: 675,
     deliveryDate: null,
@@ -71,46 +88,46 @@ export const sampleOrders: Order[] = [
   },
   {
     id: 'ORD-0007',
-    orderDate: '2024-07-26',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Rahul Chowdary',
     status: 'delivered',
-    studio: 'Kukatpally Studio',
+    studio: 'We Washh - Kukatpally',
     driver: 'Srinivas Kumar',
     total: 1450,
-    deliveryDate: '2024-07-28',
+    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
     washType: 'both',
   },
   {
     id: 'ORD-0008',
-    orderDate: '2024-07-25',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Neha Singh',
     status: 'delivered',
-    studio: 'Madhapur Studio',
+    studio: 'The Laundry Basket - Kukatpally',
     driver: 'Anand Reddy',
     total: 875,
-    deliveryDate: '2024-07-27',
+    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
     washType: 'standard',
   },
   {
     id: 'ORD-0009',
-    orderDate: '2024-07-24',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Kiran Reddy',
     status: 'collected',
-    studio: 'Hitech City Studio',
+    studio: 'FABO Laundry - Kukatpally',
     driver: 'Ravi Teja',
     total: 1100,
-    deliveryDate: '2024-07-26',
+    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
     washType: 'express',
   },
   {
     id: 'ORD-0010',
-    orderDate: '2024-07-23',
+    orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Ananya Desai',
     status: 'delivered',
-    studio: 'Gachibowli Studio',
+    studio: 'Sunshine Dry Cleaners - Toli Chowki',
     driver: 'Srinivas Kumar',
     total: 1150,
-    deliveryDate: '2024-07-25',
+    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
     washType: 'both',
   }
 ];
