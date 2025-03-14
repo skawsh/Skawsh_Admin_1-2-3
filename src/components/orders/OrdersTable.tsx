@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-// Order status types - updated to match the new statuses
-type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'collected' | 'cancelled';
+// Order status types - updated to include the new 'delivered' status
+type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'delivered' | 'collected' | 'cancelled';
 
 // Sample order data structure
 interface Order {
@@ -26,7 +26,7 @@ interface OrdersTableProps {
   className?: string;
 }
 
-// Update sample data with new status types
+// Update sample data to include delivered orders
 const sampleOrders: Order[] = [
   {
     id: 'ORD-0001',
@@ -88,6 +88,26 @@ const sampleOrders: Order[] = [
     total: 29.99,
     deliveryDate: null,
   },
+  {
+    id: 'ORD-0007',
+    orderDate: '2023-03-10',
+    customer: 'Daniel Johnson',
+    status: 'delivered',
+    studio: 'Southside Studio',
+    driver: 'Thomas Rodriguez',
+    total: 63.45,
+    deliveryDate: '2023-03-12',
+  },
+  {
+    id: 'ORD-0008',
+    orderDate: '2023-03-09',
+    customer: 'Olivia Wilson',
+    status: 'delivered',
+    studio: 'Downtown Studio',
+    driver: 'Michael Davis',
+    total: 42.30,
+    deliveryDate: '2023-03-11',
+  }
 ];
 
 const OrdersTable = ({ className }: OrdersTableProps) => {
@@ -174,7 +194,9 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
       case "in-progress":
         return <span className="status-badge status-in-progress">In Progress</span>;
       case "ready-for-collect":
-        return <span className="status-badge status-ready">Ready for collect</span>;
+        return <span className="status-badge status-ready">Ready for collection</span>;
+      case "delivered":
+        return <span className="status-badge status-delivered">Order Delivered</span>;
       case "collected":
         return <span className="status-badge status-collected">Order collected</span>;
       case "cancelled":
@@ -233,7 +255,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                   value="received" 
                   className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
                 >
-                  Order Received
+                  Orders Received
                 </TabsTrigger>
                 <TabsTrigger 
                   value="in-progress" 
@@ -245,7 +267,13 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                   value="ready-for-collect" 
                   className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
                 >
-                  Ready for collect
+                  Ready for collection
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="delivered" 
+                  className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+                >
+                  Orders Delivered
                 </TabsTrigger>
                 <TabsTrigger 
                   value="collected" 
@@ -277,7 +305,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                   <th className="table-head">Studio</th>
                   <th className="table-head">Driver</th>
                   <th className="table-head">Total</th>
-                  <th className="table-head">Delivered Date</th>
+                  <th className="table-head">Delivery Date</th>
                   <th className="table-head">Actions</th>
                 </tr>
               </thead>
@@ -299,7 +327,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                       <td className="table-cell">{order.studio}</td>
                       <td className="table-cell">{order.driver}</td>
                       <td className="table-cell font-medium">{formatCurrency(order.total)}</td>
-                      <td className="table-cell">{formatDate(order.deliveryDate)}</td>
+                      <td className="table-cell">{order.status === 'delivered' ? formatDate(order.deliveryDate) : 'N/A'}</td>
                       <td className="table-cell">
                         <Button
                           variant="outline"
