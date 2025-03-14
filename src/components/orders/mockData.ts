@@ -18,6 +18,16 @@ const formatDateString = (date: Date) => {
   return date.toISOString().split('T')[0];
 };
 
+// Helper function to ensure the delivery date is always after the order date
+const getDeliveryDate = (orderDate: Date) => {
+  // Add 1-3 days to order date for delivery
+  const deliveryDate = new Date(orderDate);
+  deliveryDate.setDate(orderDate.getDate() + Math.floor(Math.random() * 3) + 1);
+  
+  // Make sure delivery date is not in the future beyond today
+  return deliveryDate > today ? today : deliveryDate;
+};
+
 // Sample order data for Hyderabad, India region with realistic dates within the last month
 export const sampleOrders: Order[] = [
   {
@@ -25,10 +35,10 @@ export const sampleOrders: Order[] = [
     orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Rajesh Kumar',
     status: 'collected',
-    studio: 'PKC Laundries - Nallagandla',
+    studio: 'PKC Laundries',
     driver: 'Anand Reddy',
     total: 950,
-    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
+    deliveryDate: null,
     washType: 'standard',
   },
   {
@@ -36,7 +46,7 @@ export const sampleOrders: Order[] = [
     orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Priya Sharma',
     status: 'in-progress',
-    studio: 'MagicKlean - Masab Tank',
+    studio: 'MagicKlean',
     driver: 'Kavya Singh',
     total: 755,
     deliveryDate: null,
@@ -47,7 +57,7 @@ export const sampleOrders: Order[] = [
     orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Arun Verma',
     status: 'ready-for-collect',
-    studio: 'Cleanovo - Film Nagar',
+    studio: 'Cleanovo',
     driver: 'Ravi Teja',
     total: 1200,
     deliveryDate: null,
@@ -58,7 +68,7 @@ export const sampleOrders: Order[] = [
     orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Deepika Reddy',
     status: 'new',
-    studio: 'UClean Laundry - Himayatnagar',
+    studio: 'UClean Laundry',
     driver: 'Unassigned',
     total: 890,
     deliveryDate: null,
@@ -69,7 +79,7 @@ export const sampleOrders: Order[] = [
     orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Venkat Rao',
     status: 'cancelled',
-    studio: 'Tumbledry - Jubilee Hills',
+    studio: 'Tumbledry',
     driver: 'Cancelled',
     total: 0,
     deliveryDate: null,
@@ -80,57 +90,77 @@ export const sampleOrders: Order[] = [
     orderDate: formatDateString(getRandomDate(lastMonth, today)),
     customer: 'Sneha Reddy',
     status: 'received',
-    studio: 'Washmart Laundry - Kukatpally',
+    studio: 'Washmart Laundry',
     driver: 'Pending Assignment',
     total: 675,
     deliveryDate: null,
     washType: 'standard',
   },
+];
+
+// Process the orders to add proper delivery dates
+sampleOrders.forEach(order => {
+  // Create a date object from order date string
+  const orderDateObj = new Date(order.orderDate);
+  
+  // Delivered and Collected statuses should have delivery dates
+  if (order.status === 'delivered' || order.status === 'collected') {
+    order.deliveryDate = formatDateString(getDeliveryDate(orderDateObj));
+  }
+});
+
+// Add more orders with logical dates
+const orderDate7 = getRandomDate(lastMonth, today);
+const orderDate8 = getRandomDate(lastMonth, today);
+const orderDate9 = getRandomDate(lastMonth, today);
+const orderDate10 = getRandomDate(lastMonth, today);
+
+sampleOrders.push(
   {
     id: 'ORD-0007',
-    orderDate: formatDateString(getRandomDate(lastMonth, today)),
+    orderDate: formatDateString(orderDate7),
     customer: 'Rahul Chowdary',
     status: 'delivered',
-    studio: 'We Washh - Kukatpally',
+    studio: 'We Washh',
     driver: 'Srinivas Kumar',
     total: 1450,
-    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
+    deliveryDate: formatDateString(getDeliveryDate(orderDate7)),
     washType: 'both',
   },
   {
     id: 'ORD-0008',
-    orderDate: formatDateString(getRandomDate(lastMonth, today)),
+    orderDate: formatDateString(orderDate8),
     customer: 'Neha Singh',
     status: 'delivered',
-    studio: 'The Laundry Basket - Kukatpally',
+    studio: 'The Laundry Basket',
     driver: 'Anand Reddy',
     total: 875,
-    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
+    deliveryDate: formatDateString(getDeliveryDate(orderDate8)),
     washType: 'standard',
   },
   {
     id: 'ORD-0009',
-    orderDate: formatDateString(getRandomDate(lastMonth, today)),
+    orderDate: formatDateString(orderDate9),
     customer: 'Kiran Reddy',
     status: 'collected',
-    studio: 'FABO Laundry - Kukatpally',
+    studio: 'FABO Laundry',
     driver: 'Ravi Teja',
     total: 1100,
-    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
+    deliveryDate: formatDateString(getDeliveryDate(orderDate9)),
     washType: 'express',
   },
   {
     id: 'ORD-0010',
-    orderDate: formatDateString(getRandomDate(lastMonth, today)),
+    orderDate: formatDateString(orderDate10),
     customer: 'Ananya Desai',
     status: 'delivered',
-    studio: 'Sunshine Dry Cleaners - Toli Chowki',
+    studio: 'Sunshine Dry Cleaners',
     driver: 'Srinivas Kumar',
     total: 1150,
-    deliveryDate: formatDateString(getRandomDate(lastMonth, today)),
+    deliveryDate: formatDateString(getDeliveryDate(orderDate10)),
     washType: 'both',
   }
-];
+);
 
 // Calculate the total orders
 export const totalOrders = sampleOrders.length;
