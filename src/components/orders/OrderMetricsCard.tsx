@@ -44,7 +44,7 @@ const OrderMetricsCard = ({
   
   return (
     <div className={cn(
-      "metrics-card bg-white border border-gray-100 rounded-lg shadow-sm p-5 h-[120px] flex flex-col justify-between animate-slide-up",
+      "metrics-card bg-white border border-gray-100 rounded-lg shadow-sm p-5 h-28 flex flex-col justify-between animate-slide-up",
       className
     )}>
       <div className="flex justify-between items-start">
