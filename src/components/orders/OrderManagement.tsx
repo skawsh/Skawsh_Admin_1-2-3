@@ -9,7 +9,9 @@ import {
   newOrders, 
   inProgressOrders, 
   readyForCollectOrders, 
-  deliveredOrders 
+  deliveredOrders,
+  cancelledOrders,
+  assignedOrders
 } from './mockData';
 import { formatCurrency } from './formatUtils';
 
@@ -47,7 +49,7 @@ const OrderManagement = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
         <OrderMetricsCard 
           title="Total Orders"
           value={totalOrders.toString()}
@@ -70,7 +72,7 @@ const OrderManagement = () => {
         />
         
         <OrderMetricsCard 
-          title="Ready for Collection"
+          title="Ready"
           value={readyForCollectOrders.toString()}
           changePercent={15}
           icon="collected"
@@ -81,6 +83,20 @@ const OrderManagement = () => {
           value={deliveredOrders.toString()}
           changePercent={2.3}
           icon="delivered"
+        />
+        
+        <OrderMetricsCard 
+          title="Cancelled"
+          value={cancelledOrders.toString()}
+          changePercent={-10}
+          icon="cancelled"
+        />
+        
+        <OrderMetricsCard 
+          title="Assigned"
+          value={assignedOrders.toString()}
+          changePercent={7}
+          icon="assigned"
         />
       </div>
       
