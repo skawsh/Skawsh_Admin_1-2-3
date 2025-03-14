@@ -40,6 +40,7 @@ export const sampleOrders: Order[] = [
     total: 950,
     deliveryDate: null,
     washType: 'standard',
+    assigned: true
   },
   {
     id: 'ORD-0002',
@@ -51,6 +52,7 @@ export const sampleOrders: Order[] = [
     total: 755,
     deliveryDate: null,
     washType: 'express',
+    assigned: true
   },
   {
     id: 'ORD-0003',
@@ -62,6 +64,7 @@ export const sampleOrders: Order[] = [
     total: 1200,
     deliveryDate: null,
     washType: 'both',
+    assigned: true
   },
   {
     id: 'ORD-0004',
@@ -73,6 +76,7 @@ export const sampleOrders: Order[] = [
     total: 890,
     deliveryDate: null,
     washType: 'standard',
+    assigned: false
   },
   {
     id: 'ORD-0005',
@@ -84,6 +88,7 @@ export const sampleOrders: Order[] = [
     total: 0,
     deliveryDate: null,
     washType: 'express',
+    assigned: false
   },
   {
     id: 'ORD-0006',
@@ -95,6 +100,7 @@ export const sampleOrders: Order[] = [
     total: 675,
     deliveryDate: null,
     washType: 'standard',
+    assigned: false
   },
 ];
 
@@ -128,6 +134,7 @@ sampleOrders.push(
     total: 1450,
     deliveryDate: formatDateString(getDeliveryDate(orderDate7)),
     washType: 'both',
+    assigned: true
   },
   {
     id: 'ORD-0008',
@@ -139,6 +146,7 @@ sampleOrders.push(
     total: 875,
     deliveryDate: formatDateString(getDeliveryDate(orderDate8)),
     washType: 'standard',
+    assigned: true
   },
   {
     id: 'ORD-0009',
@@ -150,6 +158,7 @@ sampleOrders.push(
     total: 1100,
     deliveryDate: formatDateString(getDeliveryDate(orderDate9)),
     washType: 'express',
+    assigned: true
   },
   {
     id: 'ORD-0010',
@@ -161,6 +170,7 @@ sampleOrders.push(
     total: 1150,
     deliveryDate: formatDateString(getDeliveryDate(orderDate10)),
     washType: 'both',
+    assigned: true
   },
   {
     id: 'ORD-0011',
@@ -172,6 +182,7 @@ sampleOrders.push(
     total: 780,
     deliveryDate: null,
     washType: 'standard',
+    assigned: false
   },
   {
     id: 'ORD-0012',
@@ -183,6 +194,7 @@ sampleOrders.push(
     total: 1320,
     deliveryDate: null,
     washType: 'express',
+    assigned: true
   }
 );
 
@@ -212,6 +224,16 @@ export const inProgressOrders = sampleOrders.filter(order =>
 // Calculate ready-for-collect orders
 export const readyForCollectOrders = sampleOrders.filter(order => 
   order.status === 'ready-for-collect'
+).length;
+
+// Calculate cancelled orders
+export const cancelledOrders = sampleOrders.filter(order => 
+  order.status === 'cancelled'
+).length;
+
+// Calculate assigned orders
+export const assignedOrders = sampleOrders.filter(order => 
+  order.assigned === true
 ).length;
 
 // Calculate total revenue

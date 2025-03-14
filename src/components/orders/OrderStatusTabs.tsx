@@ -21,51 +21,57 @@ const OrderStatusTabs = ({ activeTab, onTabChange }: OrderStatusTabsProps) => {
           <TabsList className="bg-gray-100 h-auto p-1 w-max min-w-full inline-flex">
             <TabsTrigger 
               value="all" 
-              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+              className="whitespace-nowrap px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
               All Orders
             </TabsTrigger>
             <TabsTrigger 
               value="new" 
-              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+              className="whitespace-nowrap px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
-              New Orders
+              New
             </TabsTrigger>
             <TabsTrigger 
               value="received" 
-              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+              className="whitespace-nowrap px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
-              Orders Received
+              Received
             </TabsTrigger>
             <TabsTrigger 
               value="in-progress" 
-              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+              className="whitespace-nowrap px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
-              Orders In Progress
+              In Progress
             </TabsTrigger>
             <TabsTrigger 
               value="ready-for-collect" 
-              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+              className="whitespace-nowrap px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
-              Ready for collection
+              Ready for Collection
             </TabsTrigger>
             <TabsTrigger 
               value="collected" 
-              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+              className="whitespace-nowrap px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
-              Orders collected
+              Collected
             </TabsTrigger>
             <TabsTrigger 
               value="delivered" 
-              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+              className="whitespace-nowrap px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
-              Orders Delivered
+              Delivered
             </TabsTrigger>
             <TabsTrigger 
               value="cancelled" 
-              className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
+              className="whitespace-nowrap px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
-              Orders cancelled
+              Cancelled
+            </TabsTrigger>
+            <TabsTrigger 
+              value="assigned" 
+              className="whitespace-nowrap px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
+            >
+              Assigned
             </TabsTrigger>
           </TabsList>
         </div>

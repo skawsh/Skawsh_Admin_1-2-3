@@ -1,24 +1,21 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { BarChart2, DollarSign, Package, TrendingDown, TrendingUp, Truck, Check } from 'lucide-react';
+import { BarChart2, DollarSign, Package, Truck, Check, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface OrderMetricsCardProps {
   title: string;
   value: string | number;
-  changePercent: number;
-  icon: 'orders' | 'delivered' | 'collected' | 'revenue' | 'average' | 'progress';
+  icon: 'orders' | 'delivered' | 'collected' | 'revenue' | 'average' | 'progress' | 'ready' | 'cancelled' | 'assigned';
   className?: string;
 }
 
 const OrderMetricsCard = ({ 
   title, 
   value, 
-  changePercent, 
   icon, 
   className 
 }: OrderMetricsCardProps) => {
-  const isPositiveChange = changePercent >= 0;
   
   const getIcon = () => {
     switch (icon) {
@@ -30,10 +27,16 @@ const OrderMetricsCard = ({
         return <Check size={20} className="text-blue-500" />;
       case 'progress':
         return <Package size={20} className="text-orange-500" />;
+      case 'ready':
+        return <Check size={20} className="text-yellow-500" />;
       case 'revenue':
         return <DollarSign size={20} className="text-emerald-500" />;
       case 'average':
         return <BarChart2 size={20} className="text-purple-500" />;
+      case 'cancelled':
+        return <AlertTriangle size={20} className="text-red-500" />;
+      case 'assigned':
+        return <CheckCircle2 size={20} className="text-teal-500" />;
       default:
         return null;
     }
@@ -50,19 +53,6 @@ const OrderMetricsCard = ({
       
       <div className="flex flex-col">
         <span className="text-2xl font-bold">{value}</span>
-        <div className="flex items-center mt-1">
-          {isPositiveChange ? (
-            <TrendingUp size={16} className="text-green-500 mr-1" />
-          ) : (
-            <TrendingDown size={16} className="text-red-500 mr-1" />
-          )}
-          <span className={cn(
-            "text-sm font-medium",
-            isPositiveChange ? "text-green-500" : "text-red-500"
-          )}>
-            {isPositiveChange && '+'}{changePercent}% vs. last period
-          </span>
-        </div>
       </div>
     </div>
   );

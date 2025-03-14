@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -10,11 +11,11 @@ import OrdersTableContent from './OrdersTableContent';
 import './OrdersBadge.css';
 
 const OrdersTable = ({ className }: OrdersTableProps) => {
-  const [activeTab, setActiveTab] = useState<'all' | OrderStatus>('all');
+  const [activeTab, setActiveTab] = useState<'all' | OrderStatus | 'assigned'>('all');
   const [filteredOrders, setFilteredOrders] = useState(sampleOrders);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filterOrders = (tab: 'all' | OrderStatus) => {
+  const filterOrders = (tab: 'all' | OrderStatus | 'assigned') => {
     setActiveTab(tab);
     
     if (tab === 'all') {
@@ -25,6 +26,17 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
             order.customer.toLowerCase().includes(searchQuery.toLowerCase())
           ) : 
           sampleOrders
+      );
+    } else if (tab === 'assigned') {
+      setFilteredOrders(
+        sampleOrders.filter(order => 
+          order.assigned === true && 
+          (searchQuery ? 
+            order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            order.customer.toLowerCase().includes(searchQuery.toLowerCase()) :
+            true
+          )
+        )
       );
     } else {
       setFilteredOrders(
@@ -52,6 +64,17 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
             order.customer.toLowerCase().includes(query.toLowerCase())
           ) : 
           sampleOrders
+      );
+    } else if (activeTab === 'assigned') {
+      setFilteredOrders(
+        sampleOrders.filter(order => 
+          order.assigned === true && 
+          (query ? 
+            order.id.toLowerCase().includes(query.toLowerCase()) ||
+            order.customer.toLowerCase().includes(query.toLowerCase()) :
+            true
+          )
+        )
       );
     } else {
       setFilteredOrders(
@@ -85,8 +108,8 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
         
         {/* Tabs section */}
         <OrderStatusTabs 
-          activeTab={activeTab}
-          onTabChange={filterOrders}
+          activeTab={activeTab as any}
+          onTabChange={filterOrders as any}
         />
         
         <div className="mt-6">

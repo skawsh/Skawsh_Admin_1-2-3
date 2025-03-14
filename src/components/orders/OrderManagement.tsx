@@ -9,7 +9,10 @@ import {
   newOrders, 
   inProgressOrders, 
   readyForCollectOrders, 
-  deliveredOrders 
+  deliveredOrders,
+  collectedOrders,
+  cancelledOrders,
+  assignedOrders
 } from './mockData';
 import { formatCurrency } from './formatUtils';
 
@@ -47,40 +50,61 @@ const OrderManagement = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
         <OrderMetricsCard 
           title="Total Orders"
           value={totalOrders.toString()}
-          changePercent={12}
           icon="orders"
+          className="xl:col-span-2"
         />
         
         <OrderMetricsCard 
           title="New Orders"
           value={newOrders.toString()}
-          changePercent={8}
           icon="orders"
+          className="xl:col-span-1"
         />
         
         <OrderMetricsCard 
           title="In Progress"
           value={inProgressOrders.toString()}
-          changePercent={5}
           icon="progress"
+          className="xl:col-span-1"
         />
         
         <OrderMetricsCard 
           title="Ready for Collection"
           value={readyForCollectOrders.toString()}
-          changePercent={15}
+          icon="ready"
+          className="xl:col-span-1"
+        />
+        
+        <OrderMetricsCard 
+          title="Collected"
+          value={collectedOrders.toString()}
           icon="collected"
+          className="xl:col-span-1"
         />
         
         <OrderMetricsCard 
           title="Delivered"
           value={deliveredOrders.toString()}
-          changePercent={2.3}
           icon="delivered"
+          className="xl:col-span-1"
+        />
+        
+        <OrderMetricsCard 
+          title="Cancelled"
+          value={cancelledOrders.toString()}
+          icon="cancelled"
+          className="xl:col-span-1"
+        />
+
+        <OrderMetricsCard 
+          title="Assigned"
+          value={assignedOrders.toString()}
+          icon="assigned"
+          className="xl:col-span-1"
         />
       </div>
       
