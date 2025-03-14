@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-// Order status types
-type OrderStatus = 'pending' | 'in-progress' | 'in-delivery' | 'completed' | 'cancelled';
+// Order status types - updated to match the new statuses
+type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'collected' | 'cancelled';
 
 // Sample order data structure
 interface Order {
@@ -25,13 +25,13 @@ interface OrdersTableProps {
   className?: string;
 }
 
-// Sample data for the table
+// Update sample data with new status types
 const sampleOrders: Order[] = [
   {
     id: 'ORD-0001',
     orderDate: '2023-03-12',
     customer: 'John Smith',
-    status: 'completed',
+    status: 'collected',
     studio: 'Downtown Studio',
     driver: 'Michael Davis',
     total: 45.99,
@@ -51,7 +51,7 @@ const sampleOrders: Order[] = [
     id: 'ORD-0003',
     orderDate: '2023-03-13',
     customer: 'James Brown',
-    status: 'in-delivery',
+    status: 'ready-for-collect',
     studio: 'Eastside Studio',
     driver: 'Robert Miller',
     total: 78.25,
@@ -61,7 +61,7 @@ const sampleOrders: Order[] = [
     id: 'ORD-0004',
     orderDate: '2023-03-14',
     customer: 'Olivia Davis',
-    status: 'pending',
+    status: 'new',
     studio: 'Downtown Studio',
     driver: 'Unassigned',
     total: 54.75,
@@ -75,6 +75,16 @@ const sampleOrders: Order[] = [
     studio: 'Northside Studio',
     driver: 'Cancelled',
     total: 0,
+    deliveryDate: null,
+  },
+  {
+    id: 'ORD-0006',
+    orderDate: '2023-03-15',
+    customer: 'Sophia Martinez',
+    status: 'received',
+    studio: 'Downtown Studio',
+    driver: 'Pending Assignment',
+    total: 29.99,
     deliveryDate: null,
   },
 ];
@@ -156,15 +166,17 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
-      case 'pending':
-        return <span className="status-badge status-pending">Pending</span>;
-      case 'in-progress':
+      case "new":
+        return <span className="status-badge status-new">New Order</span>;
+      case "received":
+        return <span className="status-badge status-received">Order Received</span>;
+      case "in-progress":
         return <span className="status-badge status-in-progress">In Progress</span>;
-      case 'in-delivery':
-        return <span className="status-badge status-in-delivery">In Delivery</span>;
-      case 'completed':
-        return <span className="status-badge status-completed">Completed</span>;
-      case 'cancelled':
+      case "ready-for-collect":
+        return <span className="status-badge status-ready">Ready for collect</span>;
+      case "collected":
+        return <span className="status-badge status-collected">Order collected</span>;
+      case "cancelled":
         return <span className="status-badge status-cancelled">Cancelled</span>;
       default:
         return null;
@@ -181,7 +193,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-6">Orders Overview</h2>
         
-        {/* Search and Filter section - moved above tabs */}
+        {/* Search and Filter section */}
         <div className="flex mb-6 justify-between items-center">
           <div className="relative w-full max-w-md">
             <Input
@@ -199,10 +211,10 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
           </Button>
         </div>
         
-        {/* Tabs section - now below search */}
+        {/* Tabs section - updated with new statuses */}
         <div className="flex flex-col space-y-4 md:flex-row md:justify-between md:space-y-0 mb-6">
           <Tabs defaultValue="all" className="w-full" onValueChange={(value) => filterOrders(value as 'all' | OrderStatus)}>
-            <TabsList className="bg-gray-100 h-auto p-1 w-full md:w-auto">
+            <TabsList className="bg-gray-100 h-auto p-1 w-full md:w-auto overflow-x-auto flex">
               <TabsTrigger 
                 value="all" 
                 className="px-6 py-2 data-[state=active]:bg-white rounded-md"
@@ -210,28 +222,34 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                 All Orders
               </TabsTrigger>
               <TabsTrigger 
-                value="pending" 
+                value="new" 
                 className="px-6 py-2 data-[state=active]:bg-white rounded-md"
               >
-                Pending
+                New Orders
+              </TabsTrigger>
+              <TabsTrigger 
+                value="received" 
+                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
+              >
+                Order Received
               </TabsTrigger>
               <TabsTrigger 
                 value="in-progress" 
                 className="px-6 py-2 data-[state=active]:bg-white rounded-md"
               >
-                In Progress
+                Orders In Progress
               </TabsTrigger>
               <TabsTrigger 
-                value="in-delivery" 
+                value="ready-for-collect" 
                 className="px-6 py-2 data-[state=active]:bg-white rounded-md"
               >
-                In Delivery
+                Ready for collect
               </TabsTrigger>
               <TabsTrigger 
-                value="completed" 
+                value="collected" 
                 className="px-6 py-2 data-[state=active]:bg-white rounded-md"
               >
-                Completed
+                Order collected
               </TabsTrigger>
               <TabsTrigger 
                 value="cancelled" 
