@@ -44,10 +44,10 @@ const OrderMetricsCard = ({
   
   return (
     <div className={cn(
-      "metrics-card bg-white border border-gray-100 rounded-lg shadow-sm p-5 animate-slide-up",
+      "metrics-card bg-white border border-gray-100 rounded-lg shadow-sm p-5 h-[120px] flex flex-col justify-between animate-slide-up",
       className
     )}>
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start">
         <span className="text-gray-600 font-medium text-sm">{title}</span>
         <div className="h-10 w-10 rounded-full flex items-center justify-center bg-gray-50">
           {getIcon()}
@@ -55,7 +55,7 @@ const OrderMetricsCard = ({
       </div>
       
       <div className="flex flex-col">
-        <span className="text-3xl font-bold text-gray-800">{value}</span>
+        <span className="text-2xl font-bold text-gray-800">{value}</span>
       </div>
     </div>
   );
