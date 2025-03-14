@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Filter, Search, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -211,11 +212,11 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
           </Button>
         </div>
         
-        {/* Tabs section - improved scroll behavior */}
+        {/* Tabs section - fixed scrolling behavior */}
         <div className="mb-6 w-full overflow-hidden">
           <Tabs defaultValue="all" className="w-full" onValueChange={(value) => filterOrders(value as 'all' | OrderStatus)}>
-            <ScrollArea className="w-full pb-4" orientation="horizontal">
-              <TabsList className="bg-gray-100 h-auto p-1 w-max min-w-full inline-flex no-scrollbar">
+            <div className="overflow-x-auto no-scrollbar">
+              <TabsList className="bg-gray-100 h-auto p-1 w-max min-w-full inline-flex">
                 <TabsTrigger 
                   value="all" 
                   className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md flex-shrink-0"
@@ -259,7 +260,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
                   Cancelled
                 </TabsTrigger>
               </TabsList>
-            </ScrollArea>
+            </div>
           </Tabs>
         </div>
         
