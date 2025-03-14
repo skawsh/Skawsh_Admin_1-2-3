@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Order status types - updated to match the new statuses
 type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'collected' | 'cancelled';
@@ -211,53 +212,57 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
           </Button>
         </div>
         
-        {/* Tabs section - updated with new statuses */}
-        <div className="flex flex-col space-y-4 md:flex-row md:justify-between md:space-y-0 mb-6">
+        {/* Tabs section - with fixed display and hidden scrollbar */}
+        <div className="mb-6">
           <Tabs defaultValue="all" className="w-full" onValueChange={(value) => filterOrders(value as 'all' | OrderStatus)}>
-            <TabsList className="bg-gray-100 h-auto p-1 w-full md:w-auto overflow-x-auto flex">
-              <TabsTrigger 
-                value="all" 
-                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
-              >
-                All Orders
-              </TabsTrigger>
-              <TabsTrigger 
-                value="new" 
-                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
-              >
-                New Orders
-              </TabsTrigger>
-              <TabsTrigger 
-                value="received" 
-                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
-              >
-                Order Received
-              </TabsTrigger>
-              <TabsTrigger 
-                value="in-progress" 
-                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
-              >
-                Orders In Progress
-              </TabsTrigger>
-              <TabsTrigger 
-                value="ready-for-collect" 
-                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
-              >
-                Ready for collect
-              </TabsTrigger>
-              <TabsTrigger 
-                value="collected" 
-                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
-              >
-                Order collected
-              </TabsTrigger>
-              <TabsTrigger 
-                value="cancelled" 
-                className="px-6 py-2 data-[state=active]:bg-white rounded-md"
-              >
-                Cancelled
-              </TabsTrigger>
-            </TabsList>
+            <div className="relative">
+              <ScrollArea className="w-full">
+                <TabsList className="bg-gray-100 h-auto p-1 w-full flex no-scrollbar">
+                  <TabsTrigger 
+                    value="all" 
+                    className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md"
+                  >
+                    All Orders
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="new" 
+                    className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md"
+                  >
+                    New Orders
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="received" 
+                    className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md"
+                  >
+                    Order Received
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="in-progress" 
+                    className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md"
+                  >
+                    Orders In Progress
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="ready-for-collect" 
+                    className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md"
+                  >
+                    Ready for collect
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="collected" 
+                    className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md"
+                  >
+                    Order collected
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="cancelled" 
+                    className="whitespace-nowrap px-6 py-2 data-[state=active]:bg-white rounded-md"
+                  >
+                    Cancelled
+                  </TabsTrigger>
+                </TabsList>
+              </ScrollArea>
+            </div>
           </Tabs>
         </div>
         
