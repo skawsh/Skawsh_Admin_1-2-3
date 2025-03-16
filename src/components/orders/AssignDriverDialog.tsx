@@ -195,8 +195,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               </span>
             </div>
             
-            <ScrollArea className="h-[350px] pr-2"> {/* Increased height and added right padding for better scrolling experience */}
-              <div className="space-y-2 pr-4 pb-4"> {/* Added padding to bottom and right to ensure content is fully visible when scrolling */}
+            <ScrollArea className="h-[380px]"> {/* Increased height further to ensure all content is visible */}
+              <div className="space-y-2 pr-4 pb-6"> {/* Increased bottom padding to ensure last items are fully visible */}
                 {sortedDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
                   const hasAssignedOrders = driver.assignedOrders && driver.assignedOrders > 0;
@@ -233,8 +233,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                         )}
                         
                         {hasZeroOrders && !isUnavailable && (
-                          <span className="text-xs bg-green-100 text-green-800 rounded-full flex items-center justify-center w-8 h-8"> {/* Increased size of checkmark container */}
-                            <CheckCircle2 className="h-6 w-6 text-green-600" /> {/* Increased size of checkmark icon */}
+                          <span className="text-xs bg-green-100 text-green-800 rounded-full flex items-center justify-center w-8 h-8">
+                            <CheckCircle2 className="h-6 w-6 text-green-600" />
                           </span>
                         )}
                       </div>
