@@ -10,7 +10,6 @@ import {
   inProgressOrders, 
   readyForCollectOrders, 
   deliveredOrders,
-  collectedOrders,
   cancelledOrders,
   assignedOrders
 } from './mockData';
@@ -76,13 +75,6 @@ const OrderManagement = () => {
           title="Ready for Collection"
           value={readyForCollectOrders.toString()}
           icon="ready"
-          className="hover:shadow-md transition-shadow"
-        />
-        
-        <OrderMetricsCard 
-          title="Collected"
-          value={collectedOrders.toString()}
-          icon="collected"
           className="hover:shadow-md transition-shadow"
         />
         
