@@ -167,7 +167,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
             </div>
             
             <ScrollArea className="h-[280px]">
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {mockDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
                   const isDelivering = driver.status === 'delivering';
@@ -175,50 +175,32 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                   return (
                     <div 
                       key={driver.id}
-                      className={`border rounded-md p-3 transition-all relative ${
+                      className={`rounded-md p-2 transition-all relative ${
                         selectedDriverId === driver.id 
-                          ? 'border-primary ring-1 ring-primary bg-primary/5' 
-                          : 'hover:border-gray-300'
+                          ? 'bg-primary/10 ring-1 ring-primary'
+                          : 'hover:bg-gray-100'
                       } ${isUnavailable ? 'opacity-60' : ''}`}
                       onClick={() => !isUnavailable && setSelectedDriverId(driver.id)}
                     >
-                      <div className="flex justify-between items-start mb-1">
-                        <div className="flex items-center gap-1.5">
-                          <User className="h-4 w-4 text-gray-700" />
-                          <div>
-                            <h4 className="font-medium">{driver.name}</h4>
-                            <p className="text-xs text-gray-500">ID: {driver.id}</p>
-                          </div>
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-gray-700" />
+                        <div className="flex-1">
+                          <h4 className="font-medium text-sm">{driver.name}</h4>
+                          <p className="text-xs text-gray-500">ID: {driver.id}</p>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <span className="font-medium">{driver.rating}</span>
-                          <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                        </div>
+                        
+                        {isDelivering && (
+                          <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
+                            Delivering
+                          </span>
+                        )}
+                        
+                        {isUnavailable && (
+                          <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
+                            Unavailable
+                          </span>
+                        )}
                       </div>
-                      
-                      <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-1">
-                        <Package className="h-3.5 w-3.5" />
-                        <span>{driver.deliveriesCompleted} deliveries completed</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                        <MapPin className="h-3.5 w-3.5" />
-                        <span>{driver.location}</span>
-                      </div>
-                      
-                      {isDelivering && (
-                        <div className="absolute top-3 right-3 bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-xs font-medium">
-                          Delivering
-                        </div>
-                      )}
-                      
-                      {isUnavailable && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-md">
-                          <div className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">
-                            Currently Unavailable
-                          </div>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
