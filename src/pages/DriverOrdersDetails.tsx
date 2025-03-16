@@ -114,9 +114,14 @@ const DriverOrdersDetails = () => {
   };
 
   const getAddressInfo = (order: AssignedOrder) => {
-    // Updated logic: 
-    // When order is "New" or "Pending", pickup is customer, delivery is studio
-    // When order is "Ready for Collection" or "In Progress", pickup is studio, delivery is customer
+    // When order status is "New" OR "Pending": 
+    // - Pickup is from Customer
+    // - Delivery is to Studio
+    
+    // When order status is "Ready for Collection" OR "In Progress" OR others:
+    // - Pickup is from Studio
+    // - Delivery is to Customer
+    
     if (order.status === 'New' || order.status === 'Pending') {
       return {
         pickupAddress: order.customerAddress,
@@ -124,7 +129,15 @@ const DriverOrdersDetails = () => {
         deliveryAddress: order.studioAddress,
         deliveryName: order.studio
       };
+    } else if (order.status === 'Ready for Collection' || order.status === 'In Progress') {
+      return {
+        pickupAddress: order.studioAddress,
+        pickupName: order.studio,
+        deliveryAddress: order.customerAddress,
+        deliveryName: order.customer
+      };
     } else {
+      // For other statuses (Delivered, Collected, etc.), default to studio → customer
       return {
         pickupAddress: order.studioAddress,
         pickupName: order.studio,
