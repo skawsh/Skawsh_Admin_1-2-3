@@ -53,6 +53,7 @@ const OrderAssignment = () => {
   const [washTypeFilter, setWashTypeFilter] = useState('all');
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
   const [currentOrderToAssign, setCurrentOrderToAssign] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('new');
 
   const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
   const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
@@ -124,6 +125,12 @@ const OrderAssignment = () => {
     setWashTypeFilter(value);
   };
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    // Clear selection when switching tabs
+    setSelectedOrders([]);
+  };
+
   const handleAssignSelected = () => {
     setCurrentOrderToAssign(null);
     setIsAssignDialogOpen(true);
@@ -158,10 +165,8 @@ const OrderAssignment = () => {
     );
   };
 
-  // Determine current tab for proper display logic
-  const isFromReadyTab = (orderId: string) => {
-    return readyOrders.some(order => order.id === orderId);
-  };
+  // Determine if orders are from the Ready tab
+  const isFromReadyTab = activeTab === 'ready';
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
@@ -226,7 +231,12 @@ const OrderAssignment = () => {
         </div>
       </div>
       
-      <Tabs defaultValue="new" className="w-full">
+      <Tabs 
+        defaultValue="new" 
+        className="w-full"
+        value={activeTab}
+        onValueChange={handleTabChange}
+      >
         <TabsList className="mb-4">
           <TabsTrigger value="new" className="flex items-center gap-2">
             <Package size={16} />
@@ -432,7 +442,7 @@ const OrderAssignment = () => {
         onOpenChange={setIsAssignDialogOpen}
         selectedOrders={getSelectedOrdersData()}
         onAssignDriver={handleAssignDriver}
-        isReadyForCollection={currentOrderToAssign ? isFromReadyTab(currentOrderToAssign) : selectedOrders.some(id => isFromReadyTab(id))}
+        isReadyForCollection={isFromReadyTab}
       />
     </div>
   );
