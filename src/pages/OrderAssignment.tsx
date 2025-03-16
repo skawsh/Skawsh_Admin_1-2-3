@@ -203,20 +203,25 @@ const OrderAssignment = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-4">
+      {/* Header section with fixed layout */}
+      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
+        {/* Back button area - fixed width */}
+        <div className="flex items-center">
           <Link to="/">
             <Button variant="ghost" size="icon" className="rounded-full h-10 w-10">
               <ArrowLeft size={20} />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold mb-1">Order Assignment</h1>
-            <p className="text-gray-500">Assign drivers to orders and manage order dispatch</p>
-          </div>
         </div>
         
-        <div className="flex items-center gap-4">
+        {/* Title area - takes remaining space */}
+        <div>
+          <h1 className="text-3xl font-bold mb-1">Order Assignment</h1>
+          <p className="text-gray-500">Assign drivers to orders and manage order dispatch</p>
+        </div>
+        
+        {/* Controls area - fixed width with internal flex layout */}
+        <div className="flex items-center gap-4 justify-end">
           <Button 
             variant="outline" 
             className="gap-1 whitespace-nowrap"
@@ -264,6 +269,7 @@ const OrderAssignment = () => {
         </div>
       </div>
       
+      {/* Tabs section */}
       <Tabs 
         defaultValue="new" 
         className="w-full"
