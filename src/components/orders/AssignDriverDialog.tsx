@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
+import { useToast } from '@/hooks/use-toast';
 
 interface OrderTableData {
   id: string;
@@ -41,6 +43,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   onAssignDriver,
 }) => {
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
+  const { toast } = useToast();
   
   // Check if selectedOrders is an array (for backward compatibility) or an object with arrays
   const isSelectedOrdersArray = Array.isArray(selectedOrders);
@@ -105,10 +108,32 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   
   const handleAssignDriver = () => {
     if (selectedDriverId) {
+      // Call the parent component's handler
       onAssignDriver(
         selectedDriverId, 
         allOrdersData.map(order => order.id)
       );
+      
+      // Save to localStorage and dispatch event for other components
+      const assignmentData = {
+        driverId: selectedDriverId,
+        orders: allOrdersData
+      };
+      
+      localStorage.setItem('driverAssignments', JSON.stringify(assignmentData));
+      
+      // Dispatch a custom event for components that may not have access to the localStorage event
+      window.dispatchEvent(new CustomEvent('driverAssignment', { 
+        detail: assignmentData 
+      }));
+      
+      // Show success toast
+      toast({
+        title: "Orders Assigned",
+        description: `${allOrdersData.length} orders assigned to driver successfully`,
+      });
+      
+      // Close dialog
       onOpenChange(false);
     }
   };
