@@ -1,6 +1,6 @@
 
 // Order status types
-export type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'delivered' | 'collected' | 'cancelled';
+export type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'delivered' | 'cancelled';
 
 // Wash type options
 export type WashType = 'standard' | 'express' | 'both';

@@ -50,12 +50,6 @@ const OrderStatusTabs = ({ activeTab, onTabChange }: OrderStatusTabsProps) => {
               Ready for Collection
             </TabsTrigger>
             <TabsTrigger 
-              value="collected" 
-              className="px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
-            >
-              Collected
-            </TabsTrigger>
-            <TabsTrigger 
               value="delivered" 
               className="px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
