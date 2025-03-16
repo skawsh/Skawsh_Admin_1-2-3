@@ -109,7 +109,7 @@ const OrderAssignment = () => {
           </TabsTrigger>
           <TabsTrigger value="ready" className="flex items-center gap-2">
             <ClipboardCheck size={16} />
-            Ready for Pickup
+            Ready for Collection
           </TabsTrigger>
           <TabsTrigger value="rescheduled" className="flex items-center gap-2">
             <Clock size={16} />
@@ -204,7 +204,7 @@ const OrderAssignment = () => {
         
         <TabsContent value="ready">
           <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
-            No orders ready for pickup
+            No orders ready for collection
           </div>
         </TabsContent>
         
