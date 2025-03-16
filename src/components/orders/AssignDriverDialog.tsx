@@ -129,10 +129,35 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   // Check if selectedOrders is an array (for backward compatibility) or an object with arrays
   const isSelectedOrdersArray = Array.isArray(selectedOrders);
   
-  // Extract orders data based on the format
-  const newOrdersData = isSelectedOrdersArray ? [] : selectedOrders.newOrders;
-  const readyOrdersData = isSelectedOrdersArray ? [] : selectedOrders.readyOrders;
-  const rescheduledOrdersData = isSelectedOrdersArray ? [] : selectedOrders.rescheduledOrders || [];
+  // Process rescheduled orders to categorize them based on status
+  let newOrdersData: OrderTableData[] = [];
+  let readyOrdersData: OrderTableData[] = [];
+  let rescheduledOrdersData: OrderTableData[] = [];
+  
+  if (isSelectedOrdersArray) {
+    // If it's an array, keep existing backward compatibility
+    allOrdersData = selectedOrders;
+  } else {
+    // Extract orders data from the object format
+    newOrdersData = [...selectedOrders.newOrders];
+    readyOrdersData = [...selectedOrders.readyOrders];
+    
+    // Process rescheduled orders and categorize them
+    if (selectedOrders.rescheduledOrders && selectedOrders.rescheduledOrders.length > 0) {
+      selectedOrders.rescheduledOrders.forEach(order => {
+        // Add the order to the rescheduled list for display in that section
+        rescheduledOrdersData.push(order);
+        
+        // Also add the order to either new or ready based on its status
+        if (order.status === 'ready-for-collect') {
+          readyOrdersData.push(order);
+        } else {
+          // Any status that's not ready-for-collect is considered a new order
+          newOrdersData.push(order);
+        }
+      });
+    }
+  }
   
   const allOrdersData = isSelectedOrdersArray 
     ? selectedOrders 
@@ -184,6 +209,16 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   const showRescheduledOrdersTable = !isSelectedOrdersArray && rescheduledOrdersData.length > 0;
   const showSingleTable = isSelectedOrdersArray;
 
+  // Remove duplicate entries from tables to avoid showing the same order multiple times
+  // This can happen when a rescheduled order is also added to newOrders or readyOrders
+  const uniqueNewOrdersData = newOrdersData.filter((order, index, self) => 
+    index === self.findIndex((o) => o.id === order.id)
+  );
+  
+  const uniqueReadyOrdersData = readyOrdersData.filter((order, index, self) => 
+    index === self.findIndex((o) => o.id === order.id)
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col">
@@ -232,11 +267,11 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               {/* Show tables based on which orders are selected */}
               {(showNewOrdersTable || showReadyOrdersTable || showRescheduledOrdersTable) && (
                 <div className="space-y-4">
-                  {showNewOrdersTable && (
+                  {showNewOrdersTable && uniqueNewOrdersData.length > 0 && (
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <Package size={16} className="text-blue-600" />
-                        <h4 className="text-sm font-medium">New Orders ({newOrdersData.length})</h4>
+                        <h4 className="text-sm font-medium">New Orders ({uniqueNewOrdersData.length})</h4>
                       </div>
                       <div className="border rounded-md">
                         <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
@@ -245,7 +280,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                           <div className="font-medium text-sm text-gray-700">Customer Address</div>
                         </div>
                         <ScrollArea className="h-[100px]">
-                          {newOrdersData.map(order => (
+                          {uniqueNewOrdersData.map(order => (
                             <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
                               <div className="text-sm">{order.orderId}</div>
                               <div className="text-sm">{order.customer}</div>
@@ -257,11 +292,11 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                     </div>
                   )}
                   
-                  {showReadyOrdersTable && (
+                  {showReadyOrdersTable && uniqueReadyOrdersData.length > 0 && (
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <ShoppingBag size={16} className="text-green-600" />
-                        <h4 className="text-sm font-medium">Ready for Collection Orders ({readyOrdersData.length})</h4>
+                        <h4 className="text-sm font-medium">Ready for Collection Orders ({uniqueReadyOrdersData.length})</h4>
                       </div>
                       <div className="border rounded-md">
                         <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
@@ -270,7 +305,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                           <div className="font-medium text-sm text-gray-700">Studio Address</div>
                         </div>
                         <ScrollArea className="h-[100px]">
-                          {readyOrdersData.map(order => (
+                          {uniqueReadyOrdersData.map(order => (
                             <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
                               <div className="text-sm">{order.orderId}</div>
                               <div className="text-sm">{order.studio}</div>
@@ -282,7 +317,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                     </div>
                   )}
                   
-                  {showRescheduledOrdersTable && (
+                  {showRescheduledOrdersTable && rescheduledOrdersData.length > 0 && (
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <Clock size={16} className="text-amber-500" />
@@ -400,3 +435,4 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     </Dialog>
   );
 };
+
