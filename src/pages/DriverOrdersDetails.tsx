@@ -8,9 +8,10 @@ import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Package, MapPin, Calendar } from 'lucide-react';
+import { ArrowLeft, Package, MapPin, Calendar, ArrowRightLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { studioAddressMapping } from '@/components/orders/utils/addressUtils';
 
 // Define a type for assigned orders
 interface AssignedOrder {
@@ -85,17 +86,21 @@ const DriverOrdersDetails = () => {
         'PKC Laundries', 'MagicKlean', 'Cleanovo', 'UClean', 
         'Tumbledry', 'Washmart', 'We Washh', 'The Laundry Basket'
       ];
-      const statusOptions = ['Pending', 'In Progress', 'Delivered', 'Collected'];
+      const statusOptions = ['Pending', 'In Progress', 'Delivered', 'Collected', 'New', 'Ready for Collection'];
+      const selectedStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+      const selectedStudio = studioNames[Math.floor(Math.random() * studioNames.length)];
+      const customerAddress = generateRandomAddress();
+      const studioAddress = studioAddressMapping[selectedStudio] || `${selectedStudio}, Hyderabad`;
       
       mockOrders.push({
         id: `order-${driverId}-${i + 1}`,
-        orderId: `ORD-${10000 + parseInt(driverId) * 100 + i}`,
+        orderId: `ORD-${10000 + parseInt(driverId as string) * 100 + i}`,
         customer: `Customer ${i + 1}`,
-        customerAddress: generateRandomAddress(),
-        studio: studioNames[Math.floor(Math.random() * studioNames.length)],
-        studioAddress: generateRandomAddress(),
+        customerAddress: customerAddress,
+        studio: selectedStudio,
+        studioAddress: studioAddress,
         date: new Date(Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0],
-        status: statusOptions[Math.floor(Math.random() * statusOptions.length)]
+        status: selectedStatus
       });
     }
     
@@ -107,7 +112,7 @@ const DriverOrdersDetails = () => {
     const areas = ['Ameerpet', 'Banjara Hills', 'Jubilee Hills', 'Madhapur', 'Gachibowli', 'HITEC City', 'Kondapur'];
     const roads = ['Main Road', 'Circle Road', 'Junction Street', 'Cross Road', 'Highway'];
     
-    return `${plots[Math.floor(Math.random() * plots.length)]}, ${areas[Math.floor(Math.random() * areas.length)]}, ${roads[Math.floor(Math.random() * roads.length)]}, Hyderabad`;
+    return `${plots[Math.floor(Math.random() * plots.length)]}, ${areas[Math.floor(Math.random() * areas.length)]}, ${roads[Math.floor(Math.random() * roads.length)]}, Hyderabad, India`;
   };
   
   const toggleSidebar = () => {
@@ -162,21 +167,12 @@ const DriverOrdersDetails = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-laundry-blue" />
-                Driver Information
+                Assigned Orders
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Driver Name</span>
-                <span className="font-medium">{driver.name}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Phone Number</span>
-                <span className="font-medium">{driver.phoneNumber}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Total Assigned Orders</span>
-                <span className="font-medium">{driver.assignedOrders || 0}</span>
+            <CardContent>
+              <div className="text-xl font-semibold">
+                Total Assigned Orders: {assignedOrders.length}
               </div>
             </CardContent>
           </Card>
@@ -185,7 +181,7 @@ const DriverOrdersDetails = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-laundry-blue" />
-                Assigned Orders
+                Order Details
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -197,42 +193,73 @@ const DriverOrdersDetails = () => {
                       <TableHead>ORDER ID</TableHead>
                       <TableHead>DATE</TableHead>
                       <TableHead>CUSTOMER</TableHead>
-                      <TableHead>PICKUP ADDRESS</TableHead>
-                      <TableHead>STUDIO</TableHead>
+                      <TableHead>PICKUP FROM</TableHead>
+                      <TableHead>DELIVER TO</TableHead>
                       <TableHead>STATUS</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {assignedOrders.map((order, index) => (
-                      <TableRow key={order.id}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell className="font-medium">{order.orderId}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Calendar size={14} className="text-gray-500" />
-                            {order.date}
-                          </div>
-                        </TableCell>
-                        <TableCell>{order.customer}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2 max-w-xs truncate">
-                            <MapPin size={14} className="text-gray-500 shrink-0" />
-                            <span className="truncate" title={order.customerAddress}>{order.customerAddress}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{order.studio}</TableCell>
-                        <TableCell>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium
-                            ${order.status === 'Delivered' ? 'bg-green-100 text-green-800' : 
-                              order.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                              order.status === 'Collected' ? 'bg-purple-100 text-purple-800' :
-                              'bg-yellow-100 text-yellow-800'
-                            }`}>
-                            {order.status}
-                          </span>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {assignedOrders.map((order, index) => {
+                      // Determine pickup and delivery addresses based on order status
+                      let pickupAddress, deliveryAddress;
+                      
+                      if (order.status?.toLowerCase() === 'new' || 
+                          order.status?.toLowerCase() === 'pending') {
+                        // For new orders, pickup from customer, deliver to studio
+                        pickupAddress = order.customerAddress;
+                        deliveryAddress = order.studioAddress;
+                      } else if (order.status?.toLowerCase() === 'ready for collection' || 
+                                order.status?.toLowerCase() === 'in progress') {
+                        // For ready for collection orders, pickup from studio, deliver to customer
+                        pickupAddress = order.studioAddress;
+                        deliveryAddress = order.customerAddress;
+                      } else {
+                        // Default behavior for other statuses
+                        pickupAddress = order.status?.toLowerCase() === 'delivered' || 
+                                       order.status?.toLowerCase() === 'collected' ? 
+                                       order.studioAddress : order.customerAddress;
+                        deliveryAddress = order.status?.toLowerCase() === 'delivered' || 
+                                         order.status?.toLowerCase() === 'collected' ? 
+                                         order.customerAddress : order.studioAddress;
+                      }
+                      
+                      return (
+                        <TableRow key={order.id}>
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell className="font-medium">{order.orderId}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Calendar size={14} className="text-gray-500" />
+                              {order.date}
+                            </div>
+                          </TableCell>
+                          <TableCell>{order.customer}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2 max-w-xs truncate">
+                              <MapPin size={14} className="text-gray-500 shrink-0" />
+                              <span className="truncate" title={pickupAddress}>{pickupAddress}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2 max-w-xs truncate">
+                              <MapPin size={14} className="text-gray-500 shrink-0" />
+                              <span className="truncate" title={deliveryAddress}>{deliveryAddress}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium
+                              ${order.status?.toLowerCase() === 'delivered' || 
+                                order.status?.toLowerCase() === 'collected' ? 'bg-green-100 text-green-800' : 
+                                order.status?.toLowerCase() === 'in progress' ? 'bg-blue-100 text-blue-800' :
+                                order.status?.toLowerCase() === 'ready for collection' ? 'bg-purple-100 text-purple-800' :
+                                'bg-yellow-100 text-yellow-800'
+                              }`}>
+                              {order.status}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               ) : (
