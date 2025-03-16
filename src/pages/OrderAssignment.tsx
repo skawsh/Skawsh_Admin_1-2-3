@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { sampleOrders } from '@/components/orders/mockData';
+import { sampleOrders, exclusiveRescheduledOrders } from '@/components/orders/mockData';
 import { Order } from '@/components/orders/types';
 import { AssignDriverDialog } from '@/components/orders/AssignDriverDialog';
 import { AssignmentHeader } from '@/components/orders/AssignmentHeader';
@@ -28,7 +27,9 @@ const OrderAssignment = () => {
   // For demo purposes, let's assume 30% of both new and ready orders are "rescheduled"
   const rescheduledNewOrders = newOrders.filter((_, index) => index % 3 === 0);
   const rescheduledReadyOrders = readyForCollectionOrders.filter((_, index) => index % 3 === 0);
-  const rescheduledOrders = [...rescheduledNewOrders, ...rescheduledReadyOrders];
+  
+  // Combine the filtered "rescheduled" orders with our exclusive rescheduled orders
+  const rescheduledOrders = [...rescheduledNewOrders, ...rescheduledReadyOrders, ...exclusiveRescheduledOrders];
 
   const pendingOrders = mapOrdersToTableData(newOrders);
   const readyOrders = mapOrdersToTableData(readyForCollectionOrders);

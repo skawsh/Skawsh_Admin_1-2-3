@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Package, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -153,4 +152,3 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
     </div>
   );
 };
-

@@ -1,4 +1,3 @@
-
 // Order status types
 export type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'delivered' | 'cancelled';
 
@@ -17,6 +16,7 @@ export interface Order {
   deliveryDate: string | null;
   washType: WashType;
   assigned?: boolean;
+  rescheduled?: boolean;
 }
 
 // Table data interface
