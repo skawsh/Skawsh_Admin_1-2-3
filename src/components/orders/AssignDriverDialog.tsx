@@ -168,11 +168,10 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     }
   };
 
-  // Determine if we need to show separate tables or just one table
-  const showSeparateTables = !isSelectedOrdersArray && newOrdersData.length > 0 && readyOrdersData.length > 0;
+  // Determine which tables to show based on the selected orders
   const showNewOrdersTable = !isSelectedOrdersArray && newOrdersData.length > 0;
   const showReadyOrdersTable = !isSelectedOrdersArray && readyOrdersData.length > 0;
-  const showSingleTable = isSelectedOrdersArray || (!showNewOrdersTable && !showReadyOrdersTable);
+  const showSingleTable = isSelectedOrdersArray;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -222,7 +221,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                 </div>
               )}
               
-              {showSeparateTables && (
+              {/* Show tables based on which orders are selected */}
+              {(showNewOrdersTable || showReadyOrdersTable) && (
                 <div className="space-y-4">
                   {showNewOrdersTable && (
                     <div>
@@ -355,3 +355,4 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     </Dialog>
   );
 };
+
