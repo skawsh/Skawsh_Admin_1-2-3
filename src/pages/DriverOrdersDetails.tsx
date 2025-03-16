@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -13,7 +12,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { studioAddressMapping } from '@/components/orders/utils/addressUtils';
 
-// Define a type for assigned orders
 interface AssignedOrder {
   id: string;
   orderId: string;
@@ -39,13 +37,11 @@ const DriverOrdersDetails = () => {
   }, [isMobile]);
   
   useEffect(() => {
-    // Find the driver in our sample data
     const foundDriver = sampleDrivers.find(d => d.id === driverId);
     
     if (foundDriver) {
       setDriver(foundDriver);
       
-      // Get assigned orders from localStorage
       try {
         const existingAssignments = localStorage.getItem('driverAssignments');
         if (existingAssignments) {
@@ -53,12 +49,9 @@ const DriverOrdersDetails = () => {
           if (data.driverId === driverId && data.orders) {
             setAssignedOrders(data.orders);
           } else {
-            // If we don't have orders for this specific driver in localStorage,
-            // create some mock orders
             createMockOrders(foundDriver);
           }
         } else {
-          // If no orders in localStorage, create mock orders
           createMockOrders(foundDriver);
         }
       } catch (error) {
@@ -71,22 +64,18 @@ const DriverOrdersDetails = () => {
         description: "Could not find the selected driver.",
         variant: "destructive"
       });
-      // Redirect back to drivers page if driver not found
       navigate('/drivers');
     }
   }, [driverId, navigate, toast]);
   
   const createMockOrders = (driver: Driver) => {
-    // Create mock orders based on driver's assignedOrders count
     const mockOrders: AssignedOrder[] = [];
     const orderCount = driver.assignedOrders || 0;
     
-    // Use predefined studio addresses from studioAddressMapping if available
     const getStudioAddress = (studioName: string) => {
       return studioAddressMapping[studioName] || generateRandomAddress();
     };
     
-    // Sample statuses to ensure we have both "new" and "ready-for-collect" orders
     const statusOptions = ['New', 'Ready for Collection', 'In Progress', 'Delivered', 'Collected', 'Pending'];
     const studioNames = [
       'PKC Laundries', 'MagicKlean', 'Cleanovo', 'UClean', 
@@ -94,12 +83,9 @@ const DriverOrdersDetails = () => {
       'Laundry Express'
     ];
     
-    // Specific customer names for demo
     const customerNames = ['Deepika Reddy', 'Sanjay Mehta', 'Arun Verma', 'Priya Singh', 'Rajesh Kumar'];
     
-    // Make first orders match the image example
     if (orderCount > 0) {
-      // First order: ORD-0004 (new)
       mockOrders.push({
         id: `order-${driverId}-1`,
         orderId: 'ORD-0004',
@@ -111,7 +97,6 @@ const DriverOrdersDetails = () => {
         status: 'New'
       });
       
-      // Second order: ORD-R001 (new)
       mockOrders.push({
         id: `order-${driverId}-2`,
         orderId: 'ORD-R001',
@@ -123,7 +108,6 @@ const DriverOrdersDetails = () => {
         status: 'New'
       });
       
-      // Third order: ORD-0003 (ready-for-collect)
       mockOrders.push({
         id: `order-${driverId}-3`,
         orderId: 'ORD-0003',
@@ -136,7 +120,6 @@ const DriverOrdersDetails = () => {
       });
     }
     
-    // Add additional mock orders if needed
     for (let i = mockOrders.length; i < orderCount; i++) {
       mockOrders.push({
         id: `order-${driverId}-${i + 1}`,
@@ -166,22 +149,14 @@ const DriverOrdersDetails = () => {
   };
 
   const getAddressInfo = (order: AssignedOrder) => {
-    // When order status is "New" OR "Pending": 
-    // - Pickup is from Customer
-    // - Delivery is to Studio
-    
-    // When order status is "Ready for Collection" OR "In Progress" OR others:
-    // - Pickup is from Studio
-    // - Delivery is to Customer
-    
-    if (order.status === 'New' || order.status === 'Pending') {
+    if (order.status === 'New') {
       return {
         pickupAddress: order.customerAddress,
         pickupName: order.customer,
         deliveryAddress: order.studioAddress,
         deliveryName: order.studio
       };
-    } else if (order.status === 'Ready for Collection' || order.status === 'In Progress') {
+    } else if (order.status === 'Ready for Collection') {
       return {
         pickupAddress: order.studioAddress,
         pickupName: order.studio,
@@ -189,7 +164,6 @@ const DriverOrdersDetails = () => {
         deliveryName: order.customer
       };
     } else {
-      // For other statuses (Delivered, Collected, etc.), default to studio → customer
       return {
         pickupAddress: order.studioAddress,
         pickupName: order.studio,
@@ -216,7 +190,6 @@ const DriverOrdersDetails = () => {
     }
   };
   
-  // Helper function to get a simplified status for display in badges
   const getSimplifiedStatus = (status: string | undefined) => {
     switch(status) {
       case 'Ready for Collection':
