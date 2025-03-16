@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, CheckSquare, Clock, Package, ClipboardCheck, Search, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,11 +25,12 @@ const OrderAssignment = () => {
   const [washTypeFilter, setWashTypeFilter] = useState('all');
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
   const [currentOrderToAssign, setCurrentOrderToAssign] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("new");
 
   const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
   const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
 
-  const mapOrdersToTableData = (orders: Order[]) => {
+  const mapOrdersToTableData = (orders: Order[], isReadyForCollection: boolean = false) => {
     return orders.map(order => ({
       id: order.id,
       orderId: order.id,
@@ -41,7 +41,8 @@ const OrderAssignment = () => {
       studioAddress: order.studio + ' Studio, Hyderabad',
       studio: order.studio,
       washType: order.washType === 'express' ? 'Express Wash' : order.washType === 'standard' ? 'Standard Wash' : 'Both Wash',
-      distance: (Math.random() * 5 + 1).toFixed(1) + ' km'
+      distance: (Math.random() * 5 + 1).toFixed(1) + ' km',
+      isReadyForCollection: isReadyForCollection
     }));
   };
 
@@ -54,7 +55,7 @@ const OrderAssignment = () => {
   };
 
   const pendingOrders = mapOrdersToTableData(newOrders);
-  const readyOrders = mapOrdersToTableData(readyForCollectionOrders);
+  const readyOrders = mapOrdersToTableData(readyForCollectionOrders, true);
 
   const filteredPendingOrders = pendingOrders.filter(order => {
     const matchesSearch = !searchQuery || 
@@ -104,20 +105,16 @@ const OrderAssignment = () => {
   };
 
   const handleAssignDriver = (driverId: string, orderIds: string[]) => {
-    // In a real application, this would make an API call
     console.log('Assigning driver:', driverId, 'to orders:', orderIds);
-    
-    // Show success message
     const orderText = orderIds.length === 1 ? 'order' : 'orders';
     toast.success(`Successfully assigned driver to ${orderIds.length} ${orderText}`);
-    
-    // Clear selection after assignment
     setSelectedOrders([]);
   };
 
   const getSelectedOrdersData = () => {
     if (currentOrderToAssign) {
-      const order = [...pendingOrders, ...readyOrders].find(o => o.id === currentOrderToAssign);
+      const orderArrays = activeTab === "ready" ? readyOrders : pendingOrders;
+      const order = orderArrays.find(o => o.id === currentOrderToAssign);
       return order ? [order] : [];
     }
     
@@ -189,215 +186,9 @@ const OrderAssignment = () => {
         </div>
       </div>
       
-      <Tabs defaultValue="new" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="new" className="flex items-center gap-2">
-            <Package size={16} />
-            New Orders
-          </TabsTrigger>
-          <TabsTrigger value="ready" className="flex items-center gap-2">
-            <ClipboardCheck size={16} />
-            Ready for Collection
-          </TabsTrigger>
-          <TabsTrigger value="rescheduled" className="flex items-center gap-2">
-            <Clock size={16} />
-            Rescheduled
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="new" className="space-y-4">
-          <div className="bg-white rounded-md p-4 border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Package size={20} className="text-laundry-blue" />
-                <h2 className="text-xl font-semibold">New Order Assignments</h2>
-              </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <Clock size={16} />
-                <span>{newOrders.length} Orders Pending</span>
-              </div>
-            </div>
-            
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <Input
-                className="pl-10 w-full"
-                placeholder="Search new orders..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
-            
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-12 text-center">#</TableHead>
-                    <TableHead className="w-12">
-                      <Checkbox
-                        checked={selectedOrders.length === filteredPendingOrders.length && filteredPendingOrders.length > 0}
-                        onCheckedChange={handleSelectAll}
-                      />
-                    </TableHead>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Customer Address</TableHead>
-                    <TableHead>Studio</TableHead>
-                    <TableHead>Studio Address</TableHead>
-                    <TableHead>Wash Type</TableHead>
-                    <TableHead>Distance</TableHead>
-                    <TableHead>Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredPendingOrders.map((order, index) => (
-                    <TableRow key={order.id} className="hover:bg-gray-50">
-                      <TableCell className="text-center">{index + 1}</TableCell>
-                      <TableCell>
-                        <Checkbox
-                          checked={selectedOrders.includes(order.id)}
-                          onCheckedChange={() => toggleOrderSelection(order.id)}
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium">{order.orderId}</TableCell>
-                      <TableCell>{order.date}</TableCell>
-                      <TableCell>{order.customer}</TableCell>
-                      <TableCell>{order.phone}</TableCell>
-                      <TableCell>{order.customerAddress}</TableCell>
-                      <TableCell>{order.studio}</TableCell>
-                      <TableCell>{order.studioAddress}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
-                            <Package size={14} className="text-blue-600" />
-                          </div>
-                          {order.washType}
-                        </div>
-                      </TableCell>
-                      <TableCell>{order.distance}</TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="outline" 
-                          className="bg-white hover:bg-gray-50 flex items-center gap-2"
-                          onClick={() => handleAssignSingle(order.id)}
-                        >
-                          <UserPlus size={16} />
-                          Assign
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {filteredPendingOrders.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={12} className="text-center py-10 text-gray-500">
-                        No orders found matching your search criteria
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="ready">
-          {readyOrders.length > 0 ? (
-            <div className="bg-white rounded-md p-4 border border-gray-100">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <ClipboardCheck size={20} className="text-green-600" />
-                  <h2 className="text-xl font-semibold">Ready for Collection</h2>
-                </div>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <Clock size={16} />
-                  <span>{readyForCollectionOrders.length} Orders Ready</span>
-                </div>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-12 text-center">#</TableHead>
-                      <TableHead className="w-12"></TableHead>
-                      <TableHead>Order ID</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Customer Address</TableHead>
-                      <TableHead>Studio</TableHead>
-                      <TableHead>Studio Address</TableHead>
-                      <TableHead>Wash Type</TableHead>
-                      <TableHead>Distance</TableHead>
-                      <TableHead>Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {readyOrders.map((order, index) => (
-                      <TableRow key={order.id} className="hover:bg-gray-50">
-                        <TableCell className="text-center">{index + 1}</TableCell>
-                        <TableCell>
-                          <Checkbox
-                            checked={selectedOrders.includes(order.id)}
-                            onCheckedChange={() => toggleOrderSelection(order.id)}
-                          />
-                        </TableCell>
-                        <TableCell className="font-medium">{order.orderId}</TableCell>
-                        <TableCell>{order.date}</TableCell>
-                        <TableCell>{order.customer}</TableCell>
-                        <TableCell>{order.phone}</TableCell>
-                        <TableCell>{order.customerAddress}</TableCell>
-                        <TableCell>{order.studio}</TableCell>
-                        <TableCell>{order.studioAddress}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
-                              <Package size={14} className="text-blue-600" />
-                            </div>
-                            {order.washType}
-                          </div>
-                        </TableCell>
-                        <TableCell>{order.distance}</TableCell>
-                        <TableCell>
-                          <Button 
-                            variant="outline" 
-                            className="bg-white hover:bg-gray-50 flex items-center gap-2"
-                            onClick={() => handleAssignSingle(order.id)}
-                          >
-                            <UserPlus size={16} />
-                            Assign
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
-              No orders ready for collection
-            </div>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="rescheduled">
-          <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
-            No rescheduled orders
-          </div>
-        </TabsContent>
-      </Tabs>
+      <Tabs 
+        defaultValue="new" 
+        className="w-full"
+        onValueChange={(value) => setActiveTab(value)}
 
-      <AssignDriverDialog
-        isOpen={isAssignDialogOpen}
-        onOpenChange={setIsAssignDialogOpen}
-        selectedOrders={getSelectedOrdersData()}
-        onAssignDriver={handleAssignDriver}
-      />
-    </div>
-  );
-};
 
-export default OrderAssignment;
