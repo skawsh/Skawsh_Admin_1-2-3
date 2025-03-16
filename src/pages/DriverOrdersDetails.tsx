@@ -7,10 +7,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Package, MapPin, Calendar } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { ArrowLeft, Package, MapPin, Calendar, User, Building, TruckIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 // Define a type for assigned orders
 interface AssignedOrder {
@@ -113,6 +112,39 @@ const DriverOrdersDetails = () => {
   const toggleSidebar = () => {
     setSidebarOpen(prev => !prev);
   };
+
+  const getAddressInfo = (order: AssignedOrder) => {
+    // When order is in "Pending" or "New" status, pickup is customer, delivery is studio
+    // When order is in "Ready for Collection" or "In Progress", pickup is studio, delivery is customer
+    if (order.status === 'Pending' || order.status === 'New') {
+      return {
+        pickupAddress: order.customerAddress,
+        pickupName: order.customer,
+        deliveryAddress: order.studioAddress,
+        deliveryName: order.studio
+      };
+    } else {
+      return {
+        pickupAddress: order.studioAddress,
+        pickupName: order.studio,
+        deliveryAddress: order.customerAddress,
+        deliveryName: order.customer
+      };
+    }
+  };
+  
+  const getStatusColor = (status: string | undefined) => {
+    switch(status) {
+      case 'Delivered':
+        return 'bg-green-100 text-green-800';
+      case 'In Progress':
+        return 'bg-blue-100 text-blue-800';
+      case 'Collected':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-yellow-100 text-yellow-800';
+    }
+  };
   
   if (!driver) {
     return (
@@ -145,103 +177,109 @@ const DriverOrdersDetails = () => {
         />
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div className="mb-6 flex items-center">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mr-4"
-              onClick={() => navigate(`/driver/${driverId}`)}
-            >
-              <ArrowLeft size={16} className="mr-1" />
-              Back to Driver
-            </Button>
-            <h1 className="text-2xl font-bold">Assigned Orders</h1>
+          <div className="mb-6 flex items-center justify-between">
+            <div className="flex items-center">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mr-4"
+                onClick={() => navigate(`/driver/${driverId}`)}
+              >
+                <ArrowLeft size={16} className="mr-1" />
+                Back to Driver
+              </Button>
+              <h1 className="text-2xl font-bold">Assigned Orders</h1>
+            </div>
           </div>
           
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-laundry-blue" />
-                Driver Information
+                Total Assigned Orders: {assignedOrders.length}
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Driver Name</span>
-                <span className="font-medium">{driver.name}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Phone Number</span>
-                <span className="font-medium">{driver.phoneNumber}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Total Assigned Orders</span>
-                <span className="font-medium">{driver.assignedOrders || 0}</span>
-              </div>
-            </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5 text-laundry-blue" />
-                Assigned Orders
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {assignedOrders.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-16">S.NO</TableHead>
-                      <TableHead>ORDER ID</TableHead>
-                      <TableHead>DATE</TableHead>
-                      <TableHead>CUSTOMER</TableHead>
-                      <TableHead>PICKUP ADDRESS</TableHead>
-                      <TableHead>STUDIO</TableHead>
-                      <TableHead>STATUS</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {assignedOrders.map((order, index) => (
-                      <TableRow key={order.id}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell className="font-medium">{order.orderId}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Calendar size={14} className="text-gray-500" />
-                            {order.date}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {assignedOrders.length > 0 ? (
+              assignedOrders.map((order) => {
+                const { pickupAddress, pickupName, deliveryAddress, deliveryName } = getAddressInfo(order);
+                
+                return (
+                  <Card 
+                    key={order.id} 
+                    className="overflow-hidden border border-gray-200 hover:shadow-md transition-shadow duration-300"
+                  >
+                    <CardHeader className="pb-2 border-b">
+                      <div className="flex justify-between items-center">
+                        <div className="flex flex-col">
+                          <CardTitle className="text-base md:text-lg font-bold text-laundry-blue">
+                            {order.orderId}
+                          </CardTitle>
+                          <div className="flex items-center mt-1">
+                            <Calendar size={14} className="text-gray-500 mr-1" />
+                            <span className="text-sm text-gray-600">{order.date}</span>
                           </div>
-                        </TableCell>
-                        <TableCell>{order.customer}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2 max-w-xs truncate">
-                            <MapPin size={14} className="text-gray-500 shrink-0" />
-                            <span className="truncate" title={order.customerAddress}>{order.customerAddress}</span>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                          {order.status}
+                        </span>
+                      </div>
+                    </CardHeader>
+                    
+                    <CardContent className="p-4">
+                      <div className="space-y-4">
+                        <div className="bg-gray-50 p-3 rounded-md">
+                          <h3 className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                            <MapPin size={16} className="text-red-500 mr-2" />
+                            Pickup
+                          </h3>
+                          <div className="pl-6">
+                            <div className="flex items-center mb-1">
+                              <User size={14} className="text-gray-400 mr-2" />
+                              <p className="text-sm font-medium">{pickupName}</p>
+                            </div>
+                            <div className="flex items-start">
+                              <Building size={14} className="text-gray-400 mr-2 mt-1" />
+                              <p className="text-sm text-gray-600">{pickupAddress}</p>
+                            </div>
                           </div>
-                        </TableCell>
-                        <TableCell>{order.studio}</TableCell>
-                        <TableCell>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium
-                            ${order.status === 'Delivered' ? 'bg-green-100 text-green-800' : 
-                              order.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                              order.status === 'Collected' ? 'bg-purple-100 text-purple-800' :
-                              'bg-yellow-100 text-yellow-800'
-                            }`}>
-                            {order.status}
-                          </span>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  This driver has no assigned orders.
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                        </div>
+                        
+                        <div className="bg-gray-50 p-3 rounded-md">
+                          <h3 className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                            <TruckIcon size={16} className="text-green-500 mr-2" />
+                            Delivery
+                          </h3>
+                          <div className="pl-6">
+                            <div className="flex items-center mb-1">
+                              <User size={14} className="text-gray-400 mr-2" />
+                              <p className="text-sm font-medium">{deliveryName}</p>
+                            </div>
+                            <div className="flex items-start">
+                              <Building size={14} className="text-gray-400 mr-2 mt-1" />
+                              <p className="text-sm text-gray-600">{deliveryAddress}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                    
+                    <CardFooter className="bg-gray-50 p-3 border-t flex justify-end">
+                      <Button variant="outline" size="sm" className="text-xs">
+                        View Details
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })
+            ) : (
+              <div className="text-center py-8 text-gray-500 col-span-3">
+                This driver has no assigned orders.
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>
