@@ -17,11 +17,15 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
+import { AssignDriverDialog } from '@/components/orders/AssignDriverDialog';
+import { toast } from "sonner";
 
 const OrderAssignment = () => {
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [washTypeFilter, setWashTypeFilter] = useState('all');
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+  const [currentOrderToAssign, setCurrentOrderToAssign] = useState<string | null>(null);
 
   const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
   const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
@@ -89,8 +93,37 @@ const OrderAssignment = () => {
   };
 
   const handleAssignSelected = () => {
-    console.log('Assigning selected orders:', selectedOrders);
-    // Implementation for assigning selected orders would go here
+    setCurrentOrderToAssign(null);
+    setIsAssignDialogOpen(true);
+  };
+
+  const handleAssignSingle = (orderId: string) => {
+    setSelectedOrders([orderId]);
+    setCurrentOrderToAssign(orderId);
+    setIsAssignDialogOpen(true);
+  };
+
+  const handleAssignDriver = (driverId: string, orderIds: string[]) => {
+    // In a real application, this would make an API call
+    console.log('Assigning driver:', driverId, 'to orders:', orderIds);
+    
+    // Show success message
+    const orderText = orderIds.length === 1 ? 'order' : 'orders';
+    toast.success(`Successfully assigned driver to ${orderIds.length} ${orderText}`);
+    
+    // Clear selection after assignment
+    setSelectedOrders([]);
+  };
+
+  const getSelectedOrdersData = () => {
+    if (currentOrderToAssign) {
+      const order = [...pendingOrders, ...readyOrders].find(o => o.id === currentOrderToAssign);
+      return order ? [order] : [];
+    }
+    
+    return [...pendingOrders, ...readyOrders].filter(order => 
+      selectedOrders.includes(order.id)
+    );
   };
 
   return (
@@ -245,7 +278,11 @@ const OrderAssignment = () => {
                       </TableCell>
                       <TableCell>{order.distance}</TableCell>
                       <TableCell>
-                        <Button variant="outline" className="bg-white hover:bg-gray-50 flex items-center gap-2">
+                        <Button 
+                          variant="outline" 
+                          className="bg-white hover:bg-gray-50 flex items-center gap-2"
+                          onClick={() => handleAssignSingle(order.id)}
+                        >
                           <UserPlus size={16} />
                           Assign
                         </Button>
@@ -302,7 +339,10 @@ const OrderAssignment = () => {
                       <TableRow key={order.id} className="hover:bg-gray-50">
                         <TableCell className="text-center">{index + 1}</TableCell>
                         <TableCell>
-                          <Checkbox />
+                          <Checkbox
+                            checked={selectedOrders.includes(order.id)}
+                            onCheckedChange={() => toggleOrderSelection(order.id)}
+                          />
                         </TableCell>
                         <TableCell className="font-medium">{order.orderId}</TableCell>
                         <TableCell>{order.date}</TableCell>
@@ -321,7 +361,11 @@ const OrderAssignment = () => {
                         </TableCell>
                         <TableCell>{order.distance}</TableCell>
                         <TableCell>
-                          <Button variant="outline" className="bg-white hover:bg-gray-50 flex items-center gap-2">
+                          <Button 
+                            variant="outline" 
+                            className="bg-white hover:bg-gray-50 flex items-center gap-2"
+                            onClick={() => handleAssignSingle(order.id)}
+                          >
                             <UserPlus size={16} />
                             Assign
                           </Button>
@@ -345,6 +389,13 @@ const OrderAssignment = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      <AssignDriverDialog
+        isOpen={isAssignDialogOpen}
+        onOpenChange={setIsAssignDialogOpen}
+        selectedOrders={getSelectedOrdersData()}
+        onAssignDriver={handleAssignDriver}
+      />
     </div>
   );
 };
