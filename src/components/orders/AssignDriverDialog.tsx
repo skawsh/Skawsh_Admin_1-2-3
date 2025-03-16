@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -194,8 +195,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               </span>
             </div>
             
-            <ScrollArea className="h-[280px]">
-              <div className="space-y-1">
+            <ScrollArea className="h-[300px]"> {/* Increased height for better scrolling experience */}
+              <div className="space-y-2 pr-2"> {/* Added right padding to prevent content sticking to scrollbar */}
                 {sortedDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
                   const hasAssignedOrders = driver.assignedOrders && driver.assignedOrders > 0;
@@ -205,15 +206,15 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                   return (
                     <div 
                       key={driver.id}
-                      className={`rounded-md p-2 transition-all relative ${
+                      className={`rounded-md p-3 transition-all relative ${
                         selectedDriverId === driver.id 
                           ? 'bg-primary/10 ring-1 ring-primary'
                           : 'hover:bg-gray-100'
                       } ${!isAvailable ? 'opacity-60' : ''}`}
                       onClick={() => isAvailable && setSelectedDriverId(driver.id)}
                     >
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-gray-700" />
+                      <div className="flex items-center gap-3">
+                        <User className="h-5 w-5 text-gray-700" />
                         <div className="flex-1">
                           <h4 className="font-medium text-sm">{driver.name}</h4>
                           <p className="text-xs text-gray-500">ID: {driver.id}</p>
@@ -232,8 +233,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                         )}
                         
                         {hasZeroOrders && !isUnavailable && (
-                          <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded flex items-center justify-center w-6 h-6">
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          <span className="text-xs bg-green-100 text-green-800 rounded-full flex items-center justify-center w-7 h-7"> {/* Increased size of checkmark container */}
+                            <CheckCircle2 className="h-5 w-5 text-green-600" /> {/* Increased size of checkmark icon */}
                           </span>
                         )}
                       </div>
