@@ -12,25 +12,36 @@ import {
   Settings 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLocation, Link } from 'react-router-dom';
 
 interface SidebarProps {
   className?: string;
 }
 
 const Sidebar = ({ className }: SidebarProps) => {
-  // In a real app, this would be dynamic based on the current route
-  const activePage = 'orders';
+  const location = useLocation();
+  // Get the current route to highlight active links
+  const currentPath = location.pathname;
+  
+  // Get activePage based on current path
+  const getActivePage = () => {
+    if (currentPath.includes('/drivers')) return 'drivers';
+    if (currentPath === '/') return 'orders';
+    return '';
+  };
+  
+  const activePage = getActivePage();
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'studios', label: 'Studios', icon: Store },
-    { id: 'services', label: 'Services', icon: ShoppingBag },
-    { id: 'drivers', label: 'Drivers', icon: Truck },
-    { id: 'orders', label: 'Orders', icon: ClipboardList },
-    { id: 'analytics', label: 'Analytics', icon: BarChart2, hasChildren: true },
-    { id: 'revenue', label: 'Revenue', icon: DollarSign },
-    { id: 'users', label: 'Users', icon: Users },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { id: 'studios', label: 'Studios', icon: Store, path: '/studios' },
+    { id: 'services', label: 'Services', icon: ShoppingBag, path: '/services' },
+    { id: 'drivers', label: 'Drivers', icon: Truck, path: '/drivers' },
+    { id: 'orders', label: 'Orders', icon: ClipboardList, path: '/' },
+    { id: 'analytics', label: 'Analytics', icon: BarChart2, hasChildren: true, path: '/analytics' },
+    { id: 'revenue', label: 'Revenue', icon: DollarSign, path: '/revenue' },
+    { id: 'users', label: 'Users', icon: Users, path: '/users' },
+    { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
   ];
 
   return (
@@ -41,20 +52,20 @@ const Sidebar = ({ className }: SidebarProps) => {
       
       <nav className="flex-1 px-3 space-y-1">
         {navItems.map((item) => (
-          <a 
+          <Link 
             key={item.id}
-            href="#" 
+            to={item.path}
             className={cn(
-              "nav-item group",
-              activePage === item.id && "active"
+              "nav-item group flex items-center text-sm text-gray-700 rounded-md px-3 py-2 hover:bg-gray-100",
+              activePage === item.id && "active bg-blue-50 text-laundry-blue font-medium"
             )}
           >
-            <item.icon size={20} className="flex-shrink-0" />
+            <item.icon size={20} className="flex-shrink-0 mr-3" />
             <span>{item.label}</span>
             {item.hasChildren && (
               <span className="ml-auto transform transition-transform">›</span>
             )}
-          </a>
+          </Link>
         ))}
       </nav>
       
