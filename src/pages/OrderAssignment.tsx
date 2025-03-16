@@ -219,7 +219,7 @@ const OrderAssignment = () => {
         <div className="flex items-center gap-4">
           <Button 
             variant="outline" 
-            className="gap-1"
+            className="gap-1 whitespace-nowrap"
             onClick={handleSelectAll}
           >
             <CheckSquare size={18} />
@@ -228,7 +228,7 @@ const OrderAssignment = () => {
           
           {selectedOrders.length > 0 && (
             <Button 
-              className="gap-2 bg-primary text-white"
+              className="gap-2 bg-primary text-white whitespace-nowrap"
               onClick={handleAssignSelected}
             >
               <UserPlus size={18} />
@@ -345,9 +345,9 @@ const OrderAssignment = () => {
                       <TableCell>{order.date}</TableCell>
                       <TableCell>{order.customer}</TableCell>
                       <TableCell>{order.phone}</TableCell>
-                      <TableCell>{order.customerAddress}</TableCell>
+                      <TableCell className="max-w-[200px] truncate" title={order.customerAddress}>{order.customerAddress}</TableCell>
                       <TableCell>{order.studio}</TableCell>
-                      <TableCell>{order.studioAddress}</TableCell>
+                      <TableCell className="max-w-[200px] truncate" title={order.studioAddress}>{order.studioAddress}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
@@ -360,7 +360,7 @@ const OrderAssignment = () => {
                       <TableCell>
                         <Button 
                           variant="outline" 
-                          className="bg-white hover:bg-gray-50 flex items-center gap-2"
+                          className="bg-white hover:bg-gray-50 flex items-center gap-2 whitespace-nowrap"
                           onClick={() => handleAssignSingle(order.id)}
                         >
                           <UserPlus size={16} />
@@ -433,9 +433,9 @@ const OrderAssignment = () => {
                         <TableCell>{order.date}</TableCell>
                         <TableCell>{order.customer}</TableCell>
                         <TableCell>{order.phone}</TableCell>
-                        <TableCell>{order.customerAddress}</TableCell>
+                        <TableCell className="max-w-[200px] truncate" title={order.customerAddress}>{order.customerAddress}</TableCell>
                         <TableCell>{order.studio}</TableCell>
-                        <TableCell>{order.studioAddress}</TableCell>
+                        <TableCell className="max-w-[200px] truncate" title={order.studioAddress}>{order.studioAddress}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
@@ -448,7 +448,7 @@ const OrderAssignment = () => {
                         <TableCell>
                           <Button 
                             variant="outline" 
-                            className="bg-white hover:bg-gray-50 flex items-center gap-2"
+                            className="bg-white hover:bg-gray-50 flex items-center gap-2 whitespace-nowrap"
                             onClick={() => handleAssignSingle(order.id)}
                           >
                             <UserPlus size={16} />
