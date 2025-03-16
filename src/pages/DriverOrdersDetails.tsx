@@ -84,7 +84,7 @@ const DriverOrdersDetails = () => {
         'PKC Laundries', 'MagicKlean', 'Cleanovo', 'UClean', 
         'Tumbledry', 'Washmart', 'We Washh', 'The Laundry Basket'
       ];
-      const statusOptions = ['Pending', 'In Progress', 'Delivered', 'Collected'];
+      const statusOptions = ['Pending', 'In Progress', 'Delivered', 'Collected', 'New', 'Ready for Collection'];
       
       mockOrders.push({
         id: `order-${driverId}-${i + 1}`,
@@ -114,9 +114,10 @@ const DriverOrdersDetails = () => {
   };
 
   const getAddressInfo = (order: AssignedOrder) => {
-    // When order is in "Pending" or "New" status, pickup is customer, delivery is studio
-    // When order is in "Ready for Collection" or "In Progress", pickup is studio, delivery is customer
-    if (order.status === 'Pending' || order.status === 'New') {
+    // Updated logic: 
+    // When order is "New" or "Pending", pickup is customer, delivery is studio
+    // When order is "Ready for Collection" or "In Progress", pickup is studio, delivery is customer
+    if (order.status === 'New' || order.status === 'Pending') {
       return {
         pickupAddress: order.customerAddress,
         pickupName: order.customer,
@@ -141,6 +142,10 @@ const DriverOrdersDetails = () => {
         return 'bg-blue-100 text-blue-800';
       case 'Collected':
         return 'bg-purple-100 text-purple-800';
+      case 'Ready for Collection':
+        return 'bg-indigo-100 text-indigo-800';
+      case 'New':
+        return 'bg-teal-100 text-teal-800';
       default:
         return 'bg-yellow-100 text-yellow-800';
     }
