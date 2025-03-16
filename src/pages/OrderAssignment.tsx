@@ -26,8 +26,7 @@ const OrderAssignment = () => {
   // Filter orders based on their status
   const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
   const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
-  const rescheduledOrders: Order[] = []; // We don't have rescheduled orders in the sample data
-
+  
   // Convert the sample order data to the format needed for the table
   const mapOrdersToTableData = (orders: Order[]) => {
     return orders.map(order => ({
@@ -257,7 +256,7 @@ const OrderAssignment = () => {
                 </div>
                 <div className="flex items-center gap-1 text-gray-500">
                   <Clock size={16} />
-                  <span>{readyOrders.length} Orders Ready</span>
+                  <span>{readyForCollectionOrders.length} Orders Ready</span>
                 </div>
               </div>
               
