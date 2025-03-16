@@ -14,8 +14,15 @@ import {
   assignedOrders
 } from './mockData';
 import { formatCurrency } from './formatUtils';
+import { useNavigate } from 'react-router-dom';
 
 const OrderManagement = () => {
+  const navigate = useNavigate();
+
+  const handleOrderAssignment = () => {
+    navigate('/order-assignment');
+  };
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -36,6 +43,7 @@ const OrderManagement = () => {
           <Button
             variant="outline"
             className="flex items-center gap-2 px-4 h-10 bg-blue-50 text-laundry-blue border-laundry-blue hover:bg-blue-100 hover:text-laundry-blue-dark"
+            onClick={handleOrderAssignment}
           >
             <Users size={18} />
             Order Assignment
