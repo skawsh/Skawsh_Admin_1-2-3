@@ -6,92 +6,8 @@ import { MapPin, Package, Truck, User, CheckCircle2, ShoppingBag, Clock } from "
 import { Order } from './types';
 import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-
-interface Driver {
-  id: string;
-  name: string;
-  rating: number;
-  deliveriesCompleted: number;
-  location: string;
-  status: 'available' | 'delivering' | 'unavailable';
-  assignedOrders?: number;
-}
-
-// Mock data for drivers
-const mockDrivers: Driver[] = [
-  {
-    id: "D-1001",
-    name: "Raj Kumar",
-    rating: 4.8,
-    deliveriesCompleted: 245,
-    location: "Banjara Hills, Hyderabad",
-    status: 'available',
-    assignedOrders: 0
-  },
-  {
-    id: "D-1002",
-    name: "Priya Sharma",
-    rating: 4.9,
-    deliveriesCompleted: 189,
-    location: "Jubilee Hills, Hyderabad",
-    status: 'available',
-    assignedOrders: 2
-  },
-  {
-    id: "D-1003",
-    name: "Arjun Reddy",
-    rating: 4.7,
-    deliveriesCompleted: 302,
-    location: "Gachibowli, Hyderabad",
-    status: 'delivering',
-    assignedOrders: 1
-  },
-  {
-    id: "D-1004",
-    name: "Ananya Patel",
-    rating: 4.6,
-    deliveriesCompleted: 156,
-    location: "Ameerpet, Hyderabad",
-    status: 'delivering',
-    assignedOrders: 3
-  },
-  {
-    id: "D-1005",
-    name: "Vikram Singh",
-    rating: 4.5,
-    deliveriesCompleted: 210,
-    location: "Madhapur, Hyderabad",
-    status: 'unavailable',
-    assignedOrders: 0
-  },
-  {
-    id: "D-1006",
-    name: "Sneha Reddy",
-    rating: 4.8,
-    deliveriesCompleted: 178,
-    location: "Kondapur, Hyderabad",
-    status: 'available',
-    assignedOrders: 0
-  },
-  {
-    id: "D-1007",
-    name: "Rahul Verma",
-    rating: 4.7,
-    deliveriesCompleted: 225,
-    location: "HITEC City, Hyderabad",
-    status: 'available',
-    assignedOrders: 0
-  },
-  {
-    id: "D-1008",
-    name: "Neha Sharma",
-    rating: 4.9,
-    deliveriesCompleted: 267,
-    location: "Kukatpally, Hyderabad",
-    status: 'available',
-    assignedOrders: 0
-  }
-];
+import { sampleDrivers } from '@/components/drivers/mockData';
+import { Driver } from '@/components/drivers/types';
 
 interface OrderTableData {
   id: string;
@@ -163,24 +79,25 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     allOrdersData = [...newOrdersData, ...readyOrdersData];
   }
   
-  // Filter drivers - available drivers are those with status not 'unavailable' AND no assigned orders
-  const availableDrivers = mockDrivers.filter(driver => 
-    driver.status !== 'unavailable' && (!driver.assignedOrders || driver.assignedOrders === 0)
-  );
-  const totalDrivers = mockDrivers.length;
+  // Use the drivers data from the drivers section
+  const driversData = sampleDrivers;
   
-  // Sort drivers: first zero orders at top, then by status, then by name
-  const sortedDrivers = [...mockDrivers].sort((a, b) => {
-    // First sort by assigned orders (0 first)
+  // Filter drivers - available drivers are those with status 'active'
+  const availableDrivers = driversData.filter(driver => driver.status === 'active');
+  const totalDrivers = driversData.length;
+  
+  // Sort drivers: first by status, then by assigned orders, then by name
+  const sortedDrivers = [...driversData].sort((a, b) => {
+    // First sort by status
+    if (a.status === 'active' && b.status !== 'active') return -1;
+    if (a.status !== 'active' && b.status === 'active') return 1;
+    
+    // Then sort by assigned orders (0 first)
     const aOrders = a.assignedOrders || 0;
     const bOrders = b.assignedOrders || 0;
     
     if (aOrders === 0 && bOrders !== 0) return -1;
     if (aOrders !== 0 && bOrders === 0) return 1;
-    
-    // Then sort by availability
-    if (a.status !== 'unavailable' && b.status === 'unavailable') return -1;
-    if (a.status === 'unavailable' && b.status !== 'unavailable') return 1;
     
     // Then sort by name
     return a.name.localeCompare(b.name);
@@ -329,10 +246,10 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               
               <div className="space-y-2 pb-2">
                 {sortedDrivers.map(driver => {
-                  const isUnavailable = driver.status === 'unavailable';
+                  const isUnavailable = driver.status !== 'active';
                   const hasAssignedOrders = driver.assignedOrders && driver.assignedOrders > 0;
                   const isAvailable = !isUnavailable && !hasAssignedOrders;
-                  const hasZeroOrders = driver.assignedOrders === 0;
+                  const hasZeroOrders = driver.assignedOrders === 0 || driver.assignedOrders === undefined;
                   
                   return (
                     <div 
@@ -353,7 +270,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                         
                         {isUnavailable && (
                           <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
-                            Unavailable
+                            Inactive
                           </span>
                         )}
                         
