@@ -33,6 +33,8 @@ const DriversTable = ({ className }: DriversTableProps) => {
         return drivers.filter(driver => driver.status === 'inactive');
       case 'assignments':
         return drivers.filter(driver => (driver.assignedOrders || 0) > 0);
+      case 'available':
+        return drivers.filter(driver => driver.status === 'active' && (driver.assignedOrders || 0) === 0);
       default:
         return drivers;
     }
@@ -114,9 +116,45 @@ const DriversTable = ({ className }: DriversTableProps) => {
         </TabsContent>
         
         <TabsContent value="available" className="p-0 mt-0">
-          <div className="p-8 text-center text-gray-500">
-            Available drivers content will go here
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[300px]">DRIVER</TableHead>
+                <TableHead>STATUS</TableHead>
+                <TableHead>PHONE NUMBER</TableHead>
+                <TableHead>TOTAL DELIVERIES</TableHead>
+                <TableHead className="text-right">ACTIONS</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {drivers
+                .filter(driver => driver.status === 'active' && (driver.assignedOrders || 0) === 0)
+                .map((driver) => (
+                  <TableRow key={driver.id}>
+                    <TableCell className="font-medium flex items-center">
+                      <div className="w-8 h-8 rounded-full bg-gray-200 mr-3 flex items-center justify-center">
+                        <span className="text-gray-500">👤</span>
+                      </div>
+                      {driver.name}
+                    </TableCell>
+                    <TableCell>
+                      <DriverStatusBadge 
+                        status={driver.status} 
+                        onChange={(newStatus) => handleStatusChange(driver.id, newStatus)}
+                      />
+                    </TableCell>
+                    <TableCell>{driver.phoneNumber}</TableCell>
+                    <TableCell>{driver.totalDeliveries || 0}</TableCell>
+                    <TableCell className="text-right">
+                      <button className="text-gray-500 hover:text-gray-700">
+                        <MoreHorizontal size={20} />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              }
+            </TableBody>
+          </Table>
         </TabsContent>
       </Tabs>
     </div>
