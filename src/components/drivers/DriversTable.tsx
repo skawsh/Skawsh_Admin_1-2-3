@@ -142,13 +142,8 @@ const DriversTable = ({ className }: DriversTableProps) => {
       return;
     }
     
-    toast({
-      title: "Order Details",
-      description: `Viewing ${orders.length} orders for this driver`,
-    });
-    
-    // In a real application, you might navigate to a detailed view or open a modal
-    console.log("Order details for driver:", driverId, orders);
+    // Navigate to the driver orders details page
+    navigate(`/driver/${driverId}/orders`);
   };
   
   const viewDriverDetails = (driverId: string) => {

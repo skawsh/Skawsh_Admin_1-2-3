@@ -9,6 +9,7 @@ import Drivers from "./pages/Drivers";
 import NotFound from "./pages/NotFound";
 import OrderAssignment from "./pages/OrderAssignment";
 import DriverDetails from "./pages/DriverDetails";
+import DriverOrdersDetails from "./pages/DriverOrdersDetails";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/driver/:driverId" element={<DriverDetails />} />
+          <Route path="/driver/:driverId/orders" element={<DriverOrdersDetails />} />
           <Route path="/order-assignment" element={<OrderAssignment />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
