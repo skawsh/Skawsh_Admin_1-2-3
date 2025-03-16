@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, CheckSquare, Clock, Package, ClipboardCheck, Search, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -87,6 +88,11 @@ const OrderAssignment = () => {
     setWashTypeFilter(value);
   };
 
+  const handleAssignSelected = () => {
+    console.log('Assigning selected orders:', selectedOrders);
+    // Implementation for assigning selected orders would go here
+  };
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
       <div className="flex items-center justify-between mb-4">
@@ -111,6 +117,16 @@ const OrderAssignment = () => {
             <CheckSquare size={18} />
             Select Multiple
           </Button>
+          
+          {selectedOrders.length > 0 && (
+            <Button 
+              className="gap-2 bg-primary text-white"
+              onClick={handleAssignSelected}
+            >
+              <UserPlus size={18} />
+              Assign Selected ({selectedOrders.length})
+            </Button>
+          )}
           
           <Select 
             defaultValue="all" 
