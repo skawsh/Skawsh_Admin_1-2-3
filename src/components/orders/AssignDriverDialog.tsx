@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapPin, Package, Truck, Star, User } from "lucide-react";
+import { MapPin, Package, Truck, Star, User, CheckCircle2 } from "lucide-react";
 import { Order } from './types';
 
 interface Driver {
@@ -126,6 +126,23 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   );
   const totalDrivers = mockDrivers.length;
   
+  // Sort drivers: first zero orders at top, then by status, then by name
+  const sortedDrivers = [...mockDrivers].sort((a, b) => {
+    // First sort by assigned orders (0 first)
+    const aOrders = a.assignedOrders || 0;
+    const bOrders = b.assignedOrders || 0;
+    
+    if (aOrders === 0 && bOrders !== 0) return -1;
+    if (aOrders !== 0 && bOrders === 0) return 1;
+    
+    // Then sort by availability
+    if (a.status !== 'unavailable' && b.status === 'unavailable') return -1;
+    if (a.status === 'unavailable' && b.status !== 'unavailable') return 1;
+    
+    // Then sort by name
+    return a.name.localeCompare(b.name);
+  });
+  
   const handleAssignDriver = () => {
     if (selectedDriverId) {
       onAssignDriver(
@@ -180,11 +197,12 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
             
             <ScrollArea className="h-[280px]">
               <div className="space-y-1">
-                {mockDrivers.map(driver => {
+                {sortedDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
                   const isDelivering = driver.status === 'delivering';
                   const hasAssignedOrders = driver.assignedOrders && driver.assignedOrders > 0;
                   const isAvailable = !isUnavailable && !hasAssignedOrders;
+                  const hasZeroOrders = driver.assignedOrders === 0;
                   
                   return (
                     <div 
@@ -218,6 +236,12 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                         {!isUnavailable && hasAssignedOrders && (
                           <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
                             {driver.assignedOrders} Orders
+                          </span>
+                        )}
+                        
+                        {hasZeroOrders && !isUnavailable && (
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded flex items-center gap-1">
+                            <CheckCircle2 className="h-3 w-3 text-green-600" />
                           </span>
                         )}
                       </div>
