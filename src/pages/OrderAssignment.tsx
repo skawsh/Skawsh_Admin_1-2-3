@@ -35,12 +35,21 @@ const OrderAssignment = () => {
       date: order.orderDate,
       customer: order.customer,
       phone: '+91 ' + Math.floor(Math.random() * 9000000000 + 1000000000), // Mock phone number
-      address: order.studio + ' Studio, Hyderabad', // Mock address using studio name
+      customerAddress: generateRandomAddress(), // New customer address
+      studioAddress: order.studio + ' Studio, Hyderabad', // Changed from address to studioAddress
       studio: order.studio,
       washType: order.washType === 'express' ? 'Express Wash' : order.washType === 'standard' ? 'Standard Wash' : 'Both Wash',
-      priority: Math.random() > 0.5 ? 'High' : 'Low', // Random priority
-      distance: (Math.random() * 5 + 1).toFixed(1) + ' km' // Random distance
+      distance: (Math.random() * 5 + 1).toFixed(1) + ' km' // Random distance between customer and studio
     }));
+  };
+
+  // Helper function to generate random addresses
+  const generateRandomAddress = () => {
+    const plots = ['7-1-397', '8-2-120', '9-3-456', '10-4-789', '11-5-234'];
+    const areas = ['Ameerpet', 'Banjara Hills', 'Jubilee Hills', 'Madhapur', 'Gachibowli'];
+    const roads = ['Main Road', 'Circle Road', 'Junction Street', 'Cross Road', 'Highway'];
+    
+    return `${plots[Math.floor(Math.random() * plots.length)]}, ${areas[Math.floor(Math.random() * areas.length)]}, ${roads[Math.floor(Math.random() * roads.length)]}, Hyderabad`;
   };
 
   const pendingOrders = mapOrdersToTableData(newOrders);
@@ -190,11 +199,12 @@ const OrderAssignment = () => {
                     <TableHead>Date</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Phone</TableHead>
-                    <TableHead>Address</TableHead>
+                    <TableHead>Customer Address</TableHead>
+                    <TableHead>Studio Address</TableHead>
                     <TableHead>Studio</TableHead>
                     <TableHead>Wash Type</TableHead>
-                    <TableHead>Priority</TableHead>
                     <TableHead>Distance</TableHead>
+                    <TableHead>Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -211,7 +221,8 @@ const OrderAssignment = () => {
                       <TableCell>{order.date}</TableCell>
                       <TableCell>{order.customer}</TableCell>
                       <TableCell>{order.phone}</TableCell>
-                      <TableCell>{order.address}</TableCell>
+                      <TableCell>{order.customerAddress}</TableCell>
+                      <TableCell>{order.studioAddress}</TableCell>
                       <TableCell>{order.studio}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -221,21 +232,17 @@ const OrderAssignment = () => {
                           {order.washType}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          order.priority === 'High' 
-                            ? 'bg-red-100 text-red-800' 
-                            : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {order.priority}
-                        </span>
-                      </TableCell>
                       <TableCell>{order.distance}</TableCell>
+                      <TableCell>
+                        <Button variant="outline" className="bg-white hover:bg-gray-50">
+                          Assign
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                   {filteredPendingOrders.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={11} className="text-center py-10 text-gray-500">
+                      <TableCell colSpan={12} className="text-center py-10 text-gray-500">
                         No orders found matching your search criteria
                       </TableCell>
                     </TableRow>
@@ -270,11 +277,12 @@ const OrderAssignment = () => {
                       <TableHead>Date</TableHead>
                       <TableHead>Customer</TableHead>
                       <TableHead>Phone</TableHead>
-                      <TableHead>Address</TableHead>
+                      <TableHead>Customer Address</TableHead>
+                      <TableHead>Studio Address</TableHead>
                       <TableHead>Studio</TableHead>
                       <TableHead>Wash Type</TableHead>
-                      <TableHead>Priority</TableHead>
                       <TableHead>Distance</TableHead>
+                      <TableHead>Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -288,7 +296,8 @@ const OrderAssignment = () => {
                         <TableCell>{order.date}</TableCell>
                         <TableCell>{order.customer}</TableCell>
                         <TableCell>{order.phone}</TableCell>
-                        <TableCell>{order.address}</TableCell>
+                        <TableCell>{order.customerAddress}</TableCell>
+                        <TableCell>{order.studioAddress}</TableCell>
                         <TableCell>{order.studio}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -298,16 +307,12 @@ const OrderAssignment = () => {
                             {order.washType}
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            order.priority === 'High' 
-                              ? 'bg-red-100 text-red-800' 
-                              : 'bg-blue-100 text-blue-800'
-                          }`}>
-                            {order.priority}
-                          </span>
-                        </TableCell>
                         <TableCell>{order.distance}</TableCell>
+                        <TableCell>
+                          <Button variant="outline" className="bg-white hover:bg-gray-50">
+                            Assign
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
