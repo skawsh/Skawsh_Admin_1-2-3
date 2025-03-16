@@ -7,36 +7,58 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { sampleOrders } from '@/components/orders/mockData';
+import { Order } from '@/components/orders/types';
+import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 
 const OrderAssignment = () => {
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [washTypeFilter, setWashTypeFilter] = useState('all');
 
-  const pendingOrders = [
-    {
-      id: '1',
-      orderId: 'ORD-10014',
-      date: '9/8/2024',
-      customer: 'Ankit Sharma',
-      phone: '+91 8877665544',
-      address: '7-1-397, Ameerpet Main Road, Hyderabad',
-      studio: 'Wash & Go',
-      washType: 'Quick Wash',
-      priority: 'High',
-      distance: '2.8 km'
-    },
-    {
-      id: '2',
-      orderId: 'ORD-10017',
-      date: '2/23/2023',
-      customer: 'Ankit Sharma',
-      phone: '+91 7766554433',
-      address: '10-3-156, Paradise Circle, Secunderabad, Hyderabad',
-      studio: 'City Laundry',
-      washType: 'Quick Wash',
-      priority: 'Low',
-      distance: '2.5 km'
-    }
-  ];
+  // Filter orders based on their status
+  const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
+  const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
+  const rescheduledOrders: Order[] = []; // We don't have rescheduled orders in the sample data
+
+  // Convert the sample order data to the format needed for the table
+  const mapOrdersToTableData = (orders: Order[]) => {
+    return orders.map(order => ({
+      id: order.id,
+      orderId: order.id,
+      date: order.orderDate,
+      customer: order.customer,
+      phone: '+91 ' + Math.floor(Math.random() * 9000000000 + 1000000000), // Mock phone number
+      address: order.studio + ' Studio, Hyderabad', // Mock address using studio name
+      studio: order.studio,
+      washType: order.washType === 'express' ? 'Express Wash' : order.washType === 'standard' ? 'Standard Wash' : 'Both Wash',
+      priority: Math.random() > 0.5 ? 'High' : 'Low', // Random priority
+      distance: (Math.random() * 5 + 1).toFixed(1) + ' km' // Random distance
+    }));
+  };
+
+  const pendingOrders = mapOrdersToTableData(newOrders);
+  const readyOrders = mapOrdersToTableData(readyForCollectionOrders);
+
+  // Apply search and filter to orders
+  const filteredPendingOrders = pendingOrders.filter(order => {
+    const matchesSearch = !searchQuery || 
+      order.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.studio.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesWashType = washTypeFilter === 'all' || 
+      order.washType.toLowerCase().includes(washTypeFilter.toLowerCase());
+    
+    return matchesSearch && matchesWashType;
+  });
 
   const toggleOrderSelection = (orderId: string) => {
     if (selectedOrders.includes(orderId)) {
@@ -47,11 +69,19 @@ const OrderAssignment = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedOrders.length === pendingOrders.length) {
+    if (selectedOrders.length === filteredPendingOrders.length) {
       setSelectedOrders([]);
     } else {
-      setSelectedOrders(pendingOrders.map(order => order.id));
+      setSelectedOrders(filteredPendingOrders.map(order => order.id));
     }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleWashTypeChange = (value: string) => {
+    setWashTypeFilter(value);
   };
 
   return (
@@ -79,7 +109,11 @@ const OrderAssignment = () => {
             Select Multiple
           </Button>
           
-          <Select defaultValue="all">
+          <Select 
+            defaultValue="all" 
+            value={washTypeFilter}
+            onValueChange={handleWashTypeChange}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Wash Types" />
             </SelectTrigger>
@@ -87,7 +121,7 @@ const OrderAssignment = () => {
               <SelectItem value="all">All Wash Types</SelectItem>
               <SelectItem value="standard">Standard Wash</SelectItem>
               <SelectItem value="express">Express Wash</SelectItem>
-              <SelectItem value="quickwash">Quick Wash</SelectItem>
+              <SelectItem value="both">Both Wash</SelectItem>
             </SelectContent>
           </Select>
           
@@ -96,6 +130,8 @@ const OrderAssignment = () => {
             <Input
               className="pl-10 w-[250px]"
               placeholder="Search orders..."
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
           </div>
         </div>
@@ -126,7 +162,7 @@ const OrderAssignment = () => {
               </div>
               <div className="flex items-center gap-1 text-gray-500">
                 <Clock size={16} />
-                <span>10 Orders Pending</span>
+                <span>{newOrders.length} Orders Pending</span>
               </div>
             </div>
             
@@ -135,56 +171,58 @@ const OrderAssignment = () => {
               <Input
                 className="pl-10 w-full"
                 placeholder="Search new orders..."
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
             </div>
             
             <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="text-xs uppercase bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3">#</th>
-                    <th className="px-4 py-3">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12 text-center">#</TableHead>
+                    <TableHead className="w-12">
                       <Checkbox
-                        checked={selectedOrders.length === pendingOrders.length && pendingOrders.length > 0}
+                        checked={selectedOrders.length === filteredPendingOrders.length && filteredPendingOrders.length > 0}
                         onCheckedChange={handleSelectAll}
                       />
-                    </th>
-                    <th className="px-4 py-3">Order ID</th>
-                    <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Customer</th>
-                    <th className="px-4 py-3">Phone</th>
-                    <th className="px-4 py-3">Address</th>
-                    <th className="px-4 py-3">Studio</th>
-                    <th className="px-4 py-3">Wash Type</th>
-                    <th className="px-4 py-3">Priority</th>
-                    <th className="px-4 py-3">Distance</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {pendingOrders.map((order, index) => (
-                    <tr key={order.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">{order.id}</td>
-                      <td className="px-4 py-3">
+                    </TableHead>
+                    <TableHead>Order ID</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Address</TableHead>
+                    <TableHead>Studio</TableHead>
+                    <TableHead>Wash Type</TableHead>
+                    <TableHead>Priority</TableHead>
+                    <TableHead>Distance</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredPendingOrders.map((order, index) => (
+                    <TableRow key={order.id} className="hover:bg-gray-50">
+                      <TableCell className="text-center">{index + 1}</TableCell>
+                      <TableCell>
                         <Checkbox
                           checked={selectedOrders.includes(order.id)}
                           onCheckedChange={() => toggleOrderSelection(order.id)}
                         />
-                      </td>
-                      <td className="px-4 py-3 font-medium">{order.orderId}</td>
-                      <td className="px-4 py-3">{order.date}</td>
-                      <td className="px-4 py-3">{order.customer}</td>
-                      <td className="px-4 py-3">{order.phone}</td>
-                      <td className="px-4 py-3">{order.address}</td>
-                      <td className="px-4 py-3">{order.studio}</td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell className="font-medium">{order.orderId}</TableCell>
+                      <TableCell>{order.date}</TableCell>
+                      <TableCell>{order.customer}</TableCell>
+                      <TableCell>{order.phone}</TableCell>
+                      <TableCell>{order.address}</TableCell>
+                      <TableCell>{order.studio}</TableCell>
+                      <TableCell>
                         <div className="flex items-center gap-2">
                           <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
                             <Package size={14} className="text-blue-600" />
                           </div>
                           {order.washType}
                         </div>
-                      </td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell>
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                           order.priority === 'High' 
                             ? 'bg-red-100 text-red-800' 
@@ -192,20 +230,96 @@ const OrderAssignment = () => {
                         }`}>
                           {order.priority}
                         </span>
-                      </td>
-                      <td className="px-4 py-3">{order.distance}</td>
-                    </tr>
+                      </TableCell>
+                      <TableCell>{order.distance}</TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                  {filteredPendingOrders.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={11} className="text-center py-10 text-gray-500">
+                        No orders found matching your search criteria
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           </div>
         </TabsContent>
         
         <TabsContent value="ready">
-          <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
-            No orders ready for collection
-          </div>
+          {readyOrders.length > 0 ? (
+            <div className="bg-white rounded-md p-4 border border-gray-100">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <ClipboardCheck size={20} className="text-green-600" />
+                  <h2 className="text-xl font-semibold">Ready for Collection</h2>
+                </div>
+                <div className="flex items-center gap-1 text-gray-500">
+                  <Clock size={16} />
+                  <span>{readyOrders.length} Orders Ready</span>
+                </div>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-12 text-center">#</TableHead>
+                      <TableHead className="w-12"></TableHead>
+                      <TableHead>Order ID</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Address</TableHead>
+                      <TableHead>Studio</TableHead>
+                      <TableHead>Wash Type</TableHead>
+                      <TableHead>Priority</TableHead>
+                      <TableHead>Distance</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {readyOrders.map((order, index) => (
+                      <TableRow key={order.id} className="hover:bg-gray-50">
+                        <TableCell className="text-center">{index + 1}</TableCell>
+                        <TableCell>
+                          <Checkbox />
+                        </TableCell>
+                        <TableCell className="font-medium">{order.orderId}</TableCell>
+                        <TableCell>{order.date}</TableCell>
+                        <TableCell>{order.customer}</TableCell>
+                        <TableCell>{order.phone}</TableCell>
+                        <TableCell>{order.address}</TableCell>
+                        <TableCell>{order.studio}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
+                              <Package size={14} className="text-blue-600" />
+                            </div>
+                            {order.washType}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            order.priority === 'High' 
+                              ? 'bg-red-100 text-red-800' 
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {order.priority}
+                          </span>
+                        </TableCell>
+                        <TableCell>{order.distance}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
+              No orders ready for collection
+            </div>
+          )}
         </TabsContent>
         
         <TabsContent value="rescheduled">
