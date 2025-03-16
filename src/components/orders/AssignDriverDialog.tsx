@@ -103,8 +103,6 @@ interface OrderTableData {
   studioAddress: string;
   washType: string;
   distance: string;
-  // Add a flag to identify orders from "Ready for Collection" tab
-  isReadyForCollection?: boolean;
 }
 
 interface AssignDriverDialogProps {
@@ -174,21 +172,15 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
             <div className="border rounded-md">
               <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
                 <div className="font-medium text-sm text-gray-700">Order ID</div>
-                <div className="font-medium text-sm text-gray-700">
-                  {selectedOrders.some(order => order.isReadyForCollection) ? 'Studio' : 'Customer'}
-                </div>
+                <div className="font-medium text-sm text-gray-700">Customer</div>
                 <div className="font-medium text-sm text-gray-700">Address</div>
               </div>
               <ScrollArea className="h-[120px]">
                 {selectedOrders.map(order => (
                   <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
                     <div className="text-sm">{order.orderId}</div>
-                    <div className="text-sm">
-                      {order.isReadyForCollection ? order.studio : order.customer}
-                    </div>
-                    <div className="text-sm">
-                      {order.isReadyForCollection ? order.studioAddress : order.customerAddress}
-                    </div>
+                    <div className="text-sm">{order.customer}</div>
+                    <div className="text-sm">{order.customerAddress}</div>
                   </div>
                 ))}
               </ScrollArea>
