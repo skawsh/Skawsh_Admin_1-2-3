@@ -110,6 +110,7 @@ interface AssignDriverDialogProps {
   onOpenChange: (open: boolean) => void;
   selectedOrders: OrderTableData[];
   onAssignDriver: (driverId: string, orderIds: string[]) => void;
+  isReadyForCollection?: boolean;
 }
 
 export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
@@ -117,6 +118,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   onOpenChange,
   selectedOrders,
   onAssignDriver,
+  isReadyForCollection = false
 }) => {
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
   
@@ -172,15 +174,23 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
             <div className="border rounded-md">
               <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
                 <div className="font-medium text-sm text-gray-700">Order ID</div>
-                <div className="font-medium text-sm text-gray-700">Customer</div>
-                <div className="font-medium text-sm text-gray-700">Address</div>
+                <div className="font-medium text-sm text-gray-700">
+                  {isReadyForCollection ? "Studio" : "Customer"}
+                </div>
+                <div className="font-medium text-sm text-gray-700">
+                  {isReadyForCollection ? "Studio Address" : "Customer Address"}
+                </div>
               </div>
               <ScrollArea className="h-[120px]">
                 {selectedOrders.map(order => (
                   <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
                     <div className="text-sm">{order.orderId}</div>
-                    <div className="text-sm">{order.customer}</div>
-                    <div className="text-sm">{order.customerAddress}</div>
+                    <div className="text-sm">
+                      {isReadyForCollection ? order.studio : order.customer}
+                    </div>
+                    <div className="text-sm">
+                      {isReadyForCollection ? order.studioAddress : order.customerAddress}
+                    </div>
                   </div>
                 ))}
               </ScrollArea>
@@ -195,8 +205,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               </span>
             </div>
             
-            <ScrollArea className="h-[380px]"> {/* Increased height further to ensure all content is visible */}
-              <div className="space-y-2 pr-4 pb-6"> {/* Increased bottom padding to ensure last items are fully visible */}
+            <ScrollArea className="h-[380px]">
+              <div className="space-y-2 pr-4 pb-6">
                 {sortedDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
                   const hasAssignedOrders = driver.assignedOrders && driver.assignedOrders > 0;

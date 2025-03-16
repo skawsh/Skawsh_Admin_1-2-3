@@ -20,6 +20,33 @@ import {
 import { AssignDriverDialog } from '@/components/orders/AssignDriverDialog';
 import { toast } from "sonner";
 
+const studioAddressMapping: Record<string, string> = {
+  'PKC Laundries': '7-1-397, Jubilee Hills, Main Road, Hyderabad',
+  'MagicKlean': '8-2-120, Banjara Hills, Circle Road, Hyderabad',
+  'Cleanovo': '9-3-456, Ameerpet, Junction Street, Hyderabad',
+  'UClean': '10-4-789, Madhapur, Cross Road, Hyderabad',
+  'Tumbledry': '11-5-234, Gachibowli, Highway, Hyderabad',
+  'Washmart': '12-6-567, HITEC City, Main Road, Hyderabad',
+  'We Washh': '13-7-890, Kondapur, Circle Road, Hyderabad',
+  'The Laundry Basket': '14-8-123, Kukatpally, Junction Street, Hyderabad',
+  'FABO': '15-9-456, Secunderabad, Cross Road, Hyderabad',
+  'Sunshine': '16-10-789, Miyapur, Highway, Hyderabad',
+  'Bhavani BAND BOX': '17-11-012, Begumpet, Main Road, Hyderabad',
+  'Balus Modern': '18-12-345, Manikonda, Circle Road, Hyderabad'
+};
+
+// Function to calculate realistic distance between two locations
+const calculateDistance = (source: string, destination: string): string => {
+  // Use first characters of strings to create a "deterministic random" distance
+  const sourceCode = source.charCodeAt(0) + source.charCodeAt(source.length - 1);
+  const destCode = destination.charCodeAt(0) + destination.charCodeAt(destination.length - 1);
+  
+  // Create a deterministic but seemingly random distance between 1 and 15 km
+  const distance = ((sourceCode + destCode) % 140) / 10 + 1;
+  
+  return distance.toFixed(1) + ' km';
+};
+
 const OrderAssignment = () => {
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,27 +57,32 @@ const OrderAssignment = () => {
   const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
   const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
 
-  const mapOrdersToTableData = (orders: Order[]) => {
-    return orders.map(order => ({
-      id: order.id,
-      orderId: order.id,
-      date: order.orderDate,
-      customer: order.customer,
-      phone: '+91 ' + Math.floor(Math.random() * 9000000000 + 1000000000),
-      customerAddress: generateRandomAddress(),
-      studioAddress: order.studio + ' Studio, Hyderabad',
-      studio: order.studio,
-      washType: order.washType === 'express' ? 'Express Wash' : order.washType === 'standard' ? 'Standard Wash' : 'Both Wash',
-      distance: (Math.random() * 5 + 1).toFixed(1) + ' km'
-    }));
-  };
-
   const generateRandomAddress = () => {
     const plots = ['7-1-397', '8-2-120', '9-3-456', '10-4-789', '11-5-234'];
     const areas = ['Ameerpet', 'Banjara Hills', 'Jubilee Hills', 'Madhapur', 'Gachibowli'];
     const roads = ['Main Road', 'Circle Road', 'Junction Street', 'Cross Road', 'Highway'];
     
     return `${plots[Math.floor(Math.random() * plots.length)]}, ${areas[Math.floor(Math.random() * areas.length)]}, ${roads[Math.floor(Math.random() * roads.length)]}, Hyderabad`;
+  };
+
+  const mapOrdersToTableData = (orders: Order[]) => {
+    return orders.map(order => {
+      const customerAddress = generateRandomAddress();
+      const studioAddress = studioAddressMapping[order.studio] || `${order.studio} Studio, Hyderabad`;
+      
+      return {
+        id: order.id,
+        orderId: order.id,
+        date: order.orderDate,
+        customer: order.customer,
+        phone: '+91 ' + Math.floor(Math.random() * 9000000000 + 1000000000),
+        customerAddress: customerAddress,
+        studioAddress: studioAddress,
+        studio: order.studio,
+        washType: order.washType === 'express' ? 'Express Wash' : order.washType === 'standard' ? 'Standard Wash' : 'Both Wash',
+        distance: calculateDistance(customerAddress, studioAddress)
+      };
+    });
   };
 
   const pendingOrders = mapOrdersToTableData(newOrders);
@@ -124,6 +156,11 @@ const OrderAssignment = () => {
     return [...pendingOrders, ...readyOrders].filter(order => 
       selectedOrders.includes(order.id)
     );
+  };
+
+  // Determine current tab for proper display logic
+  const isFromReadyTab = (orderId: string) => {
+    return readyOrders.some(order => order.id === orderId);
   };
 
   return (
@@ -395,6 +432,7 @@ const OrderAssignment = () => {
         onOpenChange={setIsAssignDialogOpen}
         selectedOrders={getSelectedOrdersData()}
         onAssignDriver={handleAssignDriver}
+        isReadyForCollection={currentOrderToAssign ? isFromReadyTab(currentOrderToAssign) : selectedOrders.some(id => isFromReadyTab(id))}
       />
     </div>
   );
