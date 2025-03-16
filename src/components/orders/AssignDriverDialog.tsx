@@ -18,7 +18,7 @@ interface Driver {
 // Mock data for drivers
 const mockDrivers: Driver[] = [
   {
-    id: "d1",
+    id: "D-1001",
     name: "Raj Kumar",
     rating: 4.8,
     deliveriesCompleted: 245,
@@ -26,7 +26,7 @@ const mockDrivers: Driver[] = [
     status: 'available'
   },
   {
-    id: "d2",
+    id: "D-1002",
     name: "Priya Sharma",
     rating: 4.9,
     deliveriesCompleted: 189,
@@ -34,7 +34,7 @@ const mockDrivers: Driver[] = [
     status: 'available'
   },
   {
-    id: "d3",
+    id: "D-1003",
     name: "Arjun Reddy",
     rating: 4.7,
     deliveriesCompleted: 302,
@@ -42,7 +42,7 @@ const mockDrivers: Driver[] = [
     status: 'delivering'
   },
   {
-    id: "d4",
+    id: "D-1004",
     name: "Ananya Patel",
     rating: 4.6,
     deliveriesCompleted: 156,
@@ -50,7 +50,7 @@ const mockDrivers: Driver[] = [
     status: 'delivering'
   },
   {
-    id: "d5",
+    id: "D-1005",
     name: "Vikram Singh",
     rating: 4.5,
     deliveriesCompleted: 210,
@@ -58,7 +58,7 @@ const mockDrivers: Driver[] = [
     status: 'unavailable'
   },
   {
-    id: "d6",
+    id: "D-1006",
     name: "Sneha Reddy",
     rating: 4.8,
     deliveriesCompleted: 178,
@@ -66,7 +66,7 @@ const mockDrivers: Driver[] = [
     status: 'available'
   },
   {
-    id: "d7",
+    id: "D-1007",
     name: "Rahul Verma",
     rating: 4.7,
     deliveriesCompleted: 225,
@@ -74,7 +74,7 @@ const mockDrivers: Driver[] = [
     status: 'available'
   },
   {
-    id: "d8",
+    id: "D-1008",
     name: "Neha Sharma",
     rating: 4.9,
     deliveriesCompleted: 267,
@@ -146,7 +146,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                 <div className="font-medium text-sm text-gray-700">Customer</div>
                 <div className="font-medium text-sm text-gray-700">Address</div>
               </div>
-              <ScrollArea className="max-h-[120px]">
+              <ScrollArea className="h-[120px]">
                 {selectedOrders.map(order => (
                   <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
                     <div className="text-sm">{order.orderId}</div>
@@ -167,7 +167,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
             </div>
             
             <ScrollArea className="h-[280px]">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
                 {mockDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
                   const isDelivering = driver.status === 'delivering';
@@ -185,7 +185,10 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                       <div className="flex justify-between items-start mb-1">
                         <div className="flex items-center gap-1.5">
                           <User className="h-4 w-4 text-gray-700" />
-                          <h4 className="font-medium">{driver.name}</h4>
+                          <div>
+                            <h4 className="font-medium">{driver.name}</h4>
+                            <p className="text-xs text-gray-500">ID: {driver.id}</p>
+                          </div>
                         </div>
                         <div className="flex items-center gap-1">
                           <span className="font-medium">{driver.rating}</span>
