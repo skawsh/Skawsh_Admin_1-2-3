@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, CheckSquare, Clock, Package, ClipboardCheck, Search, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -203,19 +204,19 @@ const OrderAssignment = () => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-3xl font-bold mb-1">Order Assignment</h1>
-          <p className="text-gray-500">Assign drivers to orders and manage order dispatch</p>
+        <div className="flex items-center gap-4">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="rounded-full h-10 w-10">
+              <ArrowLeft size={20} />
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold mb-1">Order Assignment</h1>
+            <p className="text-gray-500">Assign drivers to orders and manage order dispatch</p>
+          </div>
         </div>
         
         <div className="flex items-center gap-4">
-          <Link to="/">
-            <Button variant="outline" className="gap-1">
-              <ArrowLeft size={18} />
-              Back
-            </Button>
-          </Link>
-          
           <Button 
             variant="outline" 
             className="gap-1"
