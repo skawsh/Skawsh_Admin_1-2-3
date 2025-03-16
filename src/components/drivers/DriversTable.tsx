@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Table, 
@@ -70,19 +69,15 @@ const DriversTable = ({ className }: DriversTableProps) => {
   
   // Update driver assignments when receiving new data
   const updateDriverAssignments = (driverId: string, orders: any[]) => {
-    // Update the driver's assigned orders count
+    // Reset all drivers' assigned orders to 0 first to clear any mock data
     setDrivers(prevDrivers => 
-      prevDrivers.map(driver => 
-        driver.id === driverId 
-          ? { 
-              ...driver, 
-              assignedOrders: (driver.assignedOrders || 0) + orders.length 
-            } 
-          : driver
-      )
+      prevDrivers.map(driver => ({
+        ...driver,
+        assignedOrders: driver.id === driverId ? (orders.length) : 0
+      }))
     );
     
-    // Add the orders to the assigned orders list
+    // Replace all assigned orders with only the new ones
     const newAssignedOrders = orders.map(order => ({
       id: order.id,
       orderId: order.orderId,
@@ -93,7 +88,8 @@ const DriversTable = ({ className }: DriversTableProps) => {
       studioAddress: order.studioAddress
     }));
     
-    setAssignedOrders(prev => [...prev, ...newAssignedOrders]);
+    // Replace all existing orders instead of appending
+    setAssignedOrders(newAssignedOrders);
     
     // Show a success toast notification
     toast({
@@ -244,7 +240,7 @@ const DriversTable = ({ className }: DriversTableProps) => {
                       </div>
                     ) : (
                       <div className="ml-11 text-sm text-gray-500 italic">
-                        No orders data available for this driver
+                        No orders assigned to this driver yet
                       </div>
                     )}
                   </div>
