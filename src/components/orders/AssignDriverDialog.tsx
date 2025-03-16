@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapPin, Package, Truck, User, CheckCircle2, ShoppingBag } from "lucide-react";
 import { Order } from './types';
 import { Separator } from "@/components/ui/separator";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface Driver {
   id: string;
@@ -175,7 +176,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <Truck className="h-5 w-5 text-primary" />
@@ -186,105 +187,105 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 flex-1 overflow-hidden">
-          <div>
-            <h3 className="font-medium text-base mb-2">Selected Orders</h3>
-            
-            {showSingleTable && (
-              <div className="border rounded-md">
-                <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
-                  <div className="font-medium text-sm text-gray-700">Order ID</div>
-                  <div className="font-medium text-sm text-gray-700">Location</div>
-                  <div className="font-medium text-sm text-gray-700">Address</div>
+        <ScrollArea className="flex-1 overflow-y-auto pr-4">
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-medium text-base mb-2">Selected Orders</h3>
+              
+              {showSingleTable && (
+                <div className="border rounded-md">
+                  <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
+                    <div className="font-medium text-sm text-gray-700">Order ID</div>
+                    <div className="font-medium text-sm text-gray-700">Location</div>
+                    <div className="font-medium text-sm text-gray-700">Address</div>
+                  </div>
+                  <ScrollArea className="h-[120px]">
+                    {allOrdersData.map(order => {
+                      // For backward compatibility, handle single table case
+                      const isFromReadyTab = isSelectedOrdersArray 
+                        ? false 
+                        : readyOrdersData.some(ro => ro.id === order.id);
+                      
+                      return (
+                        <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
+                          <div className="text-sm">{order.orderId}</div>
+                          <div className="text-sm">
+                            {isFromReadyTab ? order.studio : order.customer}
+                          </div>
+                          <div className="text-sm">
+                            {isFromReadyTab ? order.studioAddress : order.customerAddress}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </ScrollArea>
                 </div>
-                <ScrollArea className="h-[120px]">
-                  {allOrdersData.map(order => {
-                    // For backward compatibility, handle single table case
-                    const isFromReadyTab = isSelectedOrdersArray 
-                      ? false 
-                      : readyOrdersData.some(ro => ro.id === order.id);
-                    
-                    return (
-                      <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
-                        <div className="text-sm">{order.orderId}</div>
-                        <div className="text-sm">
-                          {isFromReadyTab ? order.studio : order.customer}
+              )}
+              
+              {showSeparateTables && (
+                <div className="space-y-4">
+                  {showNewOrdersTable && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Package size={16} className="text-blue-600" />
+                        <h4 className="text-sm font-medium">New Orders ({newOrdersData.length})</h4>
+                      </div>
+                      <div className="border rounded-md">
+                        <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
+                          <div className="font-medium text-sm text-gray-700">Order ID</div>
+                          <div className="font-medium text-sm text-gray-700">Customer</div>
+                          <div className="font-medium text-sm text-gray-700">Customer Address</div>
                         </div>
-                        <div className="text-sm">
-                          {isFromReadyTab ? order.studioAddress : order.customerAddress}
+                        <ScrollArea className="h-[100px]">
+                          {newOrdersData.map(order => (
+                            <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
+                              <div className="text-sm">{order.orderId}</div>
+                              <div className="text-sm">{order.customer}</div>
+                              <div className="text-sm">{order.customerAddress}</div>
+                            </div>
+                          ))}
+                        </ScrollArea>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {showReadyOrdersTable && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <ShoppingBag size={16} className="text-green-600" />
+                        <h4 className="text-sm font-medium">Ready for Collection Orders ({readyOrdersData.length})</h4>
+                      </div>
+                      <div className="border rounded-md">
+                        <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
+                          <div className="font-medium text-sm text-gray-700">Order ID</div>
+                          <div className="font-medium text-sm text-gray-700">Studio</div>
+                          <div className="font-medium text-sm text-gray-700">Studio Address</div>
                         </div>
+                        <ScrollArea className="h-[100px]">
+                          {readyOrdersData.map(order => (
+                            <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
+                              <div className="text-sm">{order.orderId}</div>
+                              <div className="text-sm">{order.studio}</div>
+                              <div className="text-sm">{order.studioAddress}</div>
+                            </div>
+                          ))}
+                        </ScrollArea>
                       </div>
-                    );
-                  })}
-                </ScrollArea>
-              </div>
-            )}
-            
-            {showSeparateTables && (
-              <div className="space-y-4">
-                {showNewOrdersTable && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Package size={16} className="text-blue-600" />
-                      <h4 className="text-sm font-medium">New Orders ({newOrdersData.length})</h4>
                     </div>
-                    <div className="border rounded-md">
-                      <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
-                        <div className="font-medium text-sm text-gray-700">Order ID</div>
-                        <div className="font-medium text-sm text-gray-700">Customer</div>
-                        <div className="font-medium text-sm text-gray-700">Customer Address</div>
-                      </div>
-                      <ScrollArea className="h-[100px]">
-                        {newOrdersData.map(order => (
-                          <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
-                            <div className="text-sm">{order.orderId}</div>
-                            <div className="text-sm">{order.customer}</div>
-                            <div className="text-sm">{order.customerAddress}</div>
-                          </div>
-                        ))}
-                      </ScrollArea>
-                    </div>
-                  </div>
-                )}
-                
-                {showReadyOrdersTable && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <ShoppingBag size={16} className="text-green-600" />
-                      <h4 className="text-sm font-medium">Ready for Collection Orders ({readyOrdersData.length})</h4>
-                    </div>
-                    <div className="border rounded-md">
-                      <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
-                        <div className="font-medium text-sm text-gray-700">Order ID</div>
-                        <div className="font-medium text-sm text-gray-700">Studio</div>
-                        <div className="font-medium text-sm text-gray-700">Studio Address</div>
-                      </div>
-                      <ScrollArea className="h-[100px]">
-                        {readyOrdersData.map(order => (
-                          <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
-                            <div className="text-sm">{order.orderId}</div>
-                            <div className="text-sm">{order.studio}</div>
-                            <div className="text-sm">{order.studioAddress}</div>
-                          </div>
-                        ))}
-                      </ScrollArea>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="font-medium text-base">Available Drivers</h3>
-              <span className="text-sm text-gray-500">
-                {availableDrivers.length} Available / {totalDrivers} Total
-              </span>
+                  )}
+                </div>
+              )}
             </div>
-            
-            <ScrollArea className="h-[280px]">
-              <div className="space-y-2 pr-4 pb-6">
+
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="font-medium text-base">Available Drivers</h3>
+                <span className="text-sm text-gray-500">
+                  {availableDrivers.length} Available / {totalDrivers} Total
+                </span>
+              </div>
+              
+              <div className="space-y-2 pb-2">
                 {sortedDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
                   const hasAssignedOrders = driver.assignedOrders && driver.assignedOrders > 0;
@@ -330,11 +331,11 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                   );
                 })}
               </div>
-            </ScrollArea>
+            </div>
           </div>
-        </div>
+        </ScrollArea>
 
-        <DialogFooter className="mt-2">
+        <DialogFooter className="mt-4 pt-4 border-t">
           <DialogClose asChild>
             <Button variant="outline" type="button">
               Cancel
