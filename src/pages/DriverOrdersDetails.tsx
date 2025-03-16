@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { ArrowLeft, Package, MapPin, Calendar, User, Building, TruckIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { studioAddressMapping } from '@/components/orders/utils/addressUtils';
 
 // Define a type for assigned orders
 interface AssignedOrder {
@@ -79,22 +81,72 @@ const DriverOrdersDetails = () => {
     const mockOrders: AssignedOrder[] = [];
     const orderCount = driver.assignedOrders || 0;
     
-    for (let i = 0; i < orderCount; i++) {
-      const studioNames = [
-        'PKC Laundries', 'MagicKlean', 'Cleanovo', 'UClean', 
-        'Tumbledry', 'Washmart', 'We Washh', 'The Laundry Basket'
-      ];
-      const statusOptions = ['Pending', 'In Progress', 'Delivered', 'Collected', 'New', 'Ready for Collection'];
+    // Use predefined studio addresses from studioAddressMapping if available
+    const getStudioAddress = (studioName: string) => {
+      return studioAddressMapping[studioName] || generateRandomAddress();
+    };
+    
+    // Sample statuses to ensure we have both "new" and "ready-for-collect" orders
+    const statusOptions = ['New', 'Ready for Collection', 'In Progress', 'Delivered', 'Collected', 'Pending'];
+    const studioNames = [
+      'PKC Laundries', 'MagicKlean', 'Cleanovo', 'UClean', 
+      'Tumbledry', 'Washmart', 'We Washh', 'The Laundry Basket',
+      'Laundry Express'
+    ];
+    
+    // Specific customer names for demo
+    const customerNames = ['Deepika Reddy', 'Sanjay Mehta', 'Arun Verma', 'Priya Singh', 'Rajesh Kumar'];
+    
+    // Make first orders match the image example
+    if (orderCount > 0) {
+      // First order: ORD-0004 (new)
+      mockOrders.push({
+        id: `order-${driverId}-1`,
+        orderId: 'ORD-0004',
+        customer: 'Deepika Reddy',
+        customerAddress: '8-2-120, Ameerpet, Highway, Hyderabad',
+        studio: 'UClean',
+        studioAddress: '10-4-789, Madhapur, Cross Road, Hyderabad',
+        date: '2025-03-03',
+        status: 'New'
+      });
       
+      // Second order: ORD-R001 (new)
+      mockOrders.push({
+        id: `order-${driverId}-2`,
+        orderId: 'ORD-R001',
+        customer: 'Sanjay Mehta',
+        customerAddress: '7-1-397, Banjara Hills, Junction Street, Hyderabad',
+        studio: 'Laundry Express',
+        studioAddress: 'Laundry Express Studio, Hyderabad',
+        date: '2025-02-24',
+        status: 'New'
+      });
+      
+      // Third order: ORD-0003 (ready-for-collect)
+      mockOrders.push({
+        id: `order-${driverId}-3`,
+        orderId: 'ORD-0003',
+        customer: 'Arun Verma',
+        customerAddress: '10-4-789, Gachibowli, Junction Street, Hyderabad',
+        studio: 'Cleanovo',
+        studioAddress: '9-3-456, Ameerpet, Junction Street, Hyderabad',
+        date: '2025-02-24',
+        status: 'Ready for Collection'
+      });
+    }
+    
+    // Add additional mock orders if needed
+    for (let i = mockOrders.length; i < orderCount; i++) {
       mockOrders.push({
         id: `order-${driverId}-${i + 1}`,
-        orderId: `ORD-${10000 + parseInt(driverId) * 100 + i}`,
-        customer: `Customer ${i + 1}`,
+        orderId: `ORD-${10000 + parseInt(driverId || '0') * 100 + i}`,
+        customer: customerNames[i % customerNames.length],
         customerAddress: generateRandomAddress(),
-        studio: studioNames[Math.floor(Math.random() * studioNames.length)],
-        studioAddress: generateRandomAddress(),
+        studio: studioNames[i % studioNames.length],
+        studioAddress: getStudioAddress(studioNames[i % studioNames.length]),
         date: new Date(Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0],
-        status: statusOptions[Math.floor(Math.random() * statusOptions.length)]
+        status: statusOptions[i % statusOptions.length]
       });
     }
     
@@ -148,19 +200,31 @@ const DriverOrdersDetails = () => {
   };
   
   const getStatusColor = (status: string | undefined) => {
-    switch(status) {
-      case 'Delivered':
+    switch(status?.toLowerCase()) {
+      case 'delivered':
         return 'bg-green-100 text-green-800';
-      case 'In Progress':
+      case 'in progress':
         return 'bg-blue-100 text-blue-800';
-      case 'Collected':
+      case 'collected':
         return 'bg-purple-100 text-purple-800';
-      case 'Ready for Collection':
-        return 'bg-indigo-100 text-indigo-800';
-      case 'New':
-        return 'bg-teal-100 text-teal-800';
-      default:
+      case 'ready for collection':
+        return 'bg-amber-100 text-amber-800';
+      case 'new':
         return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+  
+  // Helper function to get a simplified status for display in badges
+  const getSimplifiedStatus = (status: string | undefined) => {
+    switch(status) {
+      case 'Ready for Collection':
+        return 'ready-for-collect';
+      case 'In Progress':
+        return 'in-progress';
+      default:
+        return status?.toLowerCase();
     }
   };
   
@@ -213,7 +277,7 @@ const DriverOrdersDetails = () => {
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5 text-laundry-blue" />
+                <Package className="h-5 w-5 text-blue-600" />
                 Total Assigned Orders: {assignedOrders.length}
               </CardTitle>
             </CardHeader>
@@ -223,72 +287,67 @@ const DriverOrdersDetails = () => {
             {assignedOrders.length > 0 ? (
               assignedOrders.map((order) => {
                 const { pickupAddress, pickupName, deliveryAddress, deliveryName } = getAddressInfo(order);
+                const simplifiedStatus = getSimplifiedStatus(order.status);
                 
                 return (
                   <Card 
                     key={order.id} 
-                    className="overflow-hidden border border-gray-200 hover:shadow-md transition-shadow duration-300"
+                    className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
                   >
-                    <CardHeader className="pb-2 border-b">
-                      <div className="flex justify-between items-center">
-                        <div className="flex flex-col">
-                          <CardTitle className="text-base md:text-lg font-bold text-laundry-blue">
-                            {order.orderId}
-                          </CardTitle>
-                          <div className="flex items-center mt-1">
-                            <Calendar size={14} className="text-gray-500 mr-1" />
-                            <span className="text-sm text-gray-600">{order.date}</span>
-                          </div>
+                    <div className="p-4 border-b flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-bold text-blue-600">{order.orderId}</h3>
+                        <div className="flex items-center gap-1 text-gray-500 text-sm mt-1">
+                          <Calendar size={14} />
+                          <span>{order.date}</span>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
                       </div>
-                    </CardHeader>
+                      <Badge variant="outline" className={`${getStatusColor(order.status)} border-0 lowercase`}>
+                        {simplifiedStatus}
+                      </Badge>
+                    </div>
                     
-                    <CardContent className="p-4">
-                      <div className="space-y-4">
-                        <div className="bg-gray-50 p-3 rounded-md">
-                          <h3 className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                            <MapPin size={16} className="text-red-500 mr-2" />
-                            Pickup
-                          </h3>
-                          <div className="pl-6">
-                            <div className="flex items-center mb-1">
-                              <User size={14} className="text-gray-400 mr-2" />
-                              <p className="text-sm font-medium">{pickupName}</p>
-                            </div>
-                            <div className="flex items-start">
-                              <Building size={14} className="text-gray-400 mr-2 mt-1" />
-                              <p className="text-sm text-gray-600">{pickupAddress}</p>
-                            </div>
+                    <div className="p-4">
+                      <div className="mb-5">
+                        <h4 className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                          <MapPin size={16} className="text-red-500 mr-2" />
+                          Pickup
+                        </h4>
+                        <div className="ml-6 space-y-1">
+                          <div className="flex items-center">
+                            <User size={14} className="text-gray-400 mr-2" />
+                            <p className="text-sm font-medium">{pickupName}</p>
                           </div>
-                        </div>
-                        
-                        <div className="bg-gray-50 p-3 rounded-md">
-                          <h3 className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                            <TruckIcon size={16} className="text-green-500 mr-2" />
-                            Delivery
-                          </h3>
-                          <div className="pl-6">
-                            <div className="flex items-center mb-1">
-                              <User size={14} className="text-gray-400 mr-2" />
-                              <p className="text-sm font-medium">{deliveryName}</p>
-                            </div>
-                            <div className="flex items-start">
-                              <Building size={14} className="text-gray-400 mr-2 mt-1" />
-                              <p className="text-sm text-gray-600">{deliveryAddress}</p>
-                            </div>
+                          <div className="flex items-start">
+                            <Building size={14} className="text-gray-400 mr-2 mt-1" />
+                            <p className="text-sm text-gray-600">{pickupAddress}</p>
                           </div>
                         </div>
                       </div>
-                    </CardContent>
+                      
+                      <div>
+                        <h4 className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                          <TruckIcon size={16} className="text-green-500 mr-2" />
+                          Delivery
+                        </h4>
+                        <div className="ml-6 space-y-1">
+                          <div className="flex items-center">
+                            <User size={14} className="text-gray-400 mr-2" />
+                            <p className="text-sm font-medium">{deliveryName}</p>
+                          </div>
+                          <div className="flex items-start">
+                            <Building size={14} className="text-gray-400 mr-2 mt-1" />
+                            <p className="text-sm text-gray-600">{deliveryAddress}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     
-                    <CardFooter className="bg-gray-50 p-3 border-t flex justify-end">
-                      <Button variant="outline" size="sm" className="text-xs">
+                    <div className="p-3 bg-gray-50 border-t flex justify-end">
+                      <Button variant="outline" size="sm">
                         View Details
                       </Button>
-                    </CardFooter>
+                    </div>
                   </Card>
                 );
               })
