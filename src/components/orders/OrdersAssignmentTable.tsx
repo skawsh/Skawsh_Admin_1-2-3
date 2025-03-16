@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Package, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Search } from 'lucide-react';
 import { Input } from "@/components/ui/input";
+import StatusBadge from './StatusBadge';
 
 interface OrderTableData {
   id: string;
@@ -24,6 +26,7 @@ interface OrderTableData {
   studio: string;
   washType: string;
   distance: string;
+  status?: string; // Add status field to show order status
 }
 
 interface OrdersAssignmentTableProps {
@@ -38,6 +41,7 @@ interface OrdersAssignmentTableProps {
   searchQuery?: string;
   onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   showSearch?: boolean;
+  showStatus?: boolean; // Add prop to conditionally show status column
 }
 
 export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
@@ -51,7 +55,8 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
   onAssignSingle,
   searchQuery = '',
   onSearchChange,
-  showSearch = false
+  showSearch = false,
+  showStatus = false // Default to false for backward compatibility
 }) => {
   return (
     <div className="bg-white rounded-md p-4 border border-gray-100">
@@ -91,6 +96,7 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
               <TableHead>Order ID</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Customer</TableHead>
+              {showStatus && <TableHead>Status</TableHead>}
               <TableHead>Phone</TableHead>
               <TableHead>Customer Address</TableHead>
               <TableHead>Studio</TableHead>
@@ -114,6 +120,11 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
                   <TableCell className="font-medium">{order.orderId}</TableCell>
                   <TableCell>{order.date}</TableCell>
                   <TableCell>{order.customer}</TableCell>
+                  {showStatus && (
+                    <TableCell>
+                      {order.status && <StatusBadge status={order.status as any} />}
+                    </TableCell>
+                  )}
                   <TableCell>{order.phone}</TableCell>
                   <TableCell className="max-w-[200px] truncate" title={order.customerAddress}>{order.customerAddress}</TableCell>
                   <TableCell>{order.studio}</TableCell>
@@ -141,7 +152,7 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={12} className="text-center py-10 text-gray-500">
+                <TableCell colSpan={showStatus ? 13 : 12} className="text-center py-10 text-gray-500">
                   No orders found matching your search criteria
                 </TableCell>
               </TableRow>

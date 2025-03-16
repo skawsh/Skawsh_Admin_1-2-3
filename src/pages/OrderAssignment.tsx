@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -263,6 +264,7 @@ const OrderAssignment = () => {
               searchQuery={searchQuery}
               onSearchChange={handleSearchChange}
               showSearch={true}
+              showStatus={true} // Enable the status column for rescheduled orders
             />
           ) : (
             <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">

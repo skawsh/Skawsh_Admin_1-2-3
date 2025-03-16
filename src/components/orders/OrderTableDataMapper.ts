@@ -13,6 +13,7 @@ export interface OrderTableData {
   studio: string;
   washType: string;
   distance: string;
+  status?: string; // Add status field
 }
 
 export const mapOrdersToTableData = (orders: Order[]): OrderTableData[] => {
@@ -30,7 +31,8 @@ export const mapOrdersToTableData = (orders: Order[]): OrderTableData[] => {
       studioAddress: studioAddress,
       studio: order.studio,
       washType: order.washType === 'express' ? 'Express Wash' : order.washType === 'standard' ? 'Standard Wash' : 'Both Wash',
-      distance: calculateDistance(customerAddress, studioAddress)
+      distance: calculateDistance(customerAddress, studioAddress),
+      status: order.status // Add the status field from the order
     };
   });
 };
