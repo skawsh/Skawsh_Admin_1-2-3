@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -233,8 +232,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                         )}
                         
                         {hasZeroOrders && !isUnavailable && (
-                          <span className="text-xs bg-green-100 text-green-800 rounded-full flex items-center justify-center w-7 h-7"> {/* Increased size of checkmark container */}
-                            <CheckCircle2 className="h-5 w-5 text-green-600" /> {/* Increased size of checkmark icon */}
+                          <span className="text-xs bg-green-100 text-green-800 rounded-full flex items-center justify-center w-7 h-7"> {/* Checkmark container */}
+                            <CheckCircle2 className="h-5 w-5 text-green-600" /> {/* Checkmark icon */}
                           </span>
                         )}
                       </div>
