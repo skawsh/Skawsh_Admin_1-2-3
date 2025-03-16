@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -84,27 +85,26 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   // Use the drivers data from the drivers section
   const driversData = sampleDrivers;
   
-  // Filter drivers - only show Chetan Kumar for assignment
-  const availableDrivers = driversData.filter(driver => 
-    driver.status === 'active' && driver.name === 'Chetan Kumar'
-  );
-  const totalDrivers = availableDrivers.length;
+  // Filter drivers - available drivers are those with status 'active'
+  const availableDrivers = driversData.filter(driver => driver.status === 'active');
+  const totalDrivers = driversData.length;
   
   // Sort drivers: first by status, then by assigned orders, then by name
-  // But only include Chetan Kumar
-  const sortedDrivers = [...driversData]
-    .filter(driver => driver.name === 'Chetan Kumar')
-    .sort((a, b) => {
-      // Then sort by assigned orders (0 first)
-      const aOrders = a.assignedOrders || 0;
-      const bOrders = b.assignedOrders || 0;
-      
-      if (aOrders === 0 && bOrders !== 0) return -1;
-      if (aOrders !== 0 && bOrders === 0) return 1;
-      
-      // Then sort by name
-      return a.name.localeCompare(b.name);
-    });
+  const sortedDrivers = [...driversData].sort((a, b) => {
+    // First sort by status
+    if (a.status === 'active' && b.status !== 'active') return -1;
+    if (a.status !== 'active' && b.status === 'active') return 1;
+    
+    // Then sort by assigned orders (0 first)
+    const aOrders = a.assignedOrders || 0;
+    const bOrders = b.assignedOrders || 0;
+    
+    if (aOrders === 0 && bOrders !== 0) return -1;
+    if (aOrders !== 0 && bOrders === 0) return 1;
+    
+    // Then sort by name
+    return a.name.localeCompare(b.name);
+  });
   
   const handleAssignDriver = () => {
     if (selectedDriverId) {
@@ -267,7 +267,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-medium text-base">Available Drivers</h3>
                 <span className="text-sm text-gray-500">
-                  {availableDrivers.length} Available / {availableDrivers.length} Total
+                  {availableDrivers.length} Available / {totalDrivers} Total
                 </span>
               </div>
               
