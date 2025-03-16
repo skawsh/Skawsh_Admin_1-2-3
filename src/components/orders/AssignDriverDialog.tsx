@@ -13,6 +13,7 @@ interface Driver {
   deliveriesCompleted: number;
   location: string;
   status: 'available' | 'delivering' | 'unavailable';
+  assignedOrders?: number; // Add this property to track assigned orders
 }
 
 // Mock data for drivers
@@ -23,7 +24,8 @@ const mockDrivers: Driver[] = [
     rating: 4.8,
     deliveriesCompleted: 245,
     location: "Banjara Hills, Hyderabad",
-    status: 'available'
+    status: 'available',
+    assignedOrders: 0
   },
   {
     id: "D-1002",
@@ -31,7 +33,8 @@ const mockDrivers: Driver[] = [
     rating: 4.9,
     deliveriesCompleted: 189,
     location: "Jubilee Hills, Hyderabad",
-    status: 'available'
+    status: 'available',
+    assignedOrders: 2
   },
   {
     id: "D-1003",
@@ -39,7 +42,8 @@ const mockDrivers: Driver[] = [
     rating: 4.7,
     deliveriesCompleted: 302,
     location: "Gachibowli, Hyderabad",
-    status: 'delivering'
+    status: 'delivering',
+    assignedOrders: 1
   },
   {
     id: "D-1004",
@@ -47,7 +51,8 @@ const mockDrivers: Driver[] = [
     rating: 4.6,
     deliveriesCompleted: 156,
     location: "Ameerpet, Hyderabad",
-    status: 'delivering'
+    status: 'delivering',
+    assignedOrders: 3
   },
   {
     id: "D-1005",
@@ -55,7 +60,8 @@ const mockDrivers: Driver[] = [
     rating: 4.5,
     deliveriesCompleted: 210,
     location: "Madhapur, Hyderabad",
-    status: 'unavailable'
+    status: 'unavailable',
+    assignedOrders: 0
   },
   {
     id: "D-1006",
@@ -63,7 +69,8 @@ const mockDrivers: Driver[] = [
     rating: 4.8,
     deliveriesCompleted: 178,
     location: "Kondapur, Hyderabad",
-    status: 'available'
+    status: 'available',
+    assignedOrders: 0
   },
   {
     id: "D-1007",
@@ -71,7 +78,8 @@ const mockDrivers: Driver[] = [
     rating: 4.7,
     deliveriesCompleted: 225,
     location: "HITEC City, Hyderabad",
-    status: 'available'
+    status: 'available',
+    assignedOrders: 0
   },
   {
     id: "D-1008",
@@ -79,7 +87,8 @@ const mockDrivers: Driver[] = [
     rating: 4.9,
     deliveriesCompleted: 267,
     location: "Kukatpally, Hyderabad",
-    status: 'available'
+    status: 'available',
+    assignedOrders: 0
   }
 ];
 
@@ -111,7 +120,10 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
 }) => {
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
   
-  const availableDrivers = mockDrivers.filter(driver => driver.status !== 'unavailable');
+  // Filter drivers - available drivers are those with status not 'unavailable' AND no assigned orders
+  const availableDrivers = mockDrivers.filter(driver => 
+    driver.status !== 'unavailable' && (!driver.assignedOrders || driver.assignedOrders === 0)
+  );
   const totalDrivers = mockDrivers.length;
   
   const handleAssignDriver = () => {
@@ -171,6 +183,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                 {mockDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
                   const isDelivering = driver.status === 'delivering';
+                  const hasAssignedOrders = driver.assignedOrders && driver.assignedOrders > 0;
+                  const isAvailable = !isUnavailable && !hasAssignedOrders;
                   
                   return (
                     <div 
@@ -179,8 +193,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                         selectedDriverId === driver.id 
                           ? 'bg-primary/10 ring-1 ring-primary'
                           : 'hover:bg-gray-100'
-                      } ${isUnavailable ? 'opacity-60' : ''}`}
-                      onClick={() => !isUnavailable && setSelectedDriverId(driver.id)}
+                      } ${!isAvailable ? 'opacity-60' : ''}`}
+                      onClick={() => isAvailable && setSelectedDriverId(driver.id)}
                     >
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-gray-700" />
@@ -198,6 +212,12 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                         {isUnavailable && (
                           <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
                             Unavailable
+                          </span>
+                        )}
+                        
+                        {!isUnavailable && hasAssignedOrders && (
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                            {driver.assignedOrders} Orders
                           </span>
                         )}
                       </div>
