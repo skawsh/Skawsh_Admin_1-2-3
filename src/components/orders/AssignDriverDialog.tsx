@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -130,7 +129,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   // Check if selectedOrders is an array (for backward compatibility) or an object with arrays
   const isSelectedOrdersArray = Array.isArray(selectedOrders);
   
-  // Process rescheduled orders to categorize them based on status
+  // Process orders to categorize them based on status
   let newOrdersData: OrderTableData[] = [];
   let readyOrdersData: OrderTableData[] = [];
   let rescheduledOrdersData: OrderTableData[] = [];
@@ -147,10 +146,10 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     // Process rescheduled orders and categorize them
     if (selectedOrders.rescheduledOrders && selectedOrders.rescheduledOrders.length > 0) {
       selectedOrders.rescheduledOrders.forEach(order => {
-        // Add the order to the rescheduled list for display in that section
+        // Store in rescheduledOrdersData for reference
         rescheduledOrdersData.push(order);
         
-        // Also add the order to either new or ready based on its status
+        // Add the order to either new or ready based on its status
         if (order.status === 'ready-for-collect') {
           readyOrdersData.push(order);
         } else {
@@ -161,7 +160,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     }
     
     // Now set allOrdersData after processing all orders
-    allOrdersData = [...newOrdersData, ...readyOrdersData, ...rescheduledOrdersData];
+    allOrdersData = [...newOrdersData, ...readyOrdersData];
   }
   
   // Filter drivers - available drivers are those with status not 'unavailable' AND no assigned orders
@@ -207,7 +206,6 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   // Determine which tables to show based on the selected orders
   const showNewOrdersTable = !isSelectedOrdersArray && newOrdersData.length > 0;
   const showReadyOrdersTable = !isSelectedOrdersArray && readyOrdersData.length > 0;
-  const showRescheduledOrdersTable = !isSelectedOrdersArray && rescheduledOrdersData.length > 0;
   const showSingleTable = isSelectedOrdersArray;
 
   // Remove duplicate entries from tables to avoid showing the same order multiple times
@@ -266,7 +264,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               )}
               
               {/* Show tables based on which orders are selected */}
-              {(showNewOrdersTable || showReadyOrdersTable || showRescheduledOrdersTable) && (
+              {(showNewOrdersTable || showReadyOrdersTable) && (
                 <div className="space-y-4">
                   {showNewOrdersTable && uniqueNewOrdersData.length > 0 && (
                     <div>
@@ -313,43 +311,6 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                               <div className="text-sm">{order.studioAddress}</div>
                             </div>
                           ))}
-                        </ScrollArea>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {showRescheduledOrdersTable && rescheduledOrdersData.length > 0 && (
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Clock size={16} className="text-amber-500" />
-                        <h4 className="text-sm font-medium">Rescheduled Orders ({rescheduledOrdersData.length})</h4>
-                      </div>
-                      <div className="border rounded-md">
-                        <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
-                          <div className="font-medium text-sm text-gray-700">Order ID</div>
-                          <div className="font-medium text-sm text-gray-700">
-                            Location
-                          </div>
-                          <div className="font-medium text-sm text-gray-700">
-                            Address
-                          </div>
-                        </div>
-                        <ScrollArea className="h-[100px]">
-                          {rescheduledOrdersData.map(order => {
-                            const isReadyTabOrder = order.status === 'ready-for-collect';
-                            
-                            return (
-                              <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
-                                <div className="text-sm">{order.orderId}</div>
-                                <div className="text-sm">
-                                  {isReadyTabOrder ? order.studio : order.customer}
-                                </div>
-                                <div className="text-sm">
-                                  {isReadyTabOrder ? order.studioAddress : order.customerAddress}
-                                </div>
-                              </div>
-                            );
-                          })}
                         </ScrollArea>
                       </div>
                     </div>
