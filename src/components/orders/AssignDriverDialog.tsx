@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -133,6 +134,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   let newOrdersData: OrderTableData[] = [];
   let readyOrdersData: OrderTableData[] = [];
   let rescheduledOrdersData: OrderTableData[] = [];
+  let allOrdersData: OrderTableData[] = [];
   
   if (isSelectedOrdersArray) {
     // If it's an array, keep existing backward compatibility
@@ -157,11 +159,10 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
         }
       });
     }
+    
+    // Now set allOrdersData after processing all orders
+    allOrdersData = [...newOrdersData, ...readyOrdersData, ...rescheduledOrdersData];
   }
-  
-  const allOrdersData = isSelectedOrdersArray 
-    ? selectedOrders 
-    : [...newOrdersData, ...readyOrdersData, ...rescheduledOrdersData];
   
   // Filter drivers - available drivers are those with status not 'unavailable' AND no assigned orders
   const availableDrivers = mockDrivers.filter(driver => 
@@ -435,4 +436,3 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     </Dialog>
   );
 };
-
