@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,21 +13,43 @@ import { toast } from "sonner";
 const OrderAssignment = () => {
   const [selectedNewOrders, setSelectedNewOrders] = useState<string[]>([]);
   const [selectedReadyOrders, setSelectedReadyOrders] = useState<string[]>([]);
+  const [selectedRescheduledOrders, setSelectedRescheduledOrders] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [washTypeFilter, setWashTypeFilter] = useState('all');
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
   const [currentOrderToAssign, setCurrentOrderToAssign] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('new');
 
-  const selectedOrders = [...selectedNewOrders, ...selectedReadyOrders];
-
+  // Create a selection of "rescheduled" orders from both new and ready orders
+  // In a real application, these would come from the backend with a "rescheduled" flag
   const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
   const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
+  
+  // For demo purposes, let's assume 30% of both new and ready orders are "rescheduled"
+  const rescheduledNewOrders = newOrders.filter((_, index) => index % 3 === 0);
+  const rescheduledReadyOrders = readyForCollectionOrders.filter((_, index) => index % 3 === 0);
+  const rescheduledOrders = [...rescheduledNewOrders, ...rescheduledReadyOrders];
 
   const pendingOrders = mapOrdersToTableData(newOrders);
   const readyOrders = mapOrdersToTableData(readyForCollectionOrders);
+  const rescheduledOrdersData = mapOrdersToTableData(rescheduledOrders);
+
+  // Get all selected orders across all tabs
+  const selectedOrders = [...selectedNewOrders, ...selectedReadyOrders, ...selectedRescheduledOrders];
 
   const filteredPendingOrders = pendingOrders.filter(order => {
+    const matchesSearch = !searchQuery || 
+      order.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.studio.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesWashType = washTypeFilter === 'all' || 
+      order.washType.toLowerCase().includes(washTypeFilter.toLowerCase());
+    
+    return matchesSearch && matchesWashType;
+  });
+
+  const filteredRescheduledOrders = rescheduledOrdersData.filter(order => {
     const matchesSearch = !searchQuery || 
       order.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -41,18 +64,25 @@ const OrderAssignment = () => {
   const toggleOrderSelection = (orderId: string) => {
     const isNewOrder = pendingOrders.some(order => order.id === orderId);
     const isReadyOrder = readyOrders.some(order => order.id === orderId);
+    const isRescheduledOrder = rescheduledOrdersData.some(order => order.id === orderId);
     
-    if (isNewOrder) {
+    if (isNewOrder && activeTab === 'new') {
       if (selectedNewOrders.includes(orderId)) {
         setSelectedNewOrders(selectedNewOrders.filter(id => id !== orderId));
       } else {
         setSelectedNewOrders([...selectedNewOrders, orderId]);
       }
-    } else if (isReadyOrder) {
+    } else if (isReadyOrder && activeTab === 'ready') {
       if (selectedReadyOrders.includes(orderId)) {
         setSelectedReadyOrders(selectedReadyOrders.filter(id => id !== orderId));
       } else {
         setSelectedReadyOrders([...selectedReadyOrders, orderId]);
+      }
+    } else if (isRescheduledOrder && activeTab === 'rescheduled') {
+      if (selectedRescheduledOrders.includes(orderId)) {
+        setSelectedRescheduledOrders(selectedRescheduledOrders.filter(id => id !== orderId));
+      } else {
+        setSelectedRescheduledOrders([...selectedRescheduledOrders, orderId]);
       }
     }
   };
@@ -69,6 +99,12 @@ const OrderAssignment = () => {
         setSelectedReadyOrders([]);
       } else {
         setSelectedReadyOrders(readyOrders.map(order => order.id));
+      }
+    } else if (activeTab === 'rescheduled') {
+      if (selectedRescheduledOrders.length === filteredRescheduledOrders.length) {
+        setSelectedRescheduledOrders([]);
+      } else {
+        setSelectedRescheduledOrders(filteredRescheduledOrders.map(order => order.id));
       }
     }
   };
@@ -93,11 +129,14 @@ const OrderAssignment = () => {
   const handleAssignSingle = (orderId: string) => {
     setSelectedNewOrders([]);
     setSelectedReadyOrders([]);
+    setSelectedRescheduledOrders([]);
     
     if (pendingOrders.some(order => order.id === orderId)) {
       setSelectedNewOrders([orderId]);
     } else if (readyOrders.some(order => order.id === orderId)) {
       setSelectedReadyOrders([orderId]);
+    } else if (rescheduledOrdersData.some(order => order.id === orderId)) {
+      setSelectedRescheduledOrders([orderId]);
     }
     
     setCurrentOrderToAssign(orderId);
@@ -112,11 +151,13 @@ const OrderAssignment = () => {
     
     setSelectedNewOrders([]);
     setSelectedReadyOrders([]);
+    setSelectedRescheduledOrders([]);
   };
 
   const getSelectedOrdersData = () => {
     if (currentOrderToAssign) {
-      const order = [...pendingOrders, ...readyOrders].find(o => o.id === currentOrderToAssign);
+      const order = [...pendingOrders, ...readyOrders, ...rescheduledOrdersData]
+        .find(o => o.id === currentOrderToAssign);
       return order ? [order] : [];
     }
     
@@ -128,9 +169,14 @@ const OrderAssignment = () => {
       selectedReadyOrders.includes(order.id)
     );
     
+    const selectedRescheduledOrdersData = rescheduledOrdersData.filter(order => 
+      selectedRescheduledOrders.includes(order.id)
+    );
+    
     return {
       newOrders: selectedNewOrdersData,
-      readyOrders: selectedReadyOrdersData
+      readyOrders: selectedReadyOrdersData,
+      rescheduledOrders: selectedRescheduledOrdersData
     };
   };
 
@@ -203,9 +249,25 @@ const OrderAssignment = () => {
         </TabsContent>
         
         <TabsContent value="rescheduled">
-          <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
-            No rescheduled orders
-          </div>
+          {filteredRescheduledOrders.length > 0 ? (
+            <OrdersAssignmentTable
+              title="Rescheduled Orders"
+              icon={<Clock size={20} className="text-amber-500" />}
+              statusText={<div className="flex items-center gap-1"><Clock size={16} /><span>{rescheduledOrders.length} Orders Rescheduled</span></div>}
+              orders={filteredRescheduledOrders}
+              selectedOrders={selectedRescheduledOrders}
+              onToggleOrderSelection={toggleOrderSelection}
+              onSelectAll={handleSelectAll}
+              onAssignSingle={handleAssignSingle}
+              searchQuery={searchQuery}
+              onSearchChange={handleSearchChange}
+              showSearch={true}
+            />
+          ) : (
+            <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
+              No rescheduled orders
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 
