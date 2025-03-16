@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Driver } from './types';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 // Define a type for assigned orders
 interface AssignedOrder {
@@ -33,6 +34,7 @@ const DriversTable = ({ className }: DriversTableProps) => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [assignedOrders, setAssignedOrders] = useState<Record<string, AssignedOrder[]>>({});
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   // Listen for storage events to sync assignment data across components
   useEffect(() => {
@@ -150,22 +152,8 @@ const DriversTable = ({ className }: DriversTableProps) => {
   };
   
   const viewDriverDetails = (driverId: string) => {
-    const driver = drivers.find(d => d.id === driverId);
-    if (!driver) {
-      toast({
-        title: "Driver Not Found",
-        description: "Could not find details for this driver.",
-      });
-      return;
-    }
-    
-    toast({
-      title: "Driver Details",
-      description: `Viewing details for ${driver.name}`,
-    });
-    
-    // In a real application, you might navigate to a detailed view or open a modal
-    console.log("Driver details:", driver);
+    // Navigate to the driver details page
+    navigate(`/driver/${driverId}`);
   };
   
   return (
