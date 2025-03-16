@@ -56,6 +56,52 @@ export const sampleDrivers: Driver[] = [
     assignedOrders: 0,
     totalDeliveries: 76,
     rating: 4.5
+  },
+  // Adding new drivers
+  {
+    id: '7',
+    name: 'Chetan Kumar',
+    status: 'active',
+    phoneNumber: '+91 87654 32100',
+    assignedOrders: 0,
+    totalDeliveries: 92,
+    rating: 4.7
+  },
+  {
+    id: '8',
+    name: 'Deepak Sharma',
+    status: 'active',
+    phoneNumber: '+91 76543 21000',
+    assignedOrders: 0,
+    totalDeliveries: 78,
+    rating: 4.5
+  },
+  {
+    id: '9',
+    name: 'Saiteja Reddy',
+    status: 'active',
+    phoneNumber: '+91 65432 10000',
+    assignedOrders: 0,
+    totalDeliveries: 85,
+    rating: 4.6
+  },
+  {
+    id: '10',
+    name: 'Mahesh Verma',
+    status: 'active',
+    phoneNumber: '+91 54321 00000',
+    assignedOrders: 0,
+    totalDeliveries: 80,
+    rating: 4.4
+  },
+  {
+    id: '11',
+    name: 'Eswari Devi',
+    status: 'active',
+    phoneNumber: '+91 43210 00000',
+    assignedOrders: 0,
+    totalDeliveries: 72,
+    rating: 4.8
   }
 ];
 
