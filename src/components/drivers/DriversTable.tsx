@@ -15,6 +15,7 @@ import DriverStatusBadge from './DriverStatusBadge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Driver } from './types';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 
 // Define a type for assigned orders
 interface AssignedOrder {
@@ -124,6 +125,11 @@ const DriversTable = ({ className }: DriversTableProps) => {
       }))
     );
   };
+
+  // Get drivers who have assigned orders
+  const getDriversWithAssignments = () => {
+    return drivers.filter(driver => driver.assignedOrders && driver.assignedOrders > 0);
+  };
   
   return (
     <div className="bg-white rounded-md shadow-sm">
@@ -197,38 +203,40 @@ const DriversTable = ({ className }: DriversTableProps) => {
         </TabsContent>
         
         <TabsContent value="assignments" className="p-0 mt-0">
-          {getAllAssignedOrders().length > 0 ? (
+          {getDriversWithAssignments().length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ORDER ID</TableHead>
+                  <TableHead className="w-16">S.NO</TableHead>
                   <TableHead>DRIVER</TableHead>
-                  <TableHead>CUSTOMER/STUDIO</TableHead>
-                  <TableHead>ADDRESS</TableHead>
+                  <TableHead>ASSIGNED ORDERS</TableHead>
                   <TableHead className="text-right">ACTIONS</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {getAllAssignedOrders().map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-medium flex items-center gap-2">
-                      <Package size={16} className="text-blue-600" />
-                      {order.orderId}
+                {getDriversWithAssignments().map((driver, index) => (
+                  <TableRow key={driver.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell className="font-medium flex items-center">
+                      <div className="w-6 h-6 rounded-full bg-gray-200 mr-2 flex items-center justify-center">
+                        <span className="text-gray-500 text-xs">👤</span>
+                      </div>
+                      {driver.name}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center">
-                        <div className="w-6 h-6 rounded-full bg-gray-200 mr-2 flex items-center justify-center">
-                          <span className="text-gray-500 text-xs">👤</span>
-                        </div>
-                        {order.driverName}
+                      <div className="flex items-center gap-2">
+                        <Package size={16} className="text-blue-600" />
+                        <span>{driver.assignedOrders} orders</span>
                       </div>
                     </TableCell>
-                    <TableCell>{order.studio || order.customer}</TableCell>
-                    <TableCell>{order.studioAddress || order.customerAddress}</TableCell>
                     <TableCell className="text-right">
-                      <button className="text-gray-500 hover:text-gray-700">
-                        <MoreHorizontal size={20} />
-                      </button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        <MoreHorizontal size={16} />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
