@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -86,6 +87,7 @@ const DriverOrdersDetails = () => {
     const customerNames = ['Deepika Reddy', 'Sanjay Mehta', 'Arun Verma', 'Priya Singh', 'Rajesh Kumar'];
     
     if (orderCount > 0) {
+      // First order: ORD-0004 (new)
       mockOrders.push({
         id: `order-${driverId}-1`,
         orderId: 'ORD-0004',
@@ -97,6 +99,7 @@ const DriverOrdersDetails = () => {
         status: 'New'
       });
       
+      // Second order: ORD-R001 (new)
       mockOrders.push({
         id: `order-${driverId}-2`,
         orderId: 'ORD-R001',
@@ -108,6 +111,7 @@ const DriverOrdersDetails = () => {
         status: 'New'
       });
       
+      // Third order: ORD-0003 (ready-for-collect)
       mockOrders.push({
         id: `order-${driverId}-3`,
         orderId: 'ORD-0003',
