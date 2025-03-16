@@ -30,7 +30,7 @@ interface OrderTableData {
 interface OrdersAssignmentTableProps {
   title: string;
   icon: React.ReactNode;
-  statusText: string;
+  statusText: React.ReactNode;
   orders: OrderTableData[];
   selectedOrders: string[];
   onToggleOrderSelection: (orderId: string) => void;
@@ -153,3 +153,4 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
     </div>
   );
 };
+
