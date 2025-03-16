@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,23 +19,18 @@ const OrderAssignment = () => {
   const [currentOrderToAssign, setCurrentOrderToAssign] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('new');
 
-  // Create a selection of "rescheduled" orders from both new and ready orders
-  // In a real application, these would come from the backend with a "rescheduled" flag
   const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
   const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
   
-  // For demo purposes, let's assume 30% of both new and ready orders are "rescheduled"
   const rescheduledNewOrders = newOrders.filter((_, index) => index % 3 === 0);
   const rescheduledReadyOrders = readyForCollectionOrders.filter((_, index) => index % 3 === 0);
   
-  // Combine the filtered "rescheduled" orders with our exclusive rescheduled orders
   const rescheduledOrders = [...rescheduledNewOrders, ...rescheduledReadyOrders, ...exclusiveRescheduledOrders];
 
   const pendingOrders = mapOrdersToTableData(newOrders);
   const readyOrders = mapOrdersToTableData(readyForCollectionOrders);
   const rescheduledOrdersData = mapOrdersToTableData(rescheduledOrders);
 
-  // Get all selected orders across all tabs
   const selectedOrders = [...selectedNewOrders, ...selectedReadyOrders, ...selectedRescheduledOrders];
 
   const filteredPendingOrders = pendingOrders.filter(order => {
@@ -264,7 +258,7 @@ const OrderAssignment = () => {
               searchQuery={searchQuery}
               onSearchChange={handleSearchChange}
               showSearch={true}
-              showStatus={true} // Enable the status column for rescheduled orders
+              showStatus={true}
             />
           ) : (
             <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">

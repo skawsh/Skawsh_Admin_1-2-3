@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapPin, Package, Truck, User, CheckCircle2, ShoppingBag } from "lucide-react";
+import { MapPin, Package, Truck, User, CheckCircle2, ShoppingBag, Clock } from "lucide-react";
 import { Order } from './types';
 import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -105,6 +104,7 @@ interface OrderTableData {
   studioAddress: string;
   washType: string;
   distance: string;
+  status?: string;
 }
 
 interface AssignDriverDialogProps {
@@ -113,6 +113,7 @@ interface AssignDriverDialogProps {
   selectedOrders: {
     newOrders: OrderTableData[];
     readyOrders: OrderTableData[];
+    rescheduledOrders: OrderTableData[];
   } | OrderTableData[];
   onAssignDriver: (driverId: string, orderIds: string[]) => void;
 }
@@ -125,15 +126,17 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
 }) => {
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
   
-  // Check if selectedOrders is an array (for backward compatibility) or an object with two arrays
+  // Check if selectedOrders is an array (for backward compatibility) or an object with arrays
   const isSelectedOrdersArray = Array.isArray(selectedOrders);
   
   // Extract orders data based on the format
   const newOrdersData = isSelectedOrdersArray ? [] : selectedOrders.newOrders;
   const readyOrdersData = isSelectedOrdersArray ? [] : selectedOrders.readyOrders;
+  const rescheduledOrdersData = isSelectedOrdersArray ? [] : selectedOrders.rescheduledOrders || [];
+  
   const allOrdersData = isSelectedOrdersArray 
     ? selectedOrders 
-    : [...newOrdersData, ...readyOrdersData];
+    : [...newOrdersData, ...readyOrdersData, ...rescheduledOrdersData];
   
   // Filter drivers - available drivers are those with status not 'unavailable' AND no assigned orders
   const availableDrivers = mockDrivers.filter(driver => 
@@ -168,9 +171,17 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     }
   };
 
+  // Helper function to determine if an order is from ready tab
+  const isFromReadyTab = (order: OrderTableData) => {
+    if (order.status === 'ready-for-collect') return true;
+    if (isSelectedOrdersArray) return false;
+    return readyOrdersData.some(ro => ro.id === order.id);
+  };
+
   // Determine which tables to show based on the selected orders
   const showNewOrdersTable = !isSelectedOrdersArray && newOrdersData.length > 0;
   const showReadyOrdersTable = !isSelectedOrdersArray && readyOrdersData.length > 0;
+  const showRescheduledOrdersTable = !isSelectedOrdersArray && rescheduledOrdersData.length > 0;
   const showSingleTable = isSelectedOrdersArray;
 
   return (
@@ -200,19 +211,16 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                   </div>
                   <ScrollArea className="h-[120px]">
                     {allOrdersData.map(order => {
-                      // For backward compatibility, handle single table case
-                      const isFromReadyTab = isSelectedOrdersArray 
-                        ? false 
-                        : readyOrdersData.some(ro => ro.id === order.id);
+                      const isReadyTabOrder = isFromReadyTab(order);
                       
                       return (
                         <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
                           <div className="text-sm">{order.orderId}</div>
                           <div className="text-sm">
-                            {isFromReadyTab ? order.studio : order.customer}
+                            {isReadyTabOrder ? order.studio : order.customer}
                           </div>
                           <div className="text-sm">
-                            {isFromReadyTab ? order.studioAddress : order.customerAddress}
+                            {isReadyTabOrder ? order.studioAddress : order.customerAddress}
                           </div>
                         </div>
                       );
@@ -222,7 +230,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               )}
               
               {/* Show tables based on which orders are selected */}
-              {(showNewOrdersTable || showReadyOrdersTable) && (
+              {(showNewOrdersTable || showReadyOrdersTable || showRescheduledOrdersTable) && (
                 <div className="space-y-4">
                   {showNewOrdersTable && (
                     <div>
@@ -269,6 +277,43 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                               <div className="text-sm">{order.studioAddress}</div>
                             </div>
                           ))}
+                        </ScrollArea>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {showRescheduledOrdersTable && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock size={16} className="text-amber-500" />
+                        <h4 className="text-sm font-medium">Rescheduled Orders ({rescheduledOrdersData.length})</h4>
+                      </div>
+                      <div className="border rounded-md">
+                        <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
+                          <div className="font-medium text-sm text-gray-700">Order ID</div>
+                          <div className="font-medium text-sm text-gray-700">
+                            Location
+                          </div>
+                          <div className="font-medium text-sm text-gray-700">
+                            Address
+                          </div>
+                        </div>
+                        <ScrollArea className="h-[100px]">
+                          {rescheduledOrdersData.map(order => {
+                            const isReadyTabOrder = order.status === 'ready-for-collect';
+                            
+                            return (
+                              <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
+                                <div className="text-sm">{order.orderId}</div>
+                                <div className="text-sm">
+                                  {isReadyTabOrder ? order.studio : order.customer}
+                                </div>
+                                <div className="text-sm">
+                                  {isReadyTabOrder ? order.studioAddress : order.customerAddress}
+                                </div>
+                              </div>
+                            );
+                          })}
                         </ScrollArea>
                       </div>
                     </div>
@@ -355,4 +400,3 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     </Dialog>
   );
 };
-
