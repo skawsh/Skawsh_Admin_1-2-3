@@ -43,7 +43,6 @@ const DriverManagement = () => {
           title="Total Drivers"
           value={totalDrivers.toString()}
           icon="drivers"
-          trend={{ value: 3, label: "vs. last period" }}
           className="hover:shadow-md transition-shadow"
         />
         
@@ -51,7 +50,6 @@ const DriverManagement = () => {
           title="Active Drivers"
           value={activeDrivers.toString()}
           icon="active"
-          trend={{ value: 5, label: "vs. last period" }}
           className="hover:shadow-md transition-shadow"
         />
         
@@ -59,7 +57,6 @@ const DriverManagement = () => {
           title="Inactive Drivers"
           value={inactiveDrivers.toString()}
           icon="inactive"
-          trend={{ value: -3, label: "vs. last period" }}
           className="hover:shadow-md transition-shadow"
         />
       </div>

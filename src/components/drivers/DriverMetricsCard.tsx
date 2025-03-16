@@ -41,15 +41,6 @@ const DriverMetricsCard = ({
         <div className="flex flex-col flex-1">
           <span className="text-gray-500 text-sm font-medium mb-1">{title}</span>
           <span className="text-3xl font-bold">{value}</span>
-          {trend && (
-            <span className={cn(
-              "text-xs mt-2",
-              trend.value > 0 ? "text-green-500" : 
-              trend.value < 0 ? "text-red-500" : "text-gray-500"
-            )}>
-              {trend.value > 0 ? `+${trend.value}` : trend.value} {trend.label}
-            </span>
-          )}
         </div>
         <div className="flex items-center justify-center w-14">
           {getIcon()}
