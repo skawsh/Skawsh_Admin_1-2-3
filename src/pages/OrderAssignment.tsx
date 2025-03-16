@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, CheckSquare, Clock, Package, ClipboardCheck, Search, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -35,25 +34,25 @@ const studioAddressMapping: Record<string, string> = {
   'Balus Modern': '18-12-345, Manikonda, Circle Road, Hyderabad'
 };
 
-// Function to calculate realistic distance between two locations
 const calculateDistance = (source: string, destination: string): string => {
-  // Use first characters of strings to create a "deterministic random" distance
   const sourceCode = source.charCodeAt(0) + source.charCodeAt(source.length - 1);
   const destCode = destination.charCodeAt(0) + destination.charCodeAt(destination.length - 1);
   
-  // Create a deterministic but seemingly random distance between 1 and 15 km
   const distance = ((sourceCode + destCode) % 140) / 10 + 1;
   
   return distance.toFixed(1) + ' km';
 };
 
 const OrderAssignment = () => {
-  const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
+  const [selectedNewOrders, setSelectedNewOrders] = useState<string[]>([]);
+  const [selectedReadyOrders, setSelectedReadyOrders] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [washTypeFilter, setWashTypeFilter] = useState('all');
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
   const [currentOrderToAssign, setCurrentOrderToAssign] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('new');
+
+  const selectedOrders = [...selectedNewOrders, ...selectedReadyOrders];
 
   const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
   const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
@@ -102,22 +101,37 @@ const OrderAssignment = () => {
   });
 
   const toggleOrderSelection = (orderId: string) => {
-    if (selectedOrders.includes(orderId)) {
-      setSelectedOrders(selectedOrders.filter(id => id !== orderId));
-    } else {
-      setSelectedOrders([...selectedOrders, orderId]);
+    const isNewOrder = pendingOrders.some(order => order.id === orderId);
+    const isReadyOrder = readyOrders.some(order => order.id === orderId);
+    
+    if (isNewOrder) {
+      if (selectedNewOrders.includes(orderId)) {
+        setSelectedNewOrders(selectedNewOrders.filter(id => id !== orderId));
+      } else {
+        setSelectedNewOrders([...selectedNewOrders, orderId]);
+      }
+    } else if (isReadyOrder) {
+      if (selectedReadyOrders.includes(orderId)) {
+        setSelectedReadyOrders(selectedReadyOrders.filter(id => id !== orderId));
+      } else {
+        setSelectedReadyOrders([...selectedReadyOrders, orderId]);
+      }
     }
   };
 
   const handleSelectAll = () => {
-    const currentTabOrders = activeTab === 'new' 
-      ? filteredPendingOrders 
-      : readyOrders;
-      
-    if (selectedOrders.length === currentTabOrders.length) {
-      setSelectedOrders([]);
-    } else {
-      setSelectedOrders(currentTabOrders.map(order => order.id));
+    if (activeTab === 'new') {
+      if (selectedNewOrders.length === filteredPendingOrders.length) {
+        setSelectedNewOrders([]);
+      } else {
+        setSelectedNewOrders(filteredPendingOrders.map(order => order.id));
+      }
+    } else if (activeTab === 'ready') {
+      if (selectedReadyOrders.length === readyOrders.length) {
+        setSelectedReadyOrders([]);
+      } else {
+        setSelectedReadyOrders(readyOrders.map(order => order.id));
+      }
     }
   };
 
@@ -131,8 +145,6 @@ const OrderAssignment = () => {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // Don't clear selection when switching tabs
-    // We've removed: setSelectedOrders([]);
   };
 
   const handleAssignSelected = () => {
@@ -141,21 +153,27 @@ const OrderAssignment = () => {
   };
 
   const handleAssignSingle = (orderId: string) => {
-    setSelectedOrders([orderId]);
+    setSelectedNewOrders([]);
+    setSelectedReadyOrders([]);
+    
+    if (pendingOrders.some(order => order.id === orderId)) {
+      setSelectedNewOrders([orderId]);
+    } else if (readyOrders.some(order => order.id === orderId)) {
+      setSelectedReadyOrders([orderId]);
+    }
+    
     setCurrentOrderToAssign(orderId);
     setIsAssignDialogOpen(true);
   };
 
   const handleAssignDriver = (driverId: string, orderIds: string[]) => {
-    // In a real application, this would make an API call
     console.log('Assigning driver:', driverId, 'to orders:', orderIds);
     
-    // Show success message
     const orderText = orderIds.length === 1 ? 'order' : 'orders';
     toast.success(`Successfully assigned driver to ${orderIds.length} ${orderText}`);
     
-    // Clear selection after assignment
-    setSelectedOrders([]);
+    setSelectedNewOrders([]);
+    setSelectedReadyOrders([]);
   };
 
   const getSelectedOrdersData = () => {
@@ -164,12 +182,20 @@ const OrderAssignment = () => {
       return order ? [order] : [];
     }
     
-    return [...pendingOrders, ...readyOrders].filter(order => 
-      selectedOrders.includes(order.id)
+    const selectedNewOrdersData = pendingOrders.filter(order => 
+      selectedNewOrders.includes(order.id)
     );
+    
+    const selectedReadyOrdersData = readyOrders.filter(order => 
+      selectedReadyOrders.includes(order.id)
+    );
+    
+    return {
+      newOrders: selectedNewOrdersData,
+      readyOrders: selectedReadyOrdersData
+    };
   };
 
-  // Function to check if an order is from the Ready tab
   const isOrderFromReadyTab = (orderId: string) => {
     return readyOrders.some(order => order.id === orderId);
   };
@@ -288,7 +314,7 @@ const OrderAssignment = () => {
                     <TableHead className="w-12 text-center">#</TableHead>
                     <TableHead className="w-12">
                       <Checkbox
-                        checked={selectedOrders.length > 0 && filteredPendingOrders.every(order => selectedOrders.includes(order.id))}
+                        checked={selectedNewOrders.length > 0 && filteredPendingOrders.every(order => selectedNewOrders.includes(order.id))}
                         onCheckedChange={handleSelectAll}
                       />
                     </TableHead>
@@ -310,7 +336,7 @@ const OrderAssignment = () => {
                       <TableCell className="text-center">{index + 1}</TableCell>
                       <TableCell>
                         <Checkbox
-                          checked={selectedOrders.includes(order.id)}
+                          checked={selectedNewOrders.includes(order.id)}
                           onCheckedChange={() => toggleOrderSelection(order.id)}
                         />
                       </TableCell>
@@ -376,7 +402,7 @@ const OrderAssignment = () => {
                       <TableHead className="w-12 text-center">#</TableHead>
                       <TableHead className="w-12">
                         <Checkbox
-                          checked={selectedOrders.length > 0 && readyOrders.every(order => selectedOrders.includes(order.id))}
+                          checked={selectedReadyOrders.length > 0 && readyOrders.every(order => selectedReadyOrders.includes(order.id))}
                           onCheckedChange={handleSelectAll}
                         />
                       </TableHead>
@@ -398,7 +424,7 @@ const OrderAssignment = () => {
                         <TableCell className="text-center">{index + 1}</TableCell>
                         <TableCell>
                           <Checkbox
-                            checked={selectedOrders.includes(order.id)}
+                            checked={selectedReadyOrders.includes(order.id)}
                             onCheckedChange={() => toggleOrderSelection(order.id)}
                           />
                         </TableCell>
@@ -453,10 +479,6 @@ const OrderAssignment = () => {
         onOpenChange={setIsAssignDialogOpen}
         selectedOrders={getSelectedOrdersData()}
         onAssignDriver={handleAssignDriver}
-        orderSourceMap={selectedOrders.reduce((acc, orderId) => {
-          acc[orderId] = isOrderFromReadyTab(orderId) ? 'ready' : 'new';
-          return acc;
-        }, {} as Record<string, 'new' | 'ready'>)}
       />
     </div>
   );

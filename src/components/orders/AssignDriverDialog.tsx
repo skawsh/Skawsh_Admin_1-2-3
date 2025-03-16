@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapPin, Package, Truck, User, CheckCircle2 } from "lucide-react";
+import { MapPin, Package, Truck, User, CheckCircle2, ShoppingBag } from "lucide-react";
 import { Order } from './types';
+import { Separator } from "@/components/ui/separator";
 
 interface Driver {
   id: string;
@@ -13,7 +14,7 @@ interface Driver {
   deliveriesCompleted: number;
   location: string;
   status: 'available' | 'delivering' | 'unavailable';
-  assignedOrders?: number; // Add this property to track assigned orders
+  assignedOrders?: number;
 }
 
 // Mock data for drivers
@@ -108,10 +109,11 @@ interface OrderTableData {
 interface AssignDriverDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedOrders: OrderTableData[];
+  selectedOrders: {
+    newOrders: OrderTableData[];
+    readyOrders: OrderTableData[];
+  } | OrderTableData[];
   onAssignDriver: (driverId: string, orderIds: string[]) => void;
-  isReadyForCollection?: boolean;
-  orderSourceMap?: Record<string, 'new' | 'ready'>;
 }
 
 export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
@@ -119,10 +121,18 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   onOpenChange,
   selectedOrders,
   onAssignDriver,
-  isReadyForCollection = false,
-  orderSourceMap = {}
 }) => {
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
+  
+  // Check if selectedOrders is an array (for backward compatibility) or an object with two arrays
+  const isSelectedOrdersArray = Array.isArray(selectedOrders);
+  
+  // Extract orders data based on the format
+  const newOrdersData = isSelectedOrdersArray ? [] : selectedOrders.newOrders;
+  const readyOrdersData = isSelectedOrdersArray ? [] : selectedOrders.readyOrders;
+  const allOrdersData = isSelectedOrdersArray 
+    ? selectedOrders 
+    : [...newOrdersData, ...readyOrdersData];
   
   // Filter drivers - available drivers are those with status not 'unavailable' AND no assigned orders
   const availableDrivers = mockDrivers.filter(driver => 
@@ -151,11 +161,17 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     if (selectedDriverId) {
       onAssignDriver(
         selectedDriverId, 
-        selectedOrders.map(order => order.id)
+        allOrdersData.map(order => order.id)
       );
       onOpenChange(false);
     }
   };
+
+  // Determine if we need to show separate tables or just one table
+  const showSeparateTables = !isSelectedOrdersArray && newOrdersData.length > 0 && readyOrdersData.length > 0;
+  const showNewOrdersTable = !isSelectedOrdersArray && newOrdersData.length > 0;
+  const showReadyOrdersTable = !isSelectedOrdersArray && readyOrdersData.length > 0;
+  const showSingleTable = isSelectedOrdersArray || (!showNewOrdersTable && !showReadyOrdersTable);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -166,38 +182,97 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
             <DialogTitle className="text-xl">Assign Driver to Orders</DialogTitle>
           </div>
           <DialogDescription>
-            Select a driver to assign {selectedOrders.length} {selectedOrders.length === 1 ? 'order' : 'orders'}
+            Select a driver to assign {allOrdersData.length} {allOrdersData.length === 1 ? 'order' : 'orders'}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 flex-1 overflow-hidden">
           <div>
             <h3 className="font-medium text-base mb-2">Selected Orders</h3>
-            <div className="border rounded-md">
-              <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
-                <div className="font-medium text-sm text-gray-700">Order ID</div>
-                <div className="font-medium text-sm text-gray-700">Location</div>
-                <div className="font-medium text-sm text-gray-700">Address</div>
+            
+            {showSingleTable && (
+              <div className="border rounded-md">
+                <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
+                  <div className="font-medium text-sm text-gray-700">Order ID</div>
+                  <div className="font-medium text-sm text-gray-700">Location</div>
+                  <div className="font-medium text-sm text-gray-700">Address</div>
+                </div>
+                <ScrollArea className="h-[120px]">
+                  {allOrdersData.map(order => {
+                    // For backward compatibility, handle single table case
+                    const isFromReadyTab = isSelectedOrdersArray 
+                      ? false 
+                      : readyOrdersData.some(ro => ro.id === order.id);
+                    
+                    return (
+                      <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
+                        <div className="text-sm">{order.orderId}</div>
+                        <div className="text-sm">
+                          {isFromReadyTab ? order.studio : order.customer}
+                        </div>
+                        <div className="text-sm">
+                          {isFromReadyTab ? order.studioAddress : order.customerAddress}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </ScrollArea>
               </div>
-              <ScrollArea className="h-[120px]">
-                {selectedOrders.map(order => {
-                  // Determine if this specific order is from the "Ready for Collection" tab
-                  const isOrderFromReadyTab = orderSourceMap[order.id] === 'ready' || isReadyForCollection;
-                  
-                  return (
-                    <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
-                      <div className="text-sm">{order.orderId}</div>
-                      <div className="text-sm">
-                        {isOrderFromReadyTab ? order.studio : order.customer}
-                      </div>
-                      <div className="text-sm">
-                        {isOrderFromReadyTab ? order.studioAddress : order.customerAddress}
-                      </div>
+            )}
+            
+            {showSeparateTables && (
+              <div className="space-y-4">
+                {showNewOrdersTable && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Package size={16} className="text-blue-600" />
+                      <h4 className="text-sm font-medium">New Orders ({newOrdersData.length})</h4>
                     </div>
-                  );
-                })}
-              </ScrollArea>
-            </div>
+                    <div className="border rounded-md">
+                      <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
+                        <div className="font-medium text-sm text-gray-700">Order ID</div>
+                        <div className="font-medium text-sm text-gray-700">Customer</div>
+                        <div className="font-medium text-sm text-gray-700">Customer Address</div>
+                      </div>
+                      <ScrollArea className="h-[100px]">
+                        {newOrdersData.map(order => (
+                          <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
+                            <div className="text-sm">{order.orderId}</div>
+                            <div className="text-sm">{order.customer}</div>
+                            <div className="text-sm">{order.customerAddress}</div>
+                          </div>
+                        ))}
+                      </ScrollArea>
+                    </div>
+                  </div>
+                )}
+                
+                {showReadyOrdersTable && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <ShoppingBag size={16} className="text-green-600" />
+                      <h4 className="text-sm font-medium">Ready for Collection Orders ({readyOrdersData.length})</h4>
+                    </div>
+                    <div className="border rounded-md">
+                      <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
+                        <div className="font-medium text-sm text-gray-700">Order ID</div>
+                        <div className="font-medium text-sm text-gray-700">Studio</div>
+                        <div className="font-medium text-sm text-gray-700">Studio Address</div>
+                      </div>
+                      <ScrollArea className="h-[100px]">
+                        {readyOrdersData.map(order => (
+                          <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
+                            <div className="text-sm">{order.orderId}</div>
+                            <div className="text-sm">{order.studio}</div>
+                            <div className="text-sm">{order.studioAddress}</div>
+                          </div>
+                        ))}
+                      </ScrollArea>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div>
@@ -208,7 +283,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               </span>
             </div>
             
-            <ScrollArea className="h-[380px]">
+            <ScrollArea className="h-[280px]">
               <div className="space-y-2 pr-4 pb-6">
                 {sortedDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
