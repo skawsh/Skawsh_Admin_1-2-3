@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapPin, Package, Truck, Star, User, CheckCircle2 } from "lucide-react";
+import { MapPin, Package, Truck, User, CheckCircle2 } from "lucide-react";
 import { Order } from './types';
 
 interface Driver {
@@ -199,7 +198,6 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
               <div className="space-y-1">
                 {sortedDrivers.map(driver => {
                   const isUnavailable = driver.status === 'unavailable';
-                  const isDelivering = driver.status === 'delivering';
                   const hasAssignedOrders = driver.assignedOrders && driver.assignedOrders > 0;
                   const isAvailable = !isUnavailable && !hasAssignedOrders;
                   const hasZeroOrders = driver.assignedOrders === 0;
@@ -221,12 +219,6 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                           <p className="text-xs text-gray-500">ID: {driver.id}</p>
                         </div>
                         
-                        {isDelivering && (
-                          <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
-                            Delivering
-                          </span>
-                        )}
-                        
                         {isUnavailable && (
                           <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">
                             Unavailable
@@ -240,8 +232,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                         )}
                         
                         {hasZeroOrders && !isUnavailable && (
-                          <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded flex items-center gap-1">
-                            <CheckCircle2 className="h-3 w-3 text-green-600" />
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded flex items-center justify-center w-6 h-6">
+                            <CheckCircle2 className="h-4 w-4 text-green-600" />
                           </span>
                         )}
                       </div>
