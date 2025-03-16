@@ -19,6 +19,20 @@ export interface Order {
   assigned?: boolean;
 }
 
+// Table data interface
+export interface OrderTableData {
+  id: string;
+  orderId: string;
+  date: string;
+  customer: string;
+  phone: string;
+  customerAddress: string;
+  studioAddress: string;
+  studio: string;
+  washType: string;
+  distance: string;
+}
+
 // Component props types
 export interface OrdersTableProps {
   className?: string;
