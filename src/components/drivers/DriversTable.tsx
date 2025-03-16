@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Table, 
@@ -10,7 +9,7 @@ import {
 } from '@/components/ui/table';
 import { DriversTableProps } from './types';
 import { sampleDrivers } from './mockData';
-import { MoreHorizontal, Package } from 'lucide-react';
+import { MoreHorizontal, Package, User, FileText } from 'lucide-react';
 import DriverStatusBadge from './DriverStatusBadge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Driver } from './types';
@@ -131,6 +130,44 @@ const DriversTable = ({ className }: DriversTableProps) => {
     return drivers.filter(driver => driver.assignedOrders && driver.assignedOrders > 0);
   };
   
+  const viewOrderDetails = (driverId: string) => {
+    const orders = assignedOrders[driverId] || [];
+    if (orders.length === 0) {
+      toast({
+        title: "No Orders Found",
+        description: "This driver has no assigned orders to view.",
+      });
+      return;
+    }
+    
+    toast({
+      title: "Order Details",
+      description: `Viewing ${orders.length} orders for this driver`,
+    });
+    
+    // In a real application, you might navigate to a detailed view or open a modal
+    console.log("Order details for driver:", driverId, orders);
+  };
+  
+  const viewDriverDetails = (driverId: string) => {
+    const driver = drivers.find(d => d.id === driverId);
+    if (!driver) {
+      toast({
+        title: "Driver Not Found",
+        description: "Could not find details for this driver.",
+      });
+      return;
+    }
+    
+    toast({
+      title: "Driver Details",
+      description: `Viewing details for ${driver.name}`,
+    });
+    
+    // In a real application, you might navigate to a detailed view or open a modal
+    console.log("Driver details:", driver);
+  };
+  
   return (
     <div className="bg-white rounded-md shadow-sm">
       <Tabs defaultValue="all" onValueChange={setActiveTab}>
@@ -230,13 +267,26 @@ const DriversTable = ({ className }: DriversTableProps) => {
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="text-gray-500 hover:text-gray-700"
-                      >
-                        <MoreHorizontal size={16} />
-                      </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                          onClick={() => viewOrderDetails(driver.id)}
+                        >
+                          <FileText size={14} />
+                          <span className="hidden sm:inline">Orders</span>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="text-green-600 hover:text-green-800 flex items-center gap-1"
+                          onClick={() => viewDriverDetails(driver.id)}
+                        >
+                          <User size={14} />
+                          <span className="hidden sm:inline">Driver</span>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
