@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
+import { useToast } from "@/hooks/use-toast";
 
 interface OrderTableData {
   id: string;
@@ -41,6 +43,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   onAssignDriver,
 }) => {
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
+  const { toast } = useToast();
   
   // Check if selectedOrders is an array (for backward compatibility) or an object with arrays
   const isSelectedOrdersArray = Array.isArray(selectedOrders);
@@ -105,11 +108,35 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   
   const handleAssignDriver = () => {
     if (selectedDriverId) {
+      // Call the original onAssignDriver function
       onAssignDriver(
         selectedDriverId, 
         allOrdersData.map(order => order.id)
       );
+      
+      // Save the assignment data to localStorage for cross-component communication
+      localStorage.setItem('driverAssignment', JSON.stringify({
+        driverId: selectedDriverId,
+        orders: allOrdersData
+      }));
+      
+      // Dispatch a storage event to notify other components
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'driverAssignment',
+        newValue: JSON.stringify({
+          driverId: selectedDriverId,
+          orders: allOrdersData
+        })
+      }));
+      
+      // Close the dialog
       onOpenChange(false);
+      
+      // Show a success toast
+      toast({
+        title: "Orders Assigned",
+        description: `${allOrdersData.length} orders assigned to ${driversData.find(d => d.id === selectedDriverId)?.name}`,
+      });
     }
   };
 
