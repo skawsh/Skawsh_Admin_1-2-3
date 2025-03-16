@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { ArrowLeft, CheckSquare, Clock, Package, ClipboardCheck, Search } from 'lucide-react';
+import { ArrowLeft, CheckSquare, Clock, Package, ClipboardCheck, Search, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,27 +22,24 @@ const OrderAssignment = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [washTypeFilter, setWashTypeFilter] = useState('all');
 
-  // Filter orders based on their status
   const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
   const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
-  
-  // Convert the sample order data to the format needed for the table
+
   const mapOrdersToTableData = (orders: Order[]) => {
     return orders.map(order => ({
       id: order.id,
       orderId: order.id,
       date: order.orderDate,
       customer: order.customer,
-      phone: '+91 ' + Math.floor(Math.random() * 9000000000 + 1000000000), // Mock phone number
-      customerAddress: generateRandomAddress(), // New customer address
-      studioAddress: order.studio + ' Studio, Hyderabad', // Changed from address to studioAddress
+      phone: '+91 ' + Math.floor(Math.random() * 9000000000 + 1000000000),
+      customerAddress: generateRandomAddress(),
+      studioAddress: order.studio + ' Studio, Hyderabad',
       studio: order.studio,
       washType: order.washType === 'express' ? 'Express Wash' : order.washType === 'standard' ? 'Standard Wash' : 'Both Wash',
-      distance: (Math.random() * 5 + 1).toFixed(1) + ' km' // Random distance between customer and studio
+      distance: (Math.random() * 5 + 1).toFixed(1) + ' km'
     }));
   };
 
-  // Helper function to generate random addresses
   const generateRandomAddress = () => {
     const plots = ['7-1-397', '8-2-120', '9-3-456', '10-4-789', '11-5-234'];
     const areas = ['Ameerpet', 'Banjara Hills', 'Jubilee Hills', 'Madhapur', 'Gachibowli'];
@@ -55,7 +51,6 @@ const OrderAssignment = () => {
   const pendingOrders = mapOrdersToTableData(newOrders);
   const readyOrders = mapOrdersToTableData(readyForCollectionOrders);
 
-  // Apply search and filter to orders
   const filteredPendingOrders = pendingOrders.filter(order => {
     const matchesSearch = !searchQuery || 
       order.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -200,8 +195,8 @@ const OrderAssignment = () => {
                     <TableHead>Customer</TableHead>
                     <TableHead>Phone</TableHead>
                     <TableHead>Customer Address</TableHead>
-                    <TableHead>Studio Address</TableHead>
                     <TableHead>Studio</TableHead>
+                    <TableHead>Studio Address</TableHead>
                     <TableHead>Wash Type</TableHead>
                     <TableHead>Distance</TableHead>
                     <TableHead>Action</TableHead>
@@ -222,8 +217,8 @@ const OrderAssignment = () => {
                       <TableCell>{order.customer}</TableCell>
                       <TableCell>{order.phone}</TableCell>
                       <TableCell>{order.customerAddress}</TableCell>
-                      <TableCell>{order.studioAddress}</TableCell>
                       <TableCell>{order.studio}</TableCell>
+                      <TableCell>{order.studioAddress}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
@@ -234,7 +229,8 @@ const OrderAssignment = () => {
                       </TableCell>
                       <TableCell>{order.distance}</TableCell>
                       <TableCell>
-                        <Button variant="outline" className="bg-white hover:bg-gray-50">
+                        <Button variant="outline" className="bg-white hover:bg-gray-50 flex items-center gap-2">
+                          <UserPlus size={16} />
                           Assign
                         </Button>
                       </TableCell>
@@ -278,8 +274,8 @@ const OrderAssignment = () => {
                       <TableHead>Customer</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead>Customer Address</TableHead>
-                      <TableHead>Studio Address</TableHead>
                       <TableHead>Studio</TableHead>
+                      <TableHead>Studio Address</TableHead>
                       <TableHead>Wash Type</TableHead>
                       <TableHead>Distance</TableHead>
                       <TableHead>Action</TableHead>
@@ -297,8 +293,8 @@ const OrderAssignment = () => {
                         <TableCell>{order.customer}</TableCell>
                         <TableCell>{order.phone}</TableCell>
                         <TableCell>{order.customerAddress}</TableCell>
-                        <TableCell>{order.studioAddress}</TableCell>
                         <TableCell>{order.studio}</TableCell>
+                        <TableCell>{order.studioAddress}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
@@ -309,7 +305,8 @@ const OrderAssignment = () => {
                         </TableCell>
                         <TableCell>{order.distance}</TableCell>
                         <TableCell>
-                          <Button variant="outline" className="bg-white hover:bg-gray-50">
+                          <Button variant="outline" className="bg-white hover:bg-gray-50 flex items-center gap-2">
+                            <UserPlus size={16} />
                             Assign
                           </Button>
                         </TableCell>
