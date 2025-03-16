@@ -13,7 +13,6 @@ export const {
   totalOrders,
   newOrders,
   deliveredOrders,
-  collectedOrders,
   inProgressOrders,
   readyForCollectOrders,
   cancelledOrders,

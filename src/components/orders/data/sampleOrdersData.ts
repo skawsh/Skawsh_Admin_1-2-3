@@ -16,7 +16,7 @@ export const generateSampleOrders = (): Order[] => {
       id: 'ORD-0001',
       orderDate: formatDateString(getRandomDate(lastMonth, today)),
       customer: 'Rajesh Kumar',
-      status: 'collected',
+      status: 'delivered',
       studio: 'PKC Laundries',
       driver: 'Anand Reddy',
       total: 950,
@@ -123,7 +123,7 @@ export const generateSampleOrders = (): Order[] => {
       id: 'ORD-0009',
       orderDate: formatDateString(orderDate9),
       customer: 'Kiran Reddy',
-      status: 'collected',
+      status: 'delivered',
       studio: 'FABO',
       driver: 'Ravi Teja',
       total: 1100,
@@ -174,8 +174,8 @@ export const generateSampleOrders = (): Order[] => {
     // Create a date object from order date string
     const orderDateObj = new Date(order.orderDate);
     
-    // Delivered and Collected statuses should have delivery dates
-    if (order.status === 'delivered' || order.status === 'collected') {
+    // Only delivered status should have delivery dates
+    if (order.status === 'delivered') {
       order.deliveryDate = formatDateString(getDeliveryDate(orderDateObj));
     }
   });

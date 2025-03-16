@@ -16,11 +16,6 @@ export const calculateOrderMetrics = (orders: Order[]) => {
     order.status === 'delivered'
   ).length;
 
-  // Calculate collected orders
-  const collectedOrders = orders.filter(order => 
-    order.status === 'collected'
-  ).length;
-
   // Calculate in-progress orders
   const inProgressOrders = orders.filter(order => 
     order.status === 'in-progress'
@@ -51,7 +46,6 @@ export const calculateOrderMetrics = (orders: Order[]) => {
     totalOrders,
     newOrders,
     deliveredOrders,
-    collectedOrders,
     inProgressOrders,
     readyForCollectOrders,
     cancelledOrders,

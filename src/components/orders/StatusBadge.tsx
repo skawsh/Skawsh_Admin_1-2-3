@@ -18,8 +18,6 @@ const StatusBadge = ({ status }: StatusBadgeProps) => {
       return <span className="status-badge status-ready">Ready for collection</span>;
     case "delivered":
       return <span className="status-badge status-delivered">Order Delivered</span>;
-    case "collected":
-      return <span className="status-badge status-collected">Order collected</span>;
     case "cancelled":
       return <span className="status-badge status-cancelled">Order cancelled</span>;
     default:
