@@ -111,6 +111,7 @@ interface AssignDriverDialogProps {
   selectedOrders: OrderTableData[];
   onAssignDriver: (driverId: string, orderIds: string[]) => void;
   isReadyForCollection?: boolean;
+  orderSourceMap?: Record<string, 'new' | 'ready'>;
 }
 
 export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
@@ -118,7 +119,8 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   onOpenChange,
   selectedOrders,
   onAssignDriver,
-  isReadyForCollection = false
+  isReadyForCollection = false,
+  orderSourceMap = {}
 }) => {
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
   
@@ -174,25 +176,26 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
             <div className="border rounded-md">
               <div className="grid grid-cols-3 p-2 bg-gray-50 border-b">
                 <div className="font-medium text-sm text-gray-700">Order ID</div>
-                <div className="font-medium text-sm text-gray-700">
-                  {isReadyForCollection ? "Studio" : "Customer"}
-                </div>
-                <div className="font-medium text-sm text-gray-700">
-                  {isReadyForCollection ? "Studio Address" : "Customer Address"}
-                </div>
+                <div className="font-medium text-sm text-gray-700">Location</div>
+                <div className="font-medium text-sm text-gray-700">Address</div>
               </div>
               <ScrollArea className="h-[120px]">
-                {selectedOrders.map(order => (
-                  <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
-                    <div className="text-sm">{order.orderId}</div>
-                    <div className="text-sm">
-                      {isReadyForCollection ? order.studio : order.customer}
+                {selectedOrders.map(order => {
+                  // Determine if this specific order is from the "Ready for Collection" tab
+                  const isOrderFromReadyTab = orderSourceMap[order.id] === 'ready' || isReadyForCollection;
+                  
+                  return (
+                    <div key={order.id} className="grid grid-cols-3 p-2 border-b last:border-0">
+                      <div className="text-sm">{order.orderId}</div>
+                      <div className="text-sm">
+                        {isOrderFromReadyTab ? order.studio : order.customer}
+                      </div>
+                      <div className="text-sm">
+                        {isOrderFromReadyTab ? order.studioAddress : order.customerAddress}
+                      </div>
                     </div>
-                    <div className="text-sm">
-                      {isReadyForCollection ? order.studioAddress : order.customerAddress}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </ScrollArea>
             </div>
           </div>

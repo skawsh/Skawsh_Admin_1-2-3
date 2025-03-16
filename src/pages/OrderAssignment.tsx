@@ -110,10 +110,14 @@ const OrderAssignment = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedOrders.length === filteredPendingOrders.length) {
+    const currentTabOrders = activeTab === 'new' 
+      ? filteredPendingOrders 
+      : readyOrders;
+      
+    if (selectedOrders.length === currentTabOrders.length) {
       setSelectedOrders([]);
     } else {
-      setSelectedOrders(filteredPendingOrders.map(order => order.id));
+      setSelectedOrders(currentTabOrders.map(order => order.id));
     }
   };
 
@@ -127,8 +131,8 @@ const OrderAssignment = () => {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // Clear selection when switching tabs
-    setSelectedOrders([]);
+    // Don't clear selection when switching tabs
+    // We've removed: setSelectedOrders([]);
   };
 
   const handleAssignSelected = () => {
@@ -165,8 +169,10 @@ const OrderAssignment = () => {
     );
   };
 
-  // Determine if orders are from the Ready tab
-  const isFromReadyTab = activeTab === 'ready';
+  // Function to check if an order is from the Ready tab
+  const isOrderFromReadyTab = (orderId: string) => {
+    return readyOrders.some(order => order.id === orderId);
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
@@ -282,7 +288,7 @@ const OrderAssignment = () => {
                     <TableHead className="w-12 text-center">#</TableHead>
                     <TableHead className="w-12">
                       <Checkbox
-                        checked={selectedOrders.length === filteredPendingOrders.length && filteredPendingOrders.length > 0}
+                        checked={selectedOrders.length > 0 && filteredPendingOrders.every(order => selectedOrders.includes(order.id))}
                         onCheckedChange={handleSelectAll}
                       />
                     </TableHead>
@@ -368,7 +374,12 @@ const OrderAssignment = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-12 text-center">#</TableHead>
-                      <TableHead className="w-12"></TableHead>
+                      <TableHead className="w-12">
+                        <Checkbox
+                          checked={selectedOrders.length > 0 && readyOrders.every(order => selectedOrders.includes(order.id))}
+                          onCheckedChange={handleSelectAll}
+                        />
+                      </TableHead>
                       <TableHead>Order ID</TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead>Customer</TableHead>
@@ -442,7 +453,10 @@ const OrderAssignment = () => {
         onOpenChange={setIsAssignDialogOpen}
         selectedOrders={getSelectedOrdersData()}
         onAssignDriver={handleAssignDriver}
-        isReadyForCollection={isFromReadyTab}
+        orderSourceMap={selectedOrders.reduce((acc, orderId) => {
+          acc[orderId] = isOrderFromReadyTab(orderId) ? 'ready' : 'new';
+          return acc;
+        }, {} as Record<string, 'new' | 'ready'>)}
       />
     </div>
   );
