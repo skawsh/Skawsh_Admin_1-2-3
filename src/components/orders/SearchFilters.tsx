@@ -179,7 +179,7 @@ const SearchFilters = ({
             <SelectItem value="all">All Types</SelectItem>
             <SelectItem value="standard">Standard</SelectItem>
             <SelectItem value="express">Express</SelectItem>
-            <SelectItem value="both">Both</SelectItem>
+            <SelectItem value="both">Express & Standard</SelectItem>
           </SelectContent>
         </Select>
       </div>
