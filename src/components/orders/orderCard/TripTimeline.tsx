@@ -58,7 +58,7 @@ const TripTimeline: React.FC<TripTimelineProps> = ({
           {determinePickedUpIcon(orderId, customPickedUp)}
         </div>
         <div>
-          <div className={`font-medium text-sm ${customPickedUp ? 'text-green-700' : 'text-gray-500'}`}>
+          <div className={`font-medium text-sm ${reported ? 'text-gray-400' : customPickedUp ? 'text-green-700' : 'text-gray-500'}`}>
             {reported ? 
               `Pick up pending` : 
               getPickupStatusLabel(orderId, customPickedUp, customPickupTime, pickupLabel, isReadyForCollection)}
