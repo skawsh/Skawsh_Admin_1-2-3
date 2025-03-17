@@ -63,6 +63,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
     label: isNewOrder ? "Drop" : "Delivery"
   };
 
+  // Define pickup/drop labels based on order status for trip tracking
+  const pickupLabel = isReadyForCollection ? "Collected" : "Picked Up";
+  const dropLabel = isReadyForCollection ? "Delivered" : "Dropped Off";
+
   return (
     <>
       <Card className="w-full max-w-sm overflow-hidden border border-gray-100 shadow-sm">
@@ -240,7 +244,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   </div>
                   <div>
                     <div className={`font-medium text-sm ${pickedUp ? 'text-green-700' : 'text-gray-500'}`}>
-                      Picked Up
+                      {pickupLabel}
                     </div>
                     {pickedUp && pickedUpTime ? (
                       <div className="text-xs text-gray-500">{pickedUpTime}</div>
@@ -257,7 +261,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   </div>
                   <div>
                     <div className={`font-medium text-sm ${dropped ? 'text-green-700' : 'text-gray-500'}`}>
-                      Dropped Off
+                      {dropLabel}
                     </div>
                     {dropped && droppedTime ? (
                       <div className="text-xs text-gray-500">{droppedTime}</div>
