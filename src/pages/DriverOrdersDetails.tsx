@@ -522,4 +522,3 @@ const DriverOrdersDetails = () => {
 };
 
 export default DriverOrdersDetails;
-
