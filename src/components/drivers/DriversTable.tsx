@@ -89,6 +89,7 @@ const DriversTable = ({ className }: DriversTableProps) => {
       )
     );
     
+    // Keep this toast message as it's now the only toast notification for assignments
     toast({
       title: "Orders Assigned",
       description: `${orders.length} orders assigned to driver successfully`,

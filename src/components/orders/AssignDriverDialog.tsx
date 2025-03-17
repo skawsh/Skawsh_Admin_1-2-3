@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -126,12 +125,6 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
       window.dispatchEvent(new CustomEvent('driverAssignment', { 
         detail: assignmentData 
       }));
-      
-      // Show success toast
-      toast({
-        title: "Orders Assigned",
-        description: `${allOrdersData.length} orders assigned to driver successfully`,
-      });
       
       // Close dialog
       onOpenChange(false);

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,7 +7,7 @@ import { AssignDriverDialog } from '@/components/orders/AssignDriverDialog';
 import { AssignmentHeader } from '@/components/orders/AssignmentHeader';
 import { OrdersAssignmentTable } from '@/components/orders/OrdersAssignmentTable';
 import { mapOrdersToTableData, OrderTableData } from '@/components/orders/OrderTableDataMapper';
-import { toast } from "sonner";
+import { toast } from '@/hooks/use-toast';
 
 const OrderAssignment = () => {
   const [selectedNewOrders, setSelectedNewOrders] = useState<string[]>([]);
@@ -143,9 +142,6 @@ const OrderAssignment = () => {
   const handleAssignDriver = (driverId: string, orderIds: string[]) => {
     console.log('Assigning driver:', driverId, 'to orders:', orderIds);
     
-    const orderText = orderIds.length === 1 ? 'order' : 'orders';
-    toast.success(`Successfully assigned driver to ${orderIds.length} ${orderText}`);
-    
     setSelectedNewOrders([]);
     setSelectedReadyOrders([]);
     setSelectedRescheduledOrders([]);
@@ -153,12 +149,10 @@ const OrderAssignment = () => {
 
   const getSelectedOrdersData = () => {
     if (currentOrderToAssign) {
-      // If assigning a single order, find it from all available orders
       const order = [...pendingOrders, ...readyOrders, ...rescheduledOrdersData]
         .find(o => o.id === currentOrderToAssign);
         
       if (order) {
-        // If it's a rescheduled order, categorize it properly
         if (rescheduledOrdersData.some(ro => ro.id === order.id)) {
           return {
             newOrders: order.status && order.status !== 'ready-for-collect' ? [order] : [],
@@ -167,7 +161,6 @@ const OrderAssignment = () => {
           };
         }
         
-        // If it's a regular order from new or ready tabs
         return {
           newOrders: pendingOrders.some(po => po.id === order.id) ? [order] : [],
           readyOrders: readyOrders.some(ro => ro.id === order.id) ? [order] : [],
@@ -182,17 +175,14 @@ const OrderAssignment = () => {
       };
     }
     
-    // Get orders that were selected from the new orders tab
     const selectedNewOrdersData = pendingOrders.filter(order => 
       selectedNewOrders.includes(order.id)
     );
     
-    // Get orders that were selected from the ready orders tab
     const selectedReadyOrdersData = readyOrders.filter(order => 
       selectedReadyOrders.includes(order.id)
     );
     
-    // Get orders that were selected from the rescheduled orders tab
     const selectedRescheduledOrdersData = rescheduledOrdersData.filter(order => 
       selectedRescheduledOrders.includes(order.id)
     );
