@@ -14,6 +14,7 @@ import {
 import { Search } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import StatusBadge from './StatusBadge';
+import OrderCard from './OrderCard';
 
 interface OrderTableData {
   id: string;
@@ -27,6 +28,7 @@ interface OrderTableData {
   washType: string;
   distance: string;
   status?: string; // Add status field to show order status
+  assigned?: boolean; // Add assigned flag
 }
 
 interface OrdersAssignmentTableProps {
@@ -42,6 +44,8 @@ interface OrdersAssignmentTableProps {
   onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   showSearch?: boolean;
   showStatus?: boolean; // Default prop to conditionally show status column
+  useCardView?: boolean; // Add prop to toggle between table and card view
+  onViewDetails?: (orderId: string) => void; // Add handler for view details
 }
 
 export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
@@ -56,7 +60,9 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
   searchQuery = '',
   onSearchChange,
   showSearch = false,
-  showStatus = true // Changed default to true to show status in all tables
+  showStatus = true, // Changed default to true to show status in all tables
+  useCardView = false,
+  onViewDetails
 }) => {
   return (
     <div className="bg-white rounded-md p-4 border border-gray-100">
@@ -82,84 +88,109 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
         </div>
       )}
       
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12 text-center">#</TableHead>
-              <TableHead className="w-12">
-                <Checkbox
-                  checked={selectedOrders.length > 0 && orders.every(order => selectedOrders.includes(order.id))}
-                  onCheckedChange={onSelectAll}
-                />
-              </TableHead>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Customer</TableHead>
-              {showStatus && <TableHead>Status</TableHead>}
-              <TableHead>Phone</TableHead>
-              <TableHead>Customer Address</TableHead>
-              <TableHead>Studio</TableHead>
-              <TableHead>Studio Address</TableHead>
-              <TableHead>Wash Type</TableHead>
-              <TableHead>Distance</TableHead>
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.length > 0 ? (
-              orders.map((order, index) => (
-                <TableRow key={order.id} className="hover:bg-gray-50">
-                  <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedOrders.includes(order.id)}
-                      onCheckedChange={() => onToggleOrderSelection(order.id)}
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">{order.orderId}</TableCell>
-                  <TableCell>{order.date}</TableCell>
-                  <TableCell>{order.customer}</TableCell>
-                  {showStatus && (
+      {useCardView ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {orders.length > 0 ? (
+            orders.map((order) => (
+              <OrderCard
+                key={order.id}
+                id={order.id}
+                orderId={order.orderId}
+                date={order.date}
+                status={order.status || ''}
+                customer={order.customer}
+                customerAddress={order.customerAddress}
+                studio={order.studio}
+                studioAddress={order.studioAddress}
+                onViewDetails={() => onViewDetails && onViewDetails(order.id)}
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-10 text-gray-500">
+              No orders found matching your search criteria
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12 text-center">#</TableHead>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={selectedOrders.length > 0 && orders.every(order => selectedOrders.includes(order.id))}
+                    onCheckedChange={onSelectAll}
+                  />
+                </TableHead>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Customer</TableHead>
+                {showStatus && <TableHead>Status</TableHead>}
+                <TableHead>Phone</TableHead>
+                <TableHead>Customer Address</TableHead>
+                <TableHead>Studio</TableHead>
+                <TableHead>Studio Address</TableHead>
+                <TableHead>Wash Type</TableHead>
+                <TableHead>Distance</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {orders.length > 0 ? (
+                orders.map((order, index) => (
+                  <TableRow key={order.id} className="hover:bg-gray-50">
+                    <TableCell className="text-center">{index + 1}</TableCell>
                     <TableCell>
-                      {order.status && <StatusBadge status={order.status as any} />}
+                      <Checkbox
+                        checked={selectedOrders.includes(order.id)}
+                        onCheckedChange={() => onToggleOrderSelection(order.id)}
+                      />
                     </TableCell>
-                  )}
-                  <TableCell>{order.phone}</TableCell>
-                  <TableCell className="max-w-[200px] truncate" title={order.customerAddress}>{order.customerAddress}</TableCell>
-                  <TableCell>{order.studio}</TableCell>
-                  <TableCell className="max-w-[200px] truncate" title={order.studioAddress}>{order.studioAddress}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
-                        <Package size={14} className="text-blue-600" />
+                    <TableCell className="font-medium">{order.orderId}</TableCell>
+                    <TableCell>{order.date}</TableCell>
+                    <TableCell>{order.customer}</TableCell>
+                    {showStatus && (
+                      <TableCell>
+                        {order.status && <StatusBadge status={order.status} />}
+                      </TableCell>
+                    )}
+                    <TableCell>{order.phone}</TableCell>
+                    <TableCell className="max-w-[200px] truncate" title={order.customerAddress}>{order.customerAddress}</TableCell>
+                    <TableCell>{order.studio}</TableCell>
+                    <TableCell className="max-w-[200px] truncate" title={order.studioAddress}>{order.studioAddress}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="bg-blue-100 h-6 w-6 rounded-md flex items-center justify-center">
+                          <Package size={14} className="text-blue-600" />
+                        </div>
+                        {order.washType}
                       </div>
-                      {order.washType}
-                    </div>
-                  </TableCell>
-                  <TableCell>{order.distance}</TableCell>
-                  <TableCell>
-                    <Button 
-                      variant="outline" 
-                      className="bg-white hover:bg-gray-50 flex items-center gap-2 whitespace-nowrap"
-                      onClick={() => onAssignSingle(order.id)}
-                    >
-                      <UserPlus size={16} />
-                      Assign
-                    </Button>
+                    </TableCell>
+                    <TableCell>{order.distance}</TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="outline" 
+                        className="bg-white hover:bg-gray-50 flex items-center gap-2 whitespace-nowrap"
+                        onClick={() => onAssignSingle(order.id)}
+                      >
+                        <UserPlus size={16} />
+                        Assign
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={showStatus ? 13 : 12} className="text-center py-10 text-gray-500">
+                    No orders found matching your search criteria
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={showStatus ? 13 : 12} className="text-center py-10 text-gray-500">
-                  No orders found matching your search criteria
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 };

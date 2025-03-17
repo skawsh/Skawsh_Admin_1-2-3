@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,6 +19,7 @@ const OrderAssignment = () => {
   const [currentOrderToAssign, setCurrentOrderToAssign] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('new');
   const [assignedOrderIds, setAssignedOrderIds] = useState<string[]>([]);
+  const [assignedOrdersData, setAssignedOrdersData] = useState<OrderTableData[]>([]);
 
   useEffect(() => {
     const storedAssignments = localStorage.getItem('driverAssignments');
@@ -29,6 +29,7 @@ const OrderAssignment = () => {
         if (Array.isArray(orders)) {
           const orderIds = orders.map((order: any) => order.id);
           setAssignedOrderIds(orderIds);
+          setAssignedOrdersData(orders);
         }
       } catch (error) {
         console.error('Error parsing stored driver assignments:', error);
@@ -39,6 +40,11 @@ const OrderAssignment = () => {
       if (event.detail && event.detail.orders) {
         const newAssignedIds = event.detail.orders.map((order: any) => order.id);
         setAssignedOrderIds(prevIds => [...new Set([...prevIds, ...newAssignedIds])]);
+        setAssignedOrdersData(prevOrders => {
+          const existingIds = new Set(prevOrders.map(o => o.id));
+          const newOrders = event.detail.orders.filter((o: any) => !existingIds.has(o.id));
+          return [...prevOrders, ...newOrders];
+        });
       }
     };
 
@@ -175,15 +181,21 @@ const OrderAssignment = () => {
     setIsAssignDialogOpen(true);
   };
 
+  const handleViewDetails = (orderId: string) => {
+    console.log('View details for order:', orderId);
+    toast.info(`Viewing details for order ${orderId}`);
+  };
+
   const handleAssignDriver = (driverId: string, orderIds: string[]) => {
     console.log('Assigning driver:', driverId, 'to orders:', orderIds);
     
     const orderText = orderIds.length === 1 ? 'order' : 'orders';
     toast.success(`Successfully assigned driver to ${orderIds.length} ${orderText}`);
     
+    const newOrdersData = getOrdersDataById(orderIds);
     const assignmentData = {
       driverId: driverId,
-      orders: getOrdersDataById(orderIds)
+      orders: newOrdersData
     };
     
     localStorage.setItem('driverAssignments', JSON.stringify(assignmentData));
@@ -193,6 +205,11 @@ const OrderAssignment = () => {
     }));
     
     setAssignedOrderIds(prevIds => [...new Set([...prevIds, ...orderIds])]);
+    setAssignedOrdersData(prevOrders => {
+      const existingIds = new Set(prevOrders.map(o => o.id));
+      const newOrders = newOrdersData.filter(o => !existingIds.has(o.id));
+      return [...prevOrders, ...newOrders];
+    });
     
     setSelectedNewOrders([]);
     setSelectedReadyOrders([]);
@@ -201,7 +218,7 @@ const OrderAssignment = () => {
 
   const getOrdersDataById = (orderIds: string[]) => {
     const allOrders = [...pendingOrders, ...readyOrders, ...rescheduledOrdersData];
-    return orderIds.map(id => allOrders.find(order => order.id === id)).filter(Boolean);
+    return orderIds.map(id => allOrders.find(order => order.id === id)).filter(Boolean) as OrderTableData[];
   };
 
   const getSelectedOrdersData = () => {
@@ -282,6 +299,12 @@ const OrderAssignment = () => {
             <Clock size={16} />
             Rescheduled
           </TabsTrigger>
+          {assignedOrdersData.length > 0 && (
+            <TabsTrigger value="assigned" className="flex items-center gap-2">
+              <Package size={16} />
+              Assigned Orders
+            </TabsTrigger>
+          )}
         </TabsList>
         
         <TabsContent value="new" className="space-y-4">
@@ -340,6 +363,27 @@ const OrderAssignment = () => {
           ) : (
             <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
               No rescheduled orders
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="assigned">
+          {assignedOrdersData.length > 0 ? (
+            <OrdersAssignmentTable
+              title="Assigned Orders"
+              icon={<Package size={20} className="text-green-600" />}
+              statusText={<div className="flex items-center gap-1"><Clock size={16} /><span>{assignedOrdersData.length} Orders Assigned</span></div>}
+              orders={assignedOrdersData}
+              selectedOrders={[]}
+              onToggleOrderSelection={() => {}}
+              onSelectAll={() => {}}
+              onAssignSingle={() => {}}
+              useCardView={true}
+              onViewDetails={handleViewDetails}
+            />
+          ) : (
+            <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
+              No assigned orders
             </div>
           )}
         </TabsContent>
