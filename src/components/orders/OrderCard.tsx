@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck, CheckCircle2, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -79,6 +80,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
   // Special handling for ORD-0004
   const isORD0004 = orderId === 'ORD-0004';
 
+  // Format the wash type display
+  const getFormattedWashType = (type?: string) => {
+    if (!type) return "Standard";
+    if (type === 'both') return "Standard & Express";
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
   function determinePickupTime(orderId: string, defaultTime: string | null | undefined): string | null | undefined {
     switch (orderId) {
       case 'ORD-0011':
@@ -142,11 +150,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </div>
           )}
           
-          {/* Wash Type Badge - newly added */}
+          {/* Wash Type Badge - Updated formatting */}
           <div className="flex items-center gap-2">
             <Package size={16} className="text-blue-600" />
             <span className="text-sm font-medium bg-blue-50 text-blue-700 px-2 py-1 rounded-sm">
-              {washType === 'both' ? 'Express & Standard' : washType?.charAt(0).toUpperCase() + washType?.slice(1)} Wash
+              {getFormattedWashType(washType)} Wash
             </span>
           </div>
           
@@ -229,12 +237,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </div>
             )}
             
-            {/* Wash Type - newly added */}
+            {/* Wash Type - Updated formatting */}
             <div className="flex items-center justify-between">
               <span className="text-base font-medium">Wash Type:</span>
               <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded text-sm font-medium flex items-center gap-1">
                 <Package size={14} className="text-blue-600" />
-                {washType === 'both' ? 'Express & Standard' : washType?.charAt(0).toUpperCase() + washType?.slice(1)} Wash
+                {getFormattedWashType(washType)} Wash
               </span>
             </div>
             
