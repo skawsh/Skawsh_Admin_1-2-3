@@ -357,6 +357,7 @@ const OrderAssignment = () => {
             onSearchChange={handleSearchChange}
             showSearch={true}
             showStatus={true}
+            showNewOrder={true} // Add this new prop
           />
         </TabsContent>
         

@@ -20,6 +20,7 @@ interface OrderCardProps {
   pickedUpTime?: string | null;
   dropped?: boolean;
   droppedTime?: string | null;
+  showNewOrder?: boolean; // Add this new prop
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -34,7 +35,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   pickedUp,
   pickedUpTime,
   dropped,
-  droppedTime
+  droppedTime,
+  showNewOrder
 }) => {
   const [showDetails, setShowDetails] = useState(false);
   
@@ -70,6 +72,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               pickedUpTime={pickedUpTime}
               dropped={dropped}
               droppedTime={droppedTime}
+              showNewOrder={showNewOrder}
             />}
           </div>
         </div>

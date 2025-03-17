@@ -9,12 +9,25 @@ interface StatusBadgeProps {
   pickedUpTime?: string | null;
   dropped?: boolean;
   droppedTime?: string | null;
+  showNewOrder?: boolean; // New prop to control when to show "New Order"
 }
 
-const StatusBadge = ({ status, pickedUp, pickedUpTime, dropped, droppedTime }: StatusBadgeProps) => {
+const StatusBadge = ({ 
+  status, 
+  pickedUp, 
+  pickedUpTime, 
+  dropped, 
+  droppedTime,
+  showNewOrder = false 
+}: StatusBadgeProps) => {
   // For ORD-R001 special case
   if (status === "new" && pickedUp && !dropped) {
     return <span className="status-badge status-in-progress">Picked up</span>;
+  }
+  
+  // For new orders, show "New Order" if showNewOrder is true
+  if (status === "new" && showNewOrder) {
+    return <span className="status-badge status-new">New Order</span>;
   }
   
   // For new orders, show the real-time status based on pickup and drop status
