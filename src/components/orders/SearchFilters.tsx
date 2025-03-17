@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Filter, Search, CalendarIcon, Check, X } from 'lucide-react';
+import { Filter, Search, CalendarIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WashType } from './types';
@@ -33,14 +33,8 @@ const SearchFilters = ({
   selectedDate 
 }: SearchFiltersProps) => {
   const [washType, setWashType] = useState<WashType | 'all'>('all');
-  const [dateFilter, setDateFilter] = useState<string>('today'); // Changed default to 'today'
+  const [dateFilter, setDateFilter] = useState<string>('all');
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [dateMode, setDateMode] = useState<'single' | 'range'>('single');
-  const [tempDate, setTempDate] = useState<Date | undefined>(undefined);
-  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
-    from: undefined,
-    to: undefined
-  });
 
   const dateFilters: DateRangeFilter[] = [
     {
@@ -99,14 +93,6 @@ const SearchFilters = ({
     }
   ];
 
-  // Apply today's date range by default
-  useEffect(() => {
-    const todayFilter = dateFilters.find(filter => filter.value === 'today');
-    if (todayFilter && onDateRangeChange) {
-      onDateRangeChange(todayFilter.getDateRange());
-    }
-  }, []);
-
   useEffect(() => {
     // When dateFilter is set to custom, open the calendar
     if (dateFilter === 'custom') {
@@ -137,66 +123,10 @@ const SearchFilters = ({
   };
 
   const handleCustomDateChange = (date: Date | undefined) => {
-    if (dateMode === 'single') {
-      setTempDate(date);
-    } else {
-      // Range mode
-      const range = { ...dateRange };
-      
-      if (!range.from) {
-        range.from = date;
-      } else if (!range.to && date && date > range.from) {
-        range.to = date;
-      } else {
-        range.from = date;
-        range.to = undefined;
-      }
-      
-      setDateRange(range);
+    if (onDateChange && date) {
+      onDateChange(date);
     }
-  };
-
-  const handleModeToggle = (mode: 'single' | 'range') => {
-    setDateMode(mode);
-    // Reset selections when changing modes
-    setTempDate(undefined);
-    setDateRange({ from: undefined, to: undefined });
-  };
-
-  const handleApplyCustomDate = () => {
-    if (dateMode === 'single' && tempDate) {
-      if (onDateChange) {
-        onDateChange(tempDate);
-      }
-      
-      if (onDateRangeChange) {
-        onDateRangeChange({
-          start: startOfDay(tempDate),
-          end: endOfDay(tempDate)
-        });
-      }
-    } else if (dateMode === 'range' && dateRange.from && dateRange.to) {
-      if (onDateRangeChange) {
-        onDateRangeChange({
-          start: startOfDay(dateRange.from),
-          end: endOfDay(dateRange.to)
-        });
-      }
-    }
-    
-    setCalendarOpen(false);
-  };
-
-  const handleCancelCustomDate = () => {
-    setCalendarOpen(false);
-    // If no previous selection, revert to 'today'
-    if (dateFilter === 'custom' && !selectedDate) {
-      setDateFilter('today');
-      const todayFilter = dateFilters.find(filter => filter.value === 'today');
-      if (todayFilter && onDateRangeChange) {
-        onDateRangeChange(todayFilter.getDateRange());
-      }
-    }
+    // Don't auto-close the calendar to give user more control
   };
 
   return (
@@ -231,54 +161,13 @@ const SearchFilters = ({
           </PopoverTrigger>
           
           <PopoverContent className="w-auto p-0 z-50" align="end" side="bottom">
-            <div className="p-3 border-b border-gray-100">
-              <div className="flex gap-2 justify-center mb-2">
-                <Button 
-                  variant={dateMode === 'single' ? "default" : "outline"} 
-                  size="sm" 
-                  onClick={() => handleModeToggle('single')}
-                >
-                  Single Date
-                </Button>
-                <Button 
-                  variant={dateMode === 'range' ? "default" : "outline"} 
-                  size="sm" 
-                  onClick={() => handleModeToggle('range')}
-                >
-                  Date Range
-                </Button>
-              </div>
-            </div>
-
-            {dateMode === 'single' ? (
-              <Calendar
-                mode="single"
-                selected={tempDate}
-                onSelect={handleCustomDateChange}
-                initialFocus
-                className="pointer-events-auto"
-              />
-            ) : (
-              <Calendar
-                mode="range"
-                selected={dateRange}
-                onSelect={setDateRange}
-                initialFocus
-                numberOfMonths={1}
-                className="pointer-events-auto"
-              />
-            )}
-
-            <div className="flex justify-end gap-2 p-3 border-t border-gray-100">
-              <Button variant="outline" size="sm" onClick={handleCancelCustomDate}>
-                <X className="h-4 w-4 mr-1" />
-                Cancel
-              </Button>
-              <Button variant="default" size="sm" onClick={handleApplyCustomDate}>
-                <Check className="h-4 w-4 mr-1" />
-                OK
-              </Button>
-            </div>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleCustomDateChange}
+              initialFocus
+              className="pointer-events-auto"
+            />
           </PopoverContent>
         </Popover>
         
