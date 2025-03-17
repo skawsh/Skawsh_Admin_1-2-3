@@ -24,14 +24,6 @@ const StatusBadge = ({
   isDriverOrdersView = false, // Default to false
   showOriginalStatus = false, // Default to false
 }: StatusBadgeProps) => {
-  // Fix for Order ORD-0011: Always show completed pickup status in order details
-  if (status === "new" && pickedUp && pickedUpTime && pickedUpTime.includes("06:40 on 17/03/2025")) {
-    if (showOriginalStatus) {
-      // When in order details view, show it as picked up
-      return <span className="status-badge status-in-progress">Picked up: {pickedUpTime}</span>;
-    }
-  }
-  
   // If showOriginalStatus is true, skip the special cases and display the actual status
   if (showOriginalStatus) {
     // Make sure we handle all possible status values and provide appropriate display text

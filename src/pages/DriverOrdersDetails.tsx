@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -106,7 +107,10 @@ const DriverOrdersDetails = () => {
               order.dropped || order.orderId === 'ORD-R001' || order.orderId === 'ORD-R002'
             );
             
-            setAssignedOrders(active);
+            // Sort active orders so that in-progress orders come first
+            const sortedActive = sortOrdersByProgress(active);
+            
+            setAssignedOrders(sortedActive);
             setCompletedOrders(completed);
           } else {
             createMockOrders(foundDriver);
@@ -128,6 +132,44 @@ const DriverOrdersDetails = () => {
     }
   }, [driverId, navigate, toast]);
   
+  // Helper function to sort orders by progress status
+  const sortOrdersByProgress = (orders: AssignedOrder[]): AssignedOrder[] => {
+    return [...orders].sort((a, b) => {
+      // First priority: Orders that are picked up but not dropped (in progress)
+      if (a.pickedUp && !a.dropped && (!b.pickedUp || b.dropped)) {
+        return -1;
+      }
+      if (b.pickedUp && !b.dropped && (!a.pickedUp || a.dropped)) {
+        return 1;
+      }
+      
+      // Second priority: Sort by order ID for special orders
+      if (a.orderId === 'ORD-0011' && b.orderId !== 'ORD-0011') {
+        return -1;
+      }
+      if (b.orderId === 'ORD-0011' && a.orderId !== 'ORD-0011') {
+        return 1;
+      }
+      if (a.orderId === 'ORD-0012' && b.orderId !== 'ORD-0012') {
+        return -1;
+      }
+      if (b.orderId === 'ORD-0012' && a.orderId !== 'ORD-0012') {
+        return 1;
+      }
+      
+      // Third priority: Sort by status (ready-for-collect before others)
+      if (a.status === 'ready-for-collect' && b.status !== 'ready-for-collect') {
+        return -1;
+      }
+      if (b.status === 'ready-for-collect' && a.status !== 'ready-for-collect') {
+        return 1;
+      }
+      
+      // Default: Sort by date (newer first)
+      return (new Date(b.date || "")).getTime() - (new Date(a.date || "")).getTime();
+    });
+  };
+  
   const createMockOrders = (driver: Driver) => {
     const mockOrders: AssignedOrder[] = [];
     const orderCount = driver.assignedOrders || 0;
@@ -146,6 +188,21 @@ const DriverOrdersDetails = () => {
     const customerNames = ['Deepika Reddy', 'Sanjay Mehta', 'Arun Verma', 'Priya Singh', 'Rajesh Kumar'];
     
     if (orderCount > 0) {
+      // Add custom orders first
+      mockOrders.push({
+        id: `order-${driverId}-special-1`,
+        orderId: 'ORD-0011',
+        customer: 'Vikram Malhotra',
+        customerAddress: '12, Somajiguda, Hyderabad',
+        studio: 'Bhavani BAND BOX',
+        studioAddress: 'Bhavani BAND BOX, Khairatabad X Roads, Somajiguda',
+        date: '2025-02-20',
+        status: 'New',
+        pickedUp: true,
+        pickedUpTime: '06:40 on 17/03/2025',
+        dropped: false
+      });
+      
       mockOrders.push({
         id: `order-${driverId}-complete`,
         orderId: 'ORD-0001',
@@ -170,8 +227,7 @@ const DriverOrdersDetails = () => {
         studioAddress: 'UClean, KPHB Colony, Kukatpally',
         date: '2025-03-03',
         status: 'New',
-        pickedUp: true,
-        pickedUpTime: '3/17/2025, 9:05:18 PM',
+        pickedUp: false,
         dropped: false
       });
       
@@ -185,8 +241,9 @@ const DriverOrdersDetails = () => {
         date: '2025-02-24',
         status: 'New',
         pickedUp: true,
-        pickedUpTime: '3/17/2025, 9:05:18 PM',
-        dropped: false
+        pickedUpTime: '06:40 on 17/03/2025',
+        dropped: true,
+        droppedTime: '07:40 on 17/03/2025'
       });
       
       mockOrders.push({
@@ -288,7 +345,10 @@ const DriverOrdersDetails = () => {
       order.dropped || order.orderId === 'ORD-R001' || order.orderId === 'ORD-R002'
     );
     
-    setAssignedOrders(active);
+    // Sort active orders so that in-progress orders come first
+    const sortedActive = sortOrdersByProgress(active);
+    
+    setAssignedOrders(sortedActive);
     setCompletedOrders(completed);
   };
   
@@ -468,7 +528,7 @@ const DriverOrdersDetails = () => {
                       dropped={order.dropped}
                       droppedTime={order.droppedTime}
                       isDriverOrdersView={true}
-                      showOriginalStatus={true}
+                      showOriginalStatus={false}
                     />
                   ))
                 ) : (
@@ -498,7 +558,7 @@ const DriverOrdersDetails = () => {
                       dropped={order.dropped}
                       droppedTime={order.droppedTime}
                       isDriverOrdersView={true}
-                      showOriginalStatus={true}
+                      showOriginalStatus={false}
                     />
                   ))
                 ) : (
