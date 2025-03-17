@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { sampleOrders, exclusiveRescheduledOrders } from '@/components/orders/mockData';
@@ -19,14 +18,49 @@ const OrderAssignment = () => {
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
   const [currentOrderToAssign, setCurrentOrderToAssign] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('new');
+  const [assignedOrderIds, setAssignedOrderIds] = useState<string[]>([]);
 
-  const newOrders = sampleOrders.filter(order => order.status === 'new' || order.status === 'received');
-  const readyForCollectionOrders = sampleOrders.filter(order => order.status === 'ready-for-collect');
+  useEffect(() => {
+    const storedAssignments = localStorage.getItem('driverAssignments');
+    if (storedAssignments) {
+      try {
+        const { orders } = JSON.parse(storedAssignments);
+        if (Array.isArray(orders)) {
+          const orderIds = orders.map((order: any) => order.id);
+          setAssignedOrderIds(orderIds);
+        }
+      } catch (error) {
+        console.error('Error parsing stored driver assignments:', error);
+      }
+    }
+
+    const handleDriverAssignment = (event: CustomEvent<any>) => {
+      if (event.detail && event.detail.orders) {
+        const newAssignedIds = event.detail.orders.map((order: any) => order.id);
+        setAssignedOrderIds(prevIds => [...new Set([...prevIds, ...newAssignedIds])]);
+      }
+    };
+
+    window.addEventListener('driverAssignment', handleDriverAssignment as EventListener);
+
+    return () => {
+      window.removeEventListener('driverAssignment', handleDriverAssignment as EventListener);
+    };
+  }, []);
+
+  const newOrders = sampleOrders
+    .filter(order => (order.status === 'new' || order.status === 'received') && !assignedOrderIds.includes(order.id));
+  const readyForCollectionOrders = sampleOrders
+    .filter(order => order.status === 'ready-for-collect' && !assignedOrderIds.includes(order.id));
   
   const rescheduledNewOrders = newOrders.filter((_, index) => index % 3 === 0);
   const rescheduledReadyOrders = readyForCollectionOrders.filter((_, index) => index % 3 === 0);
   
-  const rescheduledOrders = [...rescheduledNewOrders, ...rescheduledReadyOrders, ...exclusiveRescheduledOrders];
+  const rescheduledOrders = [
+    ...rescheduledNewOrders, 
+    ...rescheduledReadyOrders, 
+    ...exclusiveRescheduledOrders.filter(order => !assignedOrderIds.includes(order.id))
+  ];
 
   const pendingOrders = mapOrdersToTableData(newOrders);
   const readyOrders = mapOrdersToTableData(readyForCollectionOrders);
@@ -146,7 +180,6 @@ const OrderAssignment = () => {
     const orderText = orderIds.length === 1 ? 'order' : 'orders';
     toast.success(`Successfully assigned driver to ${orderIds.length} ${orderText}`);
     
-    // Save to localStorage and dispatch event for other components
     const assignmentData = {
       driverId: driverId,
       orders: getOrdersDataById(orderIds)
@@ -154,17 +187,17 @@ const OrderAssignment = () => {
     
     localStorage.setItem('driverAssignments', JSON.stringify(assignmentData));
     
-    // Dispatch a custom event for components that may not have access to the localStorage event
     window.dispatchEvent(new CustomEvent('driverAssignment', { 
       detail: assignmentData 
     }));
+    
+    setAssignedOrderIds(prevIds => [...new Set([...prevIds, ...orderIds])]);
     
     setSelectedNewOrders([]);
     setSelectedReadyOrders([]);
     setSelectedRescheduledOrders([]);
   };
 
-  // Helper function to get order data by ids
   const getOrdersDataById = (orderIds: string[]) => {
     const allOrders = [...pendingOrders, ...readyOrders, ...rescheduledOrdersData];
     return orderIds.map(id => allOrders.find(order => order.id === id)).filter(Boolean);
@@ -172,12 +205,10 @@ const OrderAssignment = () => {
 
   const getSelectedOrdersData = () => {
     if (currentOrderToAssign) {
-      // If assigning a single order, find it from all available orders
       const order = [...pendingOrders, ...readyOrders, ...rescheduledOrdersData]
         .find(o => o.id === currentOrderToAssign);
         
       if (order) {
-        // If it's a rescheduled order, categorize it properly
         if (rescheduledOrdersData.some(ro => ro.id === order.id)) {
           return {
             newOrders: order.status && order.status !== 'ready-for-collect' ? [order] : [],
@@ -186,7 +217,6 @@ const OrderAssignment = () => {
           };
         }
         
-        // If it's a regular order from new or ready tabs
         return {
           newOrders: pendingOrders.some(po => po.id === order.id) ? [order] : [],
           readyOrders: readyOrders.some(ro => ro.id === order.id) ? [order] : [],
@@ -201,17 +231,14 @@ const OrderAssignment = () => {
       };
     }
     
-    // Get orders that were selected from the new orders tab
     const selectedNewOrdersData = pendingOrders.filter(order => 
       selectedNewOrders.includes(order.id)
     );
     
-    // Get orders that were selected from the ready orders tab
     const selectedReadyOrdersData = readyOrders.filter(order => 
       selectedReadyOrders.includes(order.id)
     );
     
-    // Get orders that were selected from the rescheduled orders tab
     const selectedRescheduledOrdersData = rescheduledOrdersData.filter(order => 
       selectedRescheduledOrders.includes(order.id)
     );
