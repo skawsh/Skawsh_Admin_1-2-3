@@ -138,14 +138,14 @@ const DriverOrdersDetails = () => {
         dropped: false
       });
       
-      // Create a sample new order ORD-R001 with pickup status to match the design
+      // Create ORD-R001 sample with specific details to match the design
       mockOrders.push({
         id: `order-${driverId}-new`,
         orderId: 'ORD-R001',
-        customer: 'Deepika Reddy',
-        customerAddress: '72, Kukatpally, Hyderabad',
-        studio: 'UClean',
-        studioAddress: 'UClean, KPHB Colony, Kukatpally',
+        customer: 'Sanjay Mehta',
+        customerAddress: '27, Film Nagar, Hyderabad',
+        studio: 'Laundry Express',
+        studioAddress: 'Laundry Express, Road No. 12, Banjara Hills',
         date: '2025-02-24',
         status: 'New',
         pickedUp: true,

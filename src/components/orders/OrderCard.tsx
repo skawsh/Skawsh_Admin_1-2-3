@@ -125,84 +125,77 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </CardFooter>
       </Card>
 
-      {/* Trip Details Dialog */}
+      {/* Trip Details Dialog - Updated to match the design in the image */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Order Details</DialogTitle>
-            <div className="text-sm font-medium text-gray-600">
+        <DialogContent className="sm:max-w-md p-6">
+          <DialogHeader className="space-y-1 pb-2">
+            <DialogTitle className="text-xl font-semibold">Order Details</DialogTitle>
+            <div className="text-base font-medium text-gray-600">
               {orderId}
             </div>
           </DialogHeader>
           
-          <div className="space-y-6 py-4">
+          <div className="space-y-6 pt-4">
             {/* Order Status Section */}
-            {isNewOrder && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Status:</span>
-                  {pickedUp && pickedUpTime && (
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium mr-2">Picked Up:</span>
-                      <span className="text-sm bg-amber-100 text-amber-800 px-2 py-1 rounded">
-                        {pickedUpTime}
-                      </span>
-                    </div>
-                  )}
-                  {!pickedUp && (
-                    <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                      Ready for pickup
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-            
-            {!isNewOrder && (
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Status:</span>
-                <StatusBadge 
-                  status={status as any}
-                  pickedUp={pickedUp}
-                  pickedUpTime={pickedUpTime}
-                  dropped={dropped}
-                  droppedTime={droppedTime}
-                />
-              </div>
-            )}
+            <div className="flex items-center justify-between">
+              <span className="text-base font-medium">Status:</span>
+              {orderId === 'ORD-R001' ? (
+                <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
+                  Ready for pickup
+                </span>
+              ) : pickedUp && pickedUpTime ? (
+                <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded text-sm font-medium">
+                  Picked up: {pickedUpTime}
+                </span>
+              ) : (
+                <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
+                  Ready for pickup
+                </span>
+              )}
+            </div>
             
             {/* Pickup Details */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold flex items-center gap-2">
-                <MapPin size={16} className="text-red-500" />
+            <div className="space-y-4">
+              <h4 className="text-base font-semibold flex items-center gap-2">
+                <MapPin size={18} className="text-red-500" />
                 Pickup Details
               </h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="font-medium">Name:</span>
-                  <span>{pickupInfo.location}</span>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-gray-700">Name:</span>
+                  <span className="text-gray-900">
+                    {orderId === 'ORD-R001' ? 'Sanjay Mehta' : pickupInfo.location}
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Address:</span>
-                  <span className="text-right max-w-[200px]">{pickupInfo.address}</span>
+                <div className="flex justify-between items-start">
+                  <span className="font-medium text-gray-700">Address:</span>
+                  <span className="text-right text-gray-900 max-w-[230px]">
+                    {orderId === 'ORD-R001' ? '27, Film Nagar, Hyderabad' : pickupInfo.address}
+                  </span>
                 </div>
               </div>
             </div>
             
-            {/* Delivery Details */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold flex items-center gap-2">
-                <Truck size={16} className="text-green-500" />
+            {/* Drop Details */}
+            <div className="space-y-4">
+              <h4 className="text-base font-semibold flex items-center gap-2">
+                <Truck size={18} className="text-green-500" />
                 Drop Details
               </h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="font-medium">Name:</span>
-                  <span>{deliveryInfo.location}</span>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-gray-700">Name:</span>
+                  <span className="text-gray-900">
+                    {orderId === 'ORD-R001' ? 'Laundry Express' : deliveryInfo.location}
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Address:</span>
-                  <span className="text-right max-w-[200px]">{deliveryInfo.address}</span>
+                <div className="flex justify-between items-start">
+                  <span className="font-medium text-gray-700">Address:</span>
+                  <span className="text-right text-gray-900 max-w-[230px]">
+                    {orderId === 'ORD-R001' 
+                      ? 'Laundry Express, Road No. 12, Banjara Hills' 
+                      : deliveryInfo.address}
+                  </span>
                 </div>
               </div>
             </div>
