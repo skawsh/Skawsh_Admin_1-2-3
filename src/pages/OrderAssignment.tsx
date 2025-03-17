@@ -146,9 +146,28 @@ const OrderAssignment = () => {
     const orderText = orderIds.length === 1 ? 'order' : 'orders';
     toast.success(`Successfully assigned driver to ${orderIds.length} ${orderText}`);
     
+    // Save to localStorage and dispatch event for other components
+    const assignmentData = {
+      driverId: driverId,
+      orders: getOrdersDataById(orderIds)
+    };
+    
+    localStorage.setItem('driverAssignments', JSON.stringify(assignmentData));
+    
+    // Dispatch a custom event for components that may not have access to the localStorage event
+    window.dispatchEvent(new CustomEvent('driverAssignment', { 
+      detail: assignmentData 
+    }));
+    
     setSelectedNewOrders([]);
     setSelectedReadyOrders([]);
     setSelectedRescheduledOrders([]);
+  };
+
+  // Helper function to get order data by ids
+  const getOrdersDataById = (orderIds: string[]) => {
+    const allOrders = [...pendingOrders, ...readyOrders, ...rescheduledOrdersData];
+    return orderIds.map(id => allOrders.find(order => order.id === id)).filter(Boolean);
   };
 
   const getSelectedOrdersData = () => {
