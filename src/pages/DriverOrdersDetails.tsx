@@ -98,6 +98,12 @@ const DriverOrdersDetails = () => {
                   pickedUpTime: "12:40 on 17/03/2025"
                 };
               }
+              if (order.orderId === 'ORD-0004') {
+                return {
+                  ...order,
+                  showTripStatus: true
+                };
+              }
               return order;
             });
             
@@ -273,6 +279,12 @@ const DriverOrdersDetails = () => {
           ...order,
           pickedUp: true,
           pickedUpTime: "12:40 on 17/03/2025"
+        };
+      }
+      if (order.orderId === 'ORD-0004') {
+        return {
+          ...order,
+          showTripStatus: true
         };
       }
       return order;
