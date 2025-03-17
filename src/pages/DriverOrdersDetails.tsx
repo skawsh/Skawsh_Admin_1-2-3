@@ -18,16 +18,7 @@ const DriverOrdersDetails = () => {
     assignedOrders, 
     completedOrders,
     reportedOrders,
-    isLoading,
-    // Get filter states
-    dateRange,
-    setDateRange,
-    selectedWashType,
-    setSelectedWashType,
-    // Get filtered lists
-    filteredAssignedOrders,
-    filteredCompletedOrders,
-    filteredReportedOrders
+    isLoading
   } = useDriverOrders(driverId, navigate);
   
   useEffect(() => {
@@ -75,13 +66,6 @@ const DriverOrdersDetails = () => {
             assignedOrders={assignedOrders}
             completedOrders={completedOrders}
             reportedOrders={reportedOrders}
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-            selectedWashType={selectedWashType}
-            setSelectedWashType={setSelectedWashType}
-            filteredAssignedOrders={filteredAssignedOrders}
-            filteredCompletedOrders={filteredCompletedOrders}
-            filteredReportedOrders={filteredReportedOrders}
           />
         </main>
       </div>
