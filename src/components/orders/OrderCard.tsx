@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck, CheckCircle2, Navigation } from 'lucide-react';
+import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from './StatusBadge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { formatDateString, formatDateTime } from './utils/dateUtils';
-import { Badge } from '@/components/ui/badge';
 
 interface OrderCardProps {
   id: string;
@@ -48,11 +47,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
   // Determine pickup and delivery information based on order status
   const isReadyForCollection = status === 'ready-for-collect';
   const isNewOrder = status === 'new';
-  
-  // Determine trip status logic
-  const isTripOngoing = pickedUp && !dropped;
-  const isTripCompleted = pickedUp && dropped;
-  const tripStatus = getTripStatus(orderId, pickedUp, dropped, isReadyForCollection);
   
   const pickupInfo = {
     location: isReadyForCollection ? studio : customer,
@@ -147,14 +141,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </div>
         </div>
         
-        {/* Trip Status Indicator - New Addition */}
-        {isTripOngoing && (
-          <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border-b border-blue-100">
-            <Navigation size={16} className="text-blue-600" />
-            <span className="text-sm font-medium text-blue-700">{tripStatus}</span>
-          </div>
-        )}
-        
         <CardContent className="p-4 space-y-4">
           {/* Pickup Information */}
           <div className="space-y-2">
@@ -239,17 +225,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 </span>
               )}
             </div>
-            
-            {/* Trip Status Section - New Addition */}
-            {isTripOngoing && (
-              <div className="flex items-center justify-between">
-                <span className="text-base font-medium">Trip Status:</span>
-                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 font-medium">
-                  <Navigation size={14} className="mr-1 text-blue-600" />
-                  {tripStatus}
-                </Badge>
-              </div>
-            )}
             
             {/* Pickup Details */}
             <div className="space-y-4">
@@ -414,17 +389,6 @@ function getDropStatusLabel(orderId: string, dropped: boolean, dropTime: string 
     return `✅ ${dropLabel} at ${dropTime}`;
   } else {
     return `${isReadyForCollection ? 'Delivery' : dropLabel} Pending`;
-  }
-}
-
-// Helper function to determine trip status text
-function getTripStatus(orderId: string, pickedUp: boolean | undefined, dropped: boolean | undefined, isReadyForCollection: boolean): string {
-  if (orderId === 'ORD-0011' || orderId === 'ORD-0012') {
-    return isReadyForCollection ? "Collection In Progress" : "Pickup In Progress";
-  } else if (pickedUp && !dropped) {
-    return isReadyForCollection ? "Delivery In Progress" : "Trip In Progress";
-  } else {
-    return "Trip Not Started";
   }
 }
 
