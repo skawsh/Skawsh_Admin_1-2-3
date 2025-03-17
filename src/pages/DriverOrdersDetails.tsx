@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -139,16 +138,19 @@ const DriverOrdersDetails = () => {
         dropped: false
       });
       
-      // Create a sample new order
+      // Create a sample new order ORD-R001 with pickup status to match the design
       mockOrders.push({
         id: `order-${driverId}-new`,
         orderId: 'ORD-R001',
-        customer: 'Sanjay Mehta',
-        customerAddress: '7-1-397, Banjara Hills, Junction Street, Hyderabad',
-        studio: 'Laundry Express',
-        studioAddress: 'Laundry Express Studio, Hyderabad',
+        customer: 'Deepika Reddy',
+        customerAddress: '72, Kukatpally, Hyderabad',
+        studio: 'UClean',
+        studioAddress: 'UClean, KPHB Colony, Kukatpally',
         date: '2025-02-24',
-        status: 'New'
+        status: 'New',
+        pickedUp: true,
+        pickedUpTime: '3/17/2025, 9:05:18 PM',
+        dropped: false
       });
     }
     

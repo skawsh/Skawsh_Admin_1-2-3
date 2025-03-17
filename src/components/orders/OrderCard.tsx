@@ -135,59 +135,49 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </div>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
+          <div className="space-y-6 py-4">
             {/* Order Status Section */}
-            <div className="space-y-2">
-              {isNewOrder && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Status:</span>
-                    <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                      {dropped ? 'Completed' : pickedUp ? 'Picked up' : 'Ready for pickup'}
-                    </span>
-                  </div>
-                  
-                  {pickedUp && (
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-sm font-medium">Picked Up:</span>
-                      <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+            {isNewOrder && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Status:</span>
+                  {pickedUp && pickedUpTime && (
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium mr-2">Picked Up:</span>
+                      <span className="text-sm bg-amber-100 text-amber-800 px-2 py-1 rounded">
                         {pickedUpTime}
                       </span>
                     </div>
                   )}
-                  
-                  {dropped && (
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-sm font-medium">Dropped:</span>
-                      <span className="text-sm bg-green-100 text-green-800 px-2 py-1 rounded">
-                        {droppedTime}
-                      </span>
-                    </div>
+                  {!pickedUp && (
+                    <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                      Ready for pickup
+                    </span>
                   )}
                 </div>
-              )}
-              
-              {!isNewOrder && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Status:</span>
-                  <StatusBadge 
-                    status={status as any}
-                    pickedUp={pickedUp}
-                    pickedUpTime={pickedUpTime}
-                    dropped={dropped}
-                    droppedTime={droppedTime}
-                  />
-                </div>
-              )}
-            </div>
+              </div>
+            )}
+            
+            {!isNewOrder && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Status:</span>
+                <StatusBadge 
+                  status={status as any}
+                  pickedUp={pickedUp}
+                  pickedUpTime={pickedUpTime}
+                  dropped={dropped}
+                  droppedTime={droppedTime}
+                />
+              </div>
+            )}
             
             {/* Pickup Details */}
-            <div className="space-y-2 border-t pt-3">
+            <div className="space-y-3">
               <h4 className="text-sm font-semibold flex items-center gap-2">
                 <MapPin size={16} className="text-red-500" />
-                {pickupInfo.label} Details
+                Pickup Details
               </h4>
-              <div className="ml-6 space-y-1 text-sm">
+              <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="font-medium">Name:</span>
                   <span>{pickupInfo.location}</span>
@@ -200,12 +190,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </div>
             
             {/* Delivery Details */}
-            <div className="space-y-2 border-t pt-3">
+            <div className="space-y-3">
               <h4 className="text-sm font-semibold flex items-center gap-2">
                 <Truck size={16} className="text-green-500" />
-                {deliveryInfo.label} Details
+                Drop Details
               </h4>
-              <div className="ml-6 space-y-1 text-sm">
+              <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="font-medium">Name:</span>
                   <span>{deliveryInfo.location}</span>
