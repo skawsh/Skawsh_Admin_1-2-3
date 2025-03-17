@@ -44,6 +44,7 @@ interface OrdersAssignmentTableProps {
   showSearch?: boolean;
   showStatus?: boolean; // Default prop to conditionally show status column
   showNewOrder?: boolean; // Added this prop to pass to StatusBadge
+  isRescheduledTab?: boolean; // New prop to identify if this is the rescheduled tab
 }
 
 export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
@@ -60,6 +61,7 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
   showSearch = false,
   showStatus = true, // Changed default to true to show status in all tables
   showNewOrder = false, // Added default value
+  isRescheduledTab = false, // Added default value
 }) => {
   return (
     <div className="bg-white rounded-md p-4 border border-gray-100">
@@ -125,7 +127,21 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
                   <TableCell>{order.customer}</TableCell>
                   {showStatus && (
                     <TableCell>
-                      {order.status && <StatusBadge status={order.status} showNewOrder={showNewOrder} />}
+                      {order.status && (
+                        <StatusBadge 
+                          status={
+                            // If in rescheduled tab and status is "ready-for-collect", show as "new"
+                            isRescheduledTab && order.status === "ready-for-collect" 
+                              ? "new" 
+                              : order.status
+                          } 
+                          showNewOrder={
+                            // Show New Order badge for the original showNewOrder OR 
+                            // for ready-for-collect orders in the rescheduled tab
+                            showNewOrder || (isRescheduledTab && order.status === "ready-for-collect")
+                          }
+                        />
+                      )}
                     </TableCell>
                   )}
                   <TableCell>{order.phone}</TableCell>

@@ -357,7 +357,7 @@ const OrderAssignment = () => {
             onSearchChange={handleSearchChange}
             showSearch={true}
             showStatus={true}
-            showNewOrder={true} // Add this new prop
+            showNewOrder={true}
           />
         </TabsContent>
         
@@ -396,6 +396,7 @@ const OrderAssignment = () => {
               onSearchChange={handleSearchChange}
               showSearch={true}
               showStatus={true}
+              isRescheduledTab={true} // Added this prop to identify this is the rescheduled tab
             />
           ) : (
             <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
