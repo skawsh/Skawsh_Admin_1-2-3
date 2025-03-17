@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
-import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck, CheckCircle2 } from 'lucide-react';
+import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from './StatusBadge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { formatDateString, formatDateTime } from './utils/dateUtils';
+import { formatDateString } from './utils/dateUtils';
 
 interface OrderCardProps {
   id: string;
@@ -219,7 +219,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </div>
             </div>
             
-            {/* Trip Tracking Timeline - Updated with driver action tracking */}
+            {/* Trip Tracking Timeline - New section */}
             <div className="space-y-4 border-t pt-4">
               <h4 className="text-base font-semibold flex items-center gap-2">
                 <Clock size={18} className="text-blue-500" />
@@ -237,48 +237,34 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   </div>
                 </div>
                 
-                {/* Pickup Status - Updated with formatting */}
+                {/* Pickup Status */}
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5">
-                    {pickedUp ? (
-                      <CheckCircle2 size={16} className="text-green-500" />
-                    ) : (
-                      <Package size={16} className="text-gray-400" />
-                    )}
+                    <Package size={16} className={`${pickedUp ? 'text-green-500' : 'text-gray-400'}`} />
                   </div>
                   <div>
-                    <div className={`font-medium text-sm flex items-center gap-1 ${pickedUp ? 'text-green-700' : 'text-gray-500'}`}>
-                      {pickedUp && (
-                        <span className="text-green-600">✅</span>
-                      )}
+                    <div className={`font-medium text-sm ${pickedUp ? 'text-green-700' : 'text-gray-500'}`}>
                       {pickupLabel}
                     </div>
                     {pickedUp && pickedUpTime ? (
-                      <div className="text-xs text-gray-600">{formatDateTime(pickedUpTime)}</div>
+                      <div className="text-xs text-gray-500">{pickedUpTime}</div>
                     ) : (
                       <div className="text-xs text-gray-400">Pending</div>
                     )}
                   </div>
                 </div>
                 
-                {/* Delivery Status - Updated with formatting */}
+                {/* Delivery Status */}
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5">
-                    {dropped ? (
-                      <CheckCircle2 size={16} className="text-green-500" />
-                    ) : (
-                      <PackageCheck size={16} className="text-gray-400" />
-                    )}
+                    <PackageCheck size={16} className={`${dropped ? 'text-green-500' : 'text-gray-400'}`} />
                   </div>
                   <div>
-                    <div className={`font-medium text-sm flex items-center gap-1 ${dropped ? 'text-green-700' : 'text-gray-500'}`}>
-                      {dropped && (
-                        <span className="text-green-600">✅</span>
-                      )}
+                    <div className={`font-medium text-sm ${dropped ? 'text-green-700' : 'text-gray-500'}`}>
                       {dropLabel}
                     </div>
                     {dropped && droppedTime ? (
-                      <div className="text-xs text-gray-600">{formatDateTime(droppedTime)}</div>
+                      <div className="text-xs text-gray-500">{droppedTime}</div>
                     ) : (
                       <div className="text-xs text-gray-400">Pending</div>
                     )}
