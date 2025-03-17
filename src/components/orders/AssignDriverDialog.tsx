@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,11 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     allOrdersData = [...newOrdersData, ...readyOrdersData];
   }
   
+  // Remove duplicate orders by unique order ID
+  const uniqueOrdersData = allOrdersData.filter((order, index, self) => 
+    index === self.findIndex((o) => o.id === order.id)
+  );
+  
   const driversData = sampleDrivers;
   
   const availableDrivers = driversData.filter(driver => driver.status === 'active');
@@ -93,7 +99,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   
   const handleAssignDriver = () => {
     if (selectedDriverId) {
-      const ordersWithPreservedStatus = allOrdersData.map(order => {
+      const ordersWithPreservedStatus = uniqueOrdersData.map(order => {
         return {
           ...order,
           originalStatus: order.status as OrderStatus
@@ -116,9 +122,10 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
         detail: assignmentData 
       }));
       
+      const orderCount = uniqueOrdersData.length;
       toast({
         title: "Orders Assigned",
-        description: `${allOrdersData.length} orders assigned to driver successfully`,
+        description: `${orderCount} ${orderCount === 1 ? 'order' : 'orders'} assigned to driver successfully`,
       });
       
       onOpenChange(false);
@@ -321,3 +328,4 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     </Dialog>
   );
 };
+
