@@ -111,9 +111,37 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
         ordersWithPreservedStatus.map(order => order.id)
       );
       
+      // Get existing assignments from localStorage
+      const existingAssignmentsJson = localStorage.getItem('driverAssignments');
+      let existingAssignments: any = {};
+      
+      if (existingAssignmentsJson) {
+        try {
+          existingAssignments = JSON.parse(existingAssignmentsJson);
+        } catch (error) {
+          console.error('Error parsing existing assignments:', error);
+        }
+      }
+      
+      // If this driver already has orders, append new ones instead of replacing
+      let updatedOrders = ordersWithPreservedStatus;
+      
+      if (existingAssignments && 
+          existingAssignments.driverId === selectedDriverId && 
+          Array.isArray(existingAssignments.orders)) {
+        // Get existing order IDs to avoid duplicates
+        const existingOrderIds = new Set(existingAssignments.orders.map((o: any) => o.id));
+        
+        // Filter out orders that already exist
+        const newOrdersToAdd = ordersWithPreservedStatus.filter(order => !existingOrderIds.has(order.id));
+        
+        // Combine existing orders with new ones
+        updatedOrders = [...existingAssignments.orders, ...newOrdersToAdd];
+      }
+      
       const assignmentData = {
         driverId: selectedDriverId,
-        orders: ordersWithPreservedStatus
+        orders: updatedOrders
       };
       
       localStorage.setItem('driverAssignments', JSON.stringify(assignmentData));
@@ -273,7 +301,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                           ? 'bg-primary/10 ring-1 ring-primary'
                           : 'hover:bg-gray-100'
                       } ${!isAvailable ? 'opacity-60' : ''}`}
-                      onClick={() => isAvailable && setSelectedDriverId(driver.id)}
+                      onClick={() => setSelectedDriverId(driver.id)}
                     >
                       <div className="flex items-center gap-3">
                         <User className="h-5 w-5 text-gray-700" />
@@ -328,4 +356,3 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     </Dialog>
   );
 };
-

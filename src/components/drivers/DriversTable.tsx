@@ -74,7 +74,7 @@ const DriversTable = ({ className }: DriversTableProps) => {
   const updateDriverAssignments = (driverId: string, orders: AssignedOrder[]) => {
     if (!driverId || !orders || orders.length === 0) return;
     
-    // Update the assigned orders for this driver
+    // Update the assigned orders for this driver - store all orders from the event
     setAssignedOrders(prev => ({
       ...prev,
       [driverId]: orders
@@ -90,8 +90,8 @@ const DriversTable = ({ className }: DriversTableProps) => {
     );
     
     toast({
-      title: "Orders Assigned",
-      description: `${orders.length} orders assigned to driver successfully`,
+      title: "Orders Updated",
+      description: `Driver now has ${orders.length} assigned orders`,
     });
   };
   

@@ -39,12 +39,8 @@ const OrderAssignment = () => {
     const handleDriverAssignment = (event: CustomEvent<any>) => {
       if (event.detail && event.detail.orders) {
         const newAssignedIds = event.detail.orders.map((order: any) => order.id);
-        setAssignedOrderIds(prevIds => [...new Set([...prevIds, ...newAssignedIds])]);
-        setAssignedOrdersData(prevOrders => {
-          const existingIds = new Set(prevOrders.map(o => o.id));
-          const newOrders = event.detail.orders.filter((o: any) => !existingIds.has(o.id));
-          return [...prevOrders, ...newOrders];
-        });
+        setAssignedOrderIds(newAssignedIds);
+        setAssignedOrdersData(event.detail.orders);
       }
     };
 
@@ -193,9 +189,33 @@ const OrderAssignment = () => {
     toast.success(`Successfully assigned driver to ${orderIds.length} ${orderText}`);
     
     const newOrdersData = getOrdersDataById(orderIds);
+    
+    const existingAssignmentsJson = localStorage.getItem('driverAssignments');
+    let existingAssignments: any = {};
+    
+    if (existingAssignmentsJson) {
+      try {
+        existingAssignments = JSON.parse(existingAssignmentsJson);
+      } catch (error) {
+        console.error('Error parsing existing assignments:', error);
+      }
+    }
+    
+    let updatedOrders = newOrdersData;
+    
+    if (existingAssignments && 
+        existingAssignments.driverId === driverId && 
+        Array.isArray(existingAssignments.orders)) {
+      const existingOrderIds = new Set(existingAssignments.orders.map((o: any) => o.id));
+      
+      const newOrdersToAdd = newOrdersData.filter(order => !existingOrderIds.has(order.id));
+      
+      updatedOrders = [...existingAssignments.orders, ...newOrdersToAdd];
+    }
+    
     const assignmentData = {
       driverId: driverId,
-      orders: newOrdersData
+      orders: updatedOrders
     };
     
     localStorage.setItem('driverAssignments', JSON.stringify(assignmentData));
@@ -204,12 +224,12 @@ const OrderAssignment = () => {
       detail: assignmentData 
     }));
     
-    setAssignedOrderIds(prevIds => [...new Set([...prevIds, ...orderIds])]);
-    setAssignedOrdersData(prevOrders => {
-      const existingIds = new Set(prevOrders.map(o => o.id));
-      const newOrders = newOrdersData.filter(o => !existingIds.has(o.id));
-      return [...prevOrders, ...newOrders];
+    setAssignedOrderIds(prevIds => {
+      const orderIds = updatedOrders.map(o => o.id);
+      return [...orderIds];
     });
+    
+    setAssignedOrdersData(updatedOrders);
     
     setSelectedNewOrders([]);
     setSelectedReadyOrders([]);
