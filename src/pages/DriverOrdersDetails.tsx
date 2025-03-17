@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -12,6 +11,8 @@ import { ArrowLeft, Package, MapPin, Calendar, User, Building, TruckIcon } from 
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { studioAddressMapping } from '@/components/orders/utils/addressUtils';
+import StatusBadge from '@/components/orders/StatusBadge';
+import { OrderStatus } from '@/components/orders/types';
 
 interface AssignedOrder {
   id: string;
@@ -22,6 +23,7 @@ interface AssignedOrder {
   studioAddress?: string;
   date?: string;
   status?: string;
+  originalStatus?: OrderStatus;
 }
 
 const DriverOrdersDetails = () => {
@@ -48,7 +50,11 @@ const DriverOrdersDetails = () => {
         if (existingAssignments) {
           const data = JSON.parse(existingAssignments);
           if (data.driverId === driverId && data.orders) {
-            setAssignedOrders(data.orders);
+            const orders = data.orders.map((order: AssignedOrder) => ({
+              ...order,
+              originalStatus: order.originalStatus || order.status
+            }));
+            setAssignedOrders(orders);
           } else {
             createMockOrders(foundDriver);
           }
@@ -87,7 +93,6 @@ const DriverOrdersDetails = () => {
     const customerNames = ['Deepika Reddy', 'Sanjay Mehta', 'Arun Verma', 'Priya Singh', 'Rajesh Kumar'];
     
     if (orderCount > 0) {
-      // First order: ORD-0004 (new)
       mockOrders.push({
         id: `order-${driverId}-1`,
         orderId: 'ORD-0004',
@@ -99,7 +104,6 @@ const DriverOrdersDetails = () => {
         status: 'New'
       });
       
-      // Second order: ORD-R001 (new)
       mockOrders.push({
         id: `order-${driverId}-2`,
         orderId: 'ORD-R001',
@@ -111,7 +115,6 @@ const DriverOrdersDetails = () => {
         status: 'New'
       });
       
-      // Third order: ORD-0003 (ready-for-collect)
       mockOrders.push({
         id: `order-${driverId}-3`,
         orderId: 'ORD-0003',
@@ -153,14 +156,16 @@ const DriverOrdersDetails = () => {
   };
 
   const getAddressInfo = (order: AssignedOrder) => {
-    if (order.status === 'New') {
+    const orderStatus = order.originalStatus || order.status;
+    
+    if (orderStatus === 'new') {
       return {
         pickupAddress: order.customerAddress,
         pickupName: order.customer,
         deliveryAddress: order.studioAddress,
         deliveryName: order.studio
       };
-    } else if (order.status === 'Ready for Collection') {
+    } else if (orderStatus === 'ready-for-collect') {
       return {
         pickupAddress: order.studioAddress,
         pickupName: order.studio,
@@ -194,14 +199,22 @@ const DriverOrdersDetails = () => {
     }
   };
   
-  const getSimplifiedStatus = (status: string | undefined) => {
+  const getSimplifiedStatus = (status: string | undefined): OrderStatus | undefined => {
     switch(status) {
       case 'Ready for Collection':
         return 'ready-for-collect';
       case 'In Progress':
         return 'in-progress';
+      case 'New':
+        return 'new';
+      case 'Delivered':
+        return 'delivered';
+      case 'Collected':
+        return 'delivered';
+      case 'Pending':
+        return 'received';
       default:
-        return status?.toLowerCase();
+        return status as OrderStatus | undefined;
     }
   };
   
@@ -264,7 +277,8 @@ const DriverOrdersDetails = () => {
             {assignedOrders.length > 0 ? (
               assignedOrders.map((order) => {
                 const { pickupAddress, pickupName, deliveryAddress, deliveryName } = getAddressInfo(order);
-                const simplifiedStatus = getSimplifiedStatus(order.status);
+                
+                const orderStatus = order.originalStatus || getSimplifiedStatus(order.status);
                 
                 return (
                   <Card 
@@ -279,9 +293,7 @@ const DriverOrdersDetails = () => {
                           <span>{order.date}</span>
                         </div>
                       </div>
-                      <Badge variant="outline" className={`${getStatusColor(order.status)} border-0 lowercase`}>
-                        {simplifiedStatus}
-                      </Badge>
+                      {orderStatus && <StatusBadge status={orderStatus} />}
                     </div>
                     
                     <div className="p-4">

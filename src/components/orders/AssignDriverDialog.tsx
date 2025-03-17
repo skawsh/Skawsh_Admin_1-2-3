@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MapPin, Package, Truck, User, CheckCircle2, ShoppingBag, Clock } from "lucide-react";
-import { Order } from './types';
+import { Order, OrderStatus } from './types';
 import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { sampleDrivers } from '@/components/drivers/mockData';
@@ -23,6 +23,7 @@ interface OrderTableData {
   washType: string;
   distance: string;
   status?: string;
+  originalStatus?: OrderStatus; // Added field to preserve original status
 }
 
 interface AssignDriverDialogProps {
@@ -114,10 +115,16 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
         allOrdersData.map(order => order.id)
       );
       
+      // Preserve the original status of orders before storing in localStorage
+      const ordersWithOriginalStatus = allOrdersData.map(order => ({
+        ...order,
+        originalStatus: order.originalStatus || order.status as OrderStatus
+      }));
+      
       // Save to localStorage and dispatch event for other components
       const assignmentData = {
         driverId: selectedDriverId,
-        orders: allOrdersData
+        orders: ordersWithOriginalStatus
       };
       
       localStorage.setItem('driverAssignments', JSON.stringify(assignmentData));

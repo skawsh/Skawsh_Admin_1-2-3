@@ -21,7 +21,7 @@ const StatusBadge = ({ status }: StatusBadgeProps) => {
     case "cancelled":
       return <span className="status-badge status-cancelled">Order cancelled</span>;
     default:
-      return null;
+      return <span className="status-badge status-new">New Order</span>; // Default to New Order for unknown status
   }
 };
 
