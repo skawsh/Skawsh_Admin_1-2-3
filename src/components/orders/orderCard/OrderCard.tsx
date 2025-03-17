@@ -29,6 +29,9 @@ interface OrderCardProps {
   showOriginalStatus?: boolean;
   showTripStatus?: boolean;
   washType?: string;
+  reported?: boolean;
+  reportedIssue?: string;
+  reportedDescription?: string;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -48,7 +51,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
   isDriverOrdersView = false,
   showOriginalStatus = false,
   showTripStatus = false,
-  washType = 'standard'
+  washType = 'standard',
+  reported = false,
+  reportedIssue = 'Customer Not Responding',
+  reportedDescription = ''
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -157,6 +163,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
         isReadyForCollection={isReadyForCollection}
         showOriginalStatus={showOriginalStatus}
         washType={washType}
+        reported={reported}
+        reportedIssue={reportedIssue}
+        reportedDescription={reportedDescription}
       />
     </>
   );
