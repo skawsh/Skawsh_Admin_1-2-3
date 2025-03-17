@@ -43,6 +43,7 @@ interface OrdersAssignmentTableProps {
   onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   showSearch?: boolean;
   showStatus?: boolean; // Default prop to conditionally show status column
+  showNewOrder?: boolean; // Added this prop to pass to StatusBadge
 }
 
 export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
@@ -58,6 +59,7 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
   onSearchChange,
   showSearch = false,
   showStatus = true, // Changed default to true to show status in all tables
+  showNewOrder = false, // Added default value
 }) => {
   return (
     <div className="bg-white rounded-md p-4 border border-gray-100">
@@ -123,7 +125,7 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
                   <TableCell>{order.customer}</TableCell>
                   {showStatus && (
                     <TableCell>
-                      {order.status && <StatusBadge status={order.status} />}
+                      {order.status && <StatusBadge status={order.status} showNewOrder={showNewOrder} />}
                     </TableCell>
                   )}
                   <TableCell>{order.phone}</TableCell>
