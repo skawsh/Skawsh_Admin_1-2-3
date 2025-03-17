@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MapPin, Truck, Calendar, User, Building, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from './StatusBadge';
@@ -28,7 +28,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
   studioAddress,
   onViewDetails
 }) => {
-  const [showDetails, setShowDetails] = React.useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  // Simulate pickup and drop statuses with timestamps
+  const [pickedUp, setPickedUp] = useState(false);
+  const [pickedUpTime, setPickedUpTime] = useState<string | null>(null);
+  const [dropped, setDropped] = useState(false);
+  const [droppedTime, setDroppedTime] = useState<string | null>(null);
   
   // Determine pickup and delivery information based on order status
   const isReadyForCollection = status === 'ready-for-collect';
@@ -46,6 +51,16 @@ const OrderCard: React.FC<OrderCardProps> = ({
     address: isReadyForCollection ? customerAddress : studioAddress,
     icon: isReadyForCollection ? <User className="text-gray-600" size={16} /> : <Building className="text-gray-600" size={16} />,
     label: isNewOrder ? "Drop" : "Delivery"
+  };
+
+  const handlePickupAction = () => {
+    setPickedUp(true);
+    setPickedUpTime(new Date().toLocaleString());
+  };
+
+  const handleDropAction = () => {
+    setDropped(true);
+    setDroppedTime(new Date().toLocaleString());
   };
 
   return (
@@ -115,20 +130,72 @@ const OrderCard: React.FC<OrderCardProps> = ({
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Order Details - {orderId}</DialogTitle>
+            <DialogTitle>Order Details</DialogTitle>
+            <div className="text-sm font-medium text-gray-600">
+              {orderId}
+            </div>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
-            {/* Order Details */}
+            {/* Order Status Section */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Order Date:</span>
-                <span className="text-sm">{date}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Status:</span>
-                <StatusBadge status={status as any} />
-              </div>
+              {isNewOrder && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Status:</span>
+                    <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                      Ready for pickup
+                    </span>
+                  </div>
+                  
+                  {!pickedUp && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="w-full mt-2"
+                      onClick={handlePickupAction}
+                    >
+                      Mark as Picked Up
+                    </Button>
+                  )}
+                  
+                  {pickedUp && (
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-sm font-medium">Picked Up:</span>
+                      <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        {pickedUpTime}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {pickedUp && !dropped && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="w-full mt-2"
+                      onClick={handleDropAction}
+                    >
+                      Mark as Dropped
+                    </Button>
+                  )}
+                  
+                  {dropped && (
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-sm font-medium">Dropped:</span>
+                      <span className="text-sm bg-green-100 text-green-800 px-2 py-1 rounded">
+                        {droppedTime}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {!isNewOrder && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Status:</span>
+                  <StatusBadge status={status as any} />
+                </div>
+              )}
             </div>
             
             {/* Pickup Details */}
@@ -166,14 +233,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 </div>
               </div>
             </div>
-            
-            {/* Additional Trip Information (could be extended) */}
-            <div className="space-y-2 border-t pt-3">
-              <h4 className="text-sm font-semibold">Trip Notes</h4>
-              <p className="text-sm text-gray-600">
-                No additional notes for this trip.
-              </p>
-            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -182,4 +241,3 @@ const OrderCard: React.FC<OrderCardProps> = ({
 };
 
 export default OrderCard;
-
