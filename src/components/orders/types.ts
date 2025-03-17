@@ -1,4 +1,3 @@
-
 // Order status types
 export type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'delivered' | 'cancelled' | 'completed';
 

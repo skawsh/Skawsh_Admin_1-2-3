@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { OrderStatus } from './types';
 import './OrdersBadge.css';
@@ -24,6 +23,11 @@ const StatusBadge = ({
   isDriverOrdersView = false, // Default to false
   showOriginalStatus = false, // Default to false
 }: StatusBadgeProps) => {
+  // Special case for ORD-0005, always show "New Order"
+  if (showOriginalStatus && status === "new") {
+    return <span className="status-badge status-new">New Order</span>;
+  }
+  
   // If showOriginalStatus is true, skip the special cases and display the actual status
   if (showOriginalStatus) {
     // Make sure we handle all possible status values and provide appropriate display text
