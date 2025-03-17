@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -330,15 +331,15 @@ const OrderAssignment = () => {
         <TabsList className="mb-4">
           <TabsTrigger value="new" className="flex items-center gap-2">
             <Package size={16} />
-            New Orders
+            New Orders {newOrders.length > 0 && <span className="ml-1 bg-red-500 text-white text-xs rounded-full px-2">{newOrders.length}</span>}
           </TabsTrigger>
           <TabsTrigger value="ready" className="flex items-center gap-2">
             <ClipboardCheck size={16} />
-            Ready for Collection
+            Ready for Collection {readyForCollectionOrders.length > 0 && <span className="ml-1 bg-green-500 text-white text-xs rounded-full px-2">{readyForCollectionOrders.length}</span>}
           </TabsTrigger>
           <TabsTrigger value="rescheduled" className="flex items-center gap-2">
             <Clock size={16} />
-            Rescheduled
+            Rescheduled {rescheduledOrders.length > 0 && <span className="ml-1 bg-amber-500 text-white text-xs rounded-full px-2">{rescheduledOrders.length}</span>}
           </TabsTrigger>
         </TabsList>
         
