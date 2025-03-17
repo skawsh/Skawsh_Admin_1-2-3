@@ -10,7 +10,8 @@ interface StatusBadgeProps {
   dropped?: boolean;
   droppedTime?: string | null;
   showNewOrder?: boolean; // Prop to control when to show "New Order"
-  isDriverOrdersView?: boolean; // New prop to indicate if displayed in driver orders view
+  isDriverOrdersView?: boolean; // Prop to indicate if displayed in driver orders view
+  showOriginalStatus?: boolean; // New prop to force showing the original status
 }
 
 const StatusBadge = ({ 
@@ -20,8 +21,32 @@ const StatusBadge = ({
   dropped, 
   droppedTime,
   showNewOrder = false,
-  isDriverOrdersView = false // Default to false
+  isDriverOrdersView = false, // Default to false
+  showOriginalStatus = false, // Default to false
 }: StatusBadgeProps) => {
+  // If showOriginalStatus is true, skip the special cases and display the actual status
+  if (showOriginalStatus) {
+    // Make sure we handle all possible status values and provide appropriate display text
+    switch (status) {
+      case "new":
+        return <span className="status-badge status-new">New Order</span>;
+      case "received":
+        return <span className="status-badge status-received">Order Received</span>;
+      case "in-progress":
+        return <span className="status-badge status-in-progress">In Progress</span>;
+      case "ready-for-collect":
+        return <span className="status-badge status-ready">Ready for collection</span>;
+      case "delivered":
+        return <span className="status-badge status-delivered">Order Delivered</span>;
+      case "cancelled":
+        return <span className="status-badge status-cancelled">Order cancelled</span>;
+      case "completed":
+        return <span className="status-badge status-delivered">Completed</span>;
+      default:
+        return <span className="status-badge status-new">New Order</span>;
+    }
+  }
+  
   // For ORD-R001 special case
   if (status === "new" && pickedUp && !dropped) {
     return <span className="status-badge status-in-progress">Picked up</span>;

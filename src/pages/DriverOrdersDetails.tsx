@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -346,6 +347,7 @@ const DriverOrdersDetails = () => {
                       dropped={order.dropped}
                       droppedTime={order.droppedTime}
                       isDriverOrdersView={true}
+                      showOriginalStatus={true} // Add this prop to show original status
                     />
                   ))
                 ) : (
@@ -375,6 +377,7 @@ const DriverOrdersDetails = () => {
                       dropped={order.dropped}
                       droppedTime={order.droppedTime}
                       isDriverOrdersView={true}
+                      showOriginalStatus={true} // Add this prop to show original status
                     />
                   ))
                 ) : (

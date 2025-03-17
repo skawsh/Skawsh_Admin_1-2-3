@@ -21,7 +21,8 @@ interface OrderCardProps {
   dropped?: boolean;
   droppedTime?: string | null;
   showNewOrder?: boolean;
-  isDriverOrdersView?: boolean; // New prop to indicate if displayed in driver orders view
+  isDriverOrdersView?: boolean; // Prop to indicate if displayed in driver orders view
+  showOriginalStatus?: boolean; // New prop to force showing the original status
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -38,7 +39,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   dropped,
   droppedTime,
   showNewOrder,
-  isDriverOrdersView = false // Default to false
+  isDriverOrdersView = false, // Default to false
+  showOriginalStatus = false, // Default to false
 }) => {
   const [showDetails, setShowDetails] = useState(false);
   
@@ -76,6 +78,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               droppedTime={droppedTime}
               showNewOrder={showNewOrder}
               isDriverOrdersView={isDriverOrdersView}
+              showOriginalStatus={showOriginalStatus}
             />}
           </div>
         </div>
