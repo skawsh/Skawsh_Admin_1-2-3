@@ -132,7 +132,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
           />
         </CardContent>
         
-        <CardFooter className="flex justify-end p-4 pt-0">
+        <div className="flex items-center justify-between border-t border-gray-100 p-4">
+          <div>
+            <span className="text-sm text-gray-500">Trip Details</span>
+          </div>
           <Button 
             variant="outline" 
             size="sm" 
@@ -140,9 +143,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
             onClick={() => setShowDetails(true)}
           >
             <Eye size={16} />
-            Trip Details
+            View
           </Button>
-        </CardFooter>
+        </div>
       </Card>
 
       {/* Trip Details Dialog */}
