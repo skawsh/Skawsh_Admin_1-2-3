@@ -22,6 +22,16 @@ export const mapOrdersToTableData = (orders: Order[]): OrderTableData[] => {
     const customerAddress = order.customerAddress || generateRandomAddress();
     const studioAddress = order.studioAddress || studioAddressMapping[order.studio] || `${order.studio} Studio, Hyderabad`;
     
+    // Format wash type according to specifications
+    let formattedWashType;
+    if (order.washType === 'express') {
+      formattedWashType = 'Express';
+    } else if (order.washType === 'standard') {
+      formattedWashType = 'Standard';
+    } else {
+      formattedWashType = 'Express & Standard';
+    }
+    
     return {
       id: order.id,
       orderId: order.id,
@@ -31,7 +41,7 @@ export const mapOrdersToTableData = (orders: Order[]): OrderTableData[] => {
       customerAddress: customerAddress,
       studioAddress: studioAddress,
       studio: order.studio,
-      washType: order.washType === 'express' ? 'Express Wash' : order.washType === 'standard' ? 'Standard Wash' : 'Both Wash',
+      washType: formattedWashType,
       distance: calculateDistance(customerAddress, studioAddress),
       status: order.status // Add the status field from the order
     };

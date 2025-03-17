@@ -79,11 +79,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
   // Special handling for ORD-0004
   const isORD0004 = orderId === 'ORD-0004';
 
-  // Format the wash type display - updated to fix the "Wash Wash" issue
+  // Format the wash type display according to specifications
   const getFormattedWashType = (type?: string) => {
     if (!type) return "Standard";
-    if (type === 'both') return "Both";
-    return type.charAt(0).toUpperCase() + type.slice(1);
+    if (type === 'express') return "Express";
+    if (type === 'standard') return "Standard";
+    if (type === 'both') return "Express & Standard";
+    return type;
   };
 
   function determinePickupTime(orderId: string, defaultTime: string | null | undefined): string | null | undefined {
@@ -153,7 +155,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           <div className="flex items-center gap-2">
             <Package size={16} className="text-blue-600" />
             <span className="text-sm font-medium bg-blue-50 text-blue-700 px-2 py-1 rounded-sm">
-              {getFormattedWashType(washType)} Wash{washType === 'both' ? ' Wash' : ''}
+              {getFormattedWashType(washType)} Wash
             </span>
           </div>
           
@@ -241,7 +243,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <span className="text-base font-medium">Wash Type:</span>
               <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded text-sm font-medium flex items-center gap-1">
                 <Package size={14} className="text-blue-600" />
-                {getFormattedWashType(washType)} Wash{washType === 'both' ? ' Wash' : ''}
+                {getFormattedWashType(washType)} Wash
               </span>
             </div>
             
