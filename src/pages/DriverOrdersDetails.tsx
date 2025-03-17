@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -219,6 +218,11 @@ const DriverOrdersDetails = () => {
     }
   };
   
+  const handleBackClick = () => {
+    // Navigate back to the previous page in history
+    window.history.back();
+  };
+  
   if (!driver) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -256,8 +260,8 @@ const DriverOrdersDetails = () => {
                 variant="ghost" 
                 size="icon" 
                 className="mr-4"
-                onClick={() => navigate('/')}
-                aria-label="Back to orders"
+                onClick={handleBackClick}
+                aria-label="Go back"
               >
                 <ArrowLeft size={20} />
               </Button>
