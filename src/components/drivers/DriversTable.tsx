@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Table, 
@@ -30,11 +31,43 @@ interface AssignedOrder {
 }
 
 const DriversTable = ({ className }: DriversTableProps) => {
-  const [drivers, setDrivers] = useState(sampleDrivers);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [activeTab, setActiveTab] = useState<string>('all');
   const [assignedOrders, setAssignedOrders] = useState<Record<string, AssignedOrder[]>>({});
   const { toast } = useToast();
   const navigate = useNavigate();
+  
+  // Initialize with driver data and load assignments
+  useEffect(() => {
+    // Start with the sample drivers
+    setDrivers(sampleDrivers);
+    
+    // Check for existing assignments in localStorage
+    const existingAssignments = localStorage.getItem('driverAssignments');
+    if (existingAssignments) {
+      try {
+        const data = JSON.parse(existingAssignments);
+        if (data.driverId && Array.isArray(data.orders)) {
+          // Store the orders for this driver
+          setAssignedOrders(prev => ({
+            ...prev,
+            [data.driverId]: data.orders
+          }));
+          
+          // Update the driver's assigned orders count
+          setDrivers(prevDrivers => 
+            prevDrivers.map(driver => 
+              driver.id === data.driverId 
+                ? { ...driver, assignedOrders: data.orders.length } 
+                : driver
+            )
+          );
+        }
+      } catch (error) {
+        console.error('Failed to parse existing driver assignments:', error);
+      }
+    }
+  }, []);
   
   // Listen for storage events to sync assignment data across components
   useEffect(() => {
@@ -49,25 +82,16 @@ const DriversTable = ({ className }: DriversTableProps) => {
       }
     };
     
-    // Check for existing assignments in localStorage
-    const existingAssignments = localStorage.getItem('driverAssignments');
-    if (existingAssignments) {
-      try {
-        const data = JSON.parse(existingAssignments);
-        updateDriverAssignments(data.driverId, data.orders);
-      } catch (error) {
-        console.error('Failed to parse existing driver assignments:', error);
-      }
-    }
+    const handleDriverAssignment = ((event: CustomEvent) => {
+      updateDriverAssignments(event.detail.driverId, event.detail.orders);
+    }) as EventListener;
     
     window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('driverAssignment', ((event: CustomEvent) => {
-      updateDriverAssignments(event.detail.driverId, event.detail.orders);
-    }) as EventListener);
+    window.addEventListener('driverAssignment', handleDriverAssignment);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('driverAssignment', ((event: CustomEvent) => {}) as EventListener);
+      window.removeEventListener('driverAssignment', handleDriverAssignment);
     };
   }, []);
   

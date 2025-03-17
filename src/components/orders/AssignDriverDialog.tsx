@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -44,6 +44,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   onAssignDriver,
 }) => {
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
+  const [driversData, setDriversData] = useState(sampleDrivers);
   const { toast } = useToast();
   
   const isSelectedOrdersArray = Array.isArray(selectedOrders);
@@ -79,7 +80,32 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
     index === self.findIndex((o) => o.id === order.id)
   );
   
-  const driversData = sampleDrivers;
+  // Load current driver assignments
+  useEffect(() => {
+    const loadDriverAssignments = () => {
+      try {
+        const existingAssignmentsJson = localStorage.getItem('driverAssignments');
+        if (existingAssignmentsJson) {
+          const assignmentData = JSON.parse(existingAssignmentsJson);
+          
+          // Update the driver's assignment count
+          if (assignmentData.driverId && Array.isArray(assignmentData.orders)) {
+            setDriversData(prevDrivers => 
+              prevDrivers.map(driver => 
+                driver.id === assignmentData.driverId 
+                  ? { ...driver, assignedOrders: assignmentData.orders.length } 
+                  : driver
+              )
+            );
+          }
+        }
+      } catch (error) {
+        console.error('Error loading driver assignments:', error);
+      }
+    };
+    
+    loadDriverAssignments();
+  }, [isOpen]); // Reload when dialog opens
   
   const availableDrivers = driversData.filter(driver => driver.status === 'active');
   const totalDrivers = driversData.length;
@@ -290,7 +316,7 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                 {sortedDrivers.map(driver => {
                   const isUnavailable = driver.status !== 'active';
                   const hasAssignedOrders = driver.assignedOrders && driver.assignedOrders > 0;
-                  const isAvailable = !isUnavailable && !hasAssignedOrders;
+                  const isAvailable = !isUnavailable;
                   const hasZeroOrders = driver.assignedOrders === 0 || driver.assignedOrders === undefined;
                   
                   return (

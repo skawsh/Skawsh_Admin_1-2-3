@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,27 +21,46 @@ const OrderAssignment = () => {
   const [activeTab, setActiveTab] = useState('new');
   const [assignedOrderIds, setAssignedOrderIds] = useState<string[]>([]);
   const [assignedOrdersData, setAssignedOrdersData] = useState<OrderTableData[]>([]);
+  const [driverAssignmentsMap, setDriverAssignmentsMap] = useState<{[driverId: string]: OrderTableData[]}>({});
 
+  // Load existing assignments
   useEffect(() => {
-    const storedAssignments = localStorage.getItem('driverAssignments');
-    if (storedAssignments) {
-      try {
-        const { orders } = JSON.parse(storedAssignments);
-        if (Array.isArray(orders)) {
-          const orderIds = orders.map((order: any) => order.id);
-          setAssignedOrderIds(orderIds);
-          setAssignedOrdersData(orders);
+    const loadAssignments = () => {
+      const storedAssignments = localStorage.getItem('driverAssignments');
+      if (storedAssignments) {
+        try {
+          const { driverId, orders } = JSON.parse(storedAssignments);
+          if (Array.isArray(orders)) {
+            const orderIds = orders.map((order: any) => order.id);
+            setAssignedOrderIds(orderIds);
+            setAssignedOrdersData(orders);
+            
+            // Store in the drivers map
+            setDriverAssignmentsMap(prev => ({
+              ...prev,
+              [driverId]: orders
+            }));
+          }
+        } catch (error) {
+          console.error('Error parsing stored driver assignments:', error);
         }
-      } catch (error) {
-        console.error('Error parsing stored driver assignments:', error);
       }
-    }
+    };
+    
+    loadAssignments();
 
     const handleDriverAssignment = (event: CustomEvent<any>) => {
       if (event.detail && event.detail.orders) {
-        const newAssignedIds = event.detail.orders.map((order: any) => order.id);
+        const { driverId, orders } = event.detail;
+        const newAssignedIds = orders.map((order: any) => order.id);
         setAssignedOrderIds(newAssignedIds);
-        setAssignedOrdersData(event.detail.orders);
+        setAssignedOrdersData(orders);
+        
+        // Update the drivers map
+        setDriverAssignmentsMap(prev => ({
+          ...prev,
+          [driverId]: orders
+        }));
       }
     };
 
@@ -51,11 +71,13 @@ const OrderAssignment = () => {
     };
   }, []);
 
+  // Filter out assigned orders from the order lists
   const newOrders = sampleOrders
     .filter(order => order.status === 'new' && !assignedOrderIds.includes(order.id));
   const readyForCollectionOrders = sampleOrders
     .filter(order => order.status === 'ready-for-collect' && !assignedOrderIds.includes(order.id));
   
+  // Create derived data for rescheduled orders
   const rescheduledNewOrders = newOrders.filter((_, index) => index % 3 === 0);
   const rescheduledReadyOrders = readyForCollectionOrders.filter((_, index) => index % 3 === 0);
   
@@ -65,12 +87,15 @@ const OrderAssignment = () => {
     ...exclusiveRescheduledOrders.filter(order => !assignedOrderIds.includes(order.id))
   ];
 
+  // Map orders to table data format
   const pendingOrders = mapOrdersToTableData(newOrders);
   const readyOrders = mapOrdersToTableData(readyForCollectionOrders);
   const rescheduledOrdersData = mapOrdersToTableData(rescheduledOrders);
 
+  // Combined list of selected orders across all tabs
   const selectedOrders = [...selectedNewOrders, ...selectedReadyOrders, ...selectedRescheduledOrders];
 
+  // Apply filters for pending orders
   const filteredPendingOrders = pendingOrders.filter(order => {
     const matchesSearch = !searchQuery || 
       order.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -83,6 +108,7 @@ const OrderAssignment = () => {
     return matchesSearch && matchesWashType;
   });
 
+  // Apply filters for rescheduled orders
   const filteredRescheduledOrders = rescheduledOrdersData.filter(order => {
     const matchesSearch = !searchQuery || 
       order.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -190,57 +216,58 @@ const OrderAssignment = () => {
     
     const newOrdersData = getOrdersDataById(orderIds);
     
-    const existingAssignmentsJson = localStorage.getItem('driverAssignments');
-    let existingAssignments: any = {};
+    // Get existing assignments for this driver
+    const existingDriverAssignments = driverAssignmentsMap[driverId] || [];
     
-    if (existingAssignmentsJson) {
-      try {
-        existingAssignments = JSON.parse(existingAssignmentsJson);
-      } catch (error) {
-        console.error('Error parsing existing assignments:', error);
-      }
-    }
+    // Create a set of existing order IDs to avoid duplicates
+    const existingOrderIds = new Set(existingDriverAssignments.map(order => order.id));
     
-    let updatedOrders = newOrdersData;
+    // Only add orders that don't already exist for this driver
+    const newOrdersToAdd = newOrdersData.filter(order => !existingOrderIds.has(order.id));
     
-    if (existingAssignments && 
-        existingAssignments.driverId === driverId && 
-        Array.isArray(existingAssignments.orders)) {
-      const existingOrderIds = new Set(existingAssignments.orders.map((o: any) => o.id));
-      
-      const newOrdersToAdd = newOrdersData.filter(order => !existingOrderIds.has(order.id));
-      
-      updatedOrders = [...existingAssignments.orders, ...newOrdersToAdd];
-    }
+    // Combine existing and new orders
+    const updatedOrdersForDriver = [...existingDriverAssignments, ...newOrdersToAdd];
     
+    // Create the assignment data
     const assignmentData = {
-      driverId: driverId,
-      orders: updatedOrders
+      driverId,
+      orders: updatedOrdersForDriver
     };
     
+    // Store in localStorage
     localStorage.setItem('driverAssignments', JSON.stringify(assignmentData));
     
+    // Dispatch event to notify other components
     window.dispatchEvent(new CustomEvent('driverAssignment', { 
       detail: assignmentData 
     }));
     
-    setAssignedOrderIds(prevIds => {
-      const orderIds = updatedOrders.map(o => o.id);
-      return [...orderIds];
-    });
+    // Update state
+    setDriverAssignmentsMap(prev => ({
+      ...prev,
+      [driverId]: updatedOrdersForDriver
+    }));
     
-    setAssignedOrdersData(updatedOrders);
+    // Update assigned order IDs
+    const allAssignedOrderIds = Object.values(driverAssignmentsMap)
+      .flat()
+      .map(order => order.id);
     
+    setAssignedOrderIds([...new Set([...allAssignedOrderIds, ...orderIds])]);
+    
+    // Reset selections
     setSelectedNewOrders([]);
     setSelectedReadyOrders([]);
     setSelectedRescheduledOrders([]);
   };
 
+  // Helper function to get order data by IDs
   const getOrdersDataById = (orderIds: string[]) => {
     const allOrders = [...pendingOrders, ...readyOrders, ...rescheduledOrdersData];
     return orderIds.map(id => allOrders.find(order => order.id === id)).filter(Boolean) as OrderTableData[];
   };
 
+  // Prepare the selected orders data for the assign dialog
   const getSelectedOrdersData = () => {
     if (currentOrderToAssign) {
       const order = [...pendingOrders, ...readyOrders, ...rescheduledOrdersData]
