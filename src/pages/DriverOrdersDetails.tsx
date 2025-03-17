@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -260,7 +261,7 @@ const DriverOrdersDetails = () => {
                 <ArrowLeft size={16} className="mr-1" />
                 Back to Driver
               </Button>
-              <h1 className="text-2xl font-bold">Assigned Orders</h1>
+              <h1 className="text-2xl font-bold">Trip Details</h1>
             </div>
           </div>
           
@@ -279,6 +280,7 @@ const DriverOrdersDetails = () => {
                 const { pickupAddress, pickupName, deliveryAddress, deliveryName } = getAddressInfo(order);
                 
                 const orderStatus = order.originalStatus || getSimplifiedStatus(order.status);
+                const isNewOrder = orderStatus === 'new';
                 
                 return (
                   <Card 
@@ -293,7 +295,13 @@ const DriverOrdersDetails = () => {
                           <span>{order.date}</span>
                         </div>
                       </div>
-                      {orderStatus && <StatusBadge status={orderStatus} />}
+                      {isNewOrder ? (
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-200">
+                          New Order
+                        </Badge>
+                      ) : (
+                        orderStatus && <StatusBadge status={orderStatus} />
+                      )}
                     </div>
                     
                     <div className="p-4">
