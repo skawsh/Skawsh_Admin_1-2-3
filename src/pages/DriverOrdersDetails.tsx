@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -334,7 +335,7 @@ const DriverOrdersDetails = () => {
                     
                     <div className="p-3 bg-gray-50 border-t flex justify-end">
                       <Button variant="outline" size="sm">
-                        View Details
+                        Trip Details
                       </Button>
                     </div>
                   </Card>

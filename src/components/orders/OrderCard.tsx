@@ -103,7 +103,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           onClick={onViewDetails}
         >
           <Eye size={16} />
-          View Details
+          Trip Details
         </Button>
       </CardFooter>
     </Card>
