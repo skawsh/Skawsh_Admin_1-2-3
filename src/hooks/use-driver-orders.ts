@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { NavigateFunction } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -10,6 +9,7 @@ interface UseDriverOrdersReturn {
   driver: Driver | null;
   assignedOrders: AssignedOrder[];
   completedOrders: AssignedOrder[];
+  reportedOrders: AssignedOrder[];
   isLoading: boolean;
   updateLocalStorage: (orders: AssignedOrder[]) => void;
   simulatePickup: (orderId: string) => void;
@@ -23,6 +23,7 @@ export const useDriverOrders = (
   const [driver, setDriver] = useState<Driver | null>(null);
   const [assignedOrders, setAssignedOrders] = useState<AssignedOrder[]>([]);
   const [completedOrders, setCompletedOrders] = useState<AssignedOrder[]>([]);
+  const [reportedOrders, setReportedOrders] = useState<AssignedOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   
@@ -90,9 +91,31 @@ export const useDriverOrders = (
               return order;
             });
             
+            const reportedOrder = {
+              id: `order-${driverId}-reported`,
+              orderId: 'ORD-0005',
+              customer: 'Ravi Kumar',
+              customerAddress: '45, Madhapur, Hyderabad',
+              studio: 'UClean',
+              studioAddress: 'UClean, KPHB Colony, Kukatpally',
+              date: '2025-03-15',
+              status: 'received',
+              pickedUp: true,
+              pickedUpTime: '3/15/2025, 2:30:18 PM',
+              dropped: false,
+              reported: true,
+              washType: 'express'
+            };
+            
+            const existingReportedOrder = processed.find((order: AssignedOrder) => order.reported);
+            
+            if (!existingReportedOrder) {
+              processed.push(reportedOrder);
+            }
+            
             const sortedActive = processed
               .filter((order: AssignedOrder) => 
-                !order.dropped && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
+                !order.dropped && !order.reported && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
               )
               .sort((a: AssignedOrder, b: AssignedOrder) => {
                 if (a.orderId === 'ORD-0004') return -1;
@@ -104,8 +127,13 @@ export const useDriverOrders = (
               order.dropped || order.orderId === 'ORD-R001' || order.orderId === 'ORD-R002'
             );
             
+            const reported = processed.filter((order: AssignedOrder) => 
+              order.reported === true
+            );
+            
             setAssignedOrders(sortedActive);
             setCompletedOrders(completed);
+            setReportedOrders(reported);
           } else {
             createMockOrders(foundDriver);
           }
@@ -230,6 +258,22 @@ export const useDriverOrders = (
         droppedTime: '01:20 on 17/03/2025',
         washType: 'both'
       });
+      
+      mockOrders.push({
+        id: `order-${driverId}-reported`,
+        orderId: 'ORD-0005',
+        customer: 'Ravi Kumar',
+        customerAddress: '45, Madhapur, Hyderabad',
+        studio: 'UClean',
+        studioAddress: 'UClean, KPHB Colony, Kukatpally',
+        date: '2025-03-15',
+        status: 'received',
+        pickedUp: true,
+        pickedUpTime: '3/15/2025, 2:30:18 PM',
+        dropped: false,
+        reported: true,
+        washType: 'express'
+      });
     }
     
     const processedMockOrders = mockOrders.map((order) => {
@@ -276,7 +320,7 @@ export const useDriverOrders = (
     
     const active = processedMockOrders
       .filter(order => 
-        !order.dropped && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
+        !order.dropped && !order.reported && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
       )
       .sort((a, b) => {
         if (a.orderId === 'ORD-0004') return -1;
@@ -288,8 +332,13 @@ export const useDriverOrders = (
       order.dropped || order.orderId === 'ORD-R001' || order.orderId === 'ORD-R002'
     );
     
+    const reported = processedMockOrders.filter(order => 
+      order.reported === true
+    );
+    
     setAssignedOrders(active);
     setCompletedOrders(completed);
+    setReportedOrders(reported);
   };
   
   const generateRandomAddress = (): string => {
@@ -364,7 +413,6 @@ export const useDriverOrders = (
     }
   };
   
-  // Studio address mapping
   const studioAddressMapping: Record<string, string> = {
     'PKC Laundries': 'PKC Laundries, Kothaguda X Roads, Kondapur',
     'MagicKlean': 'MagicKlean, Road No. 1, Banjara Hills',
@@ -381,6 +429,7 @@ export const useDriverOrders = (
     driver,
     assignedOrders,
     completedOrders,
+    reportedOrders,
     isLoading,
     updateLocalStorage,
     simulatePickup,

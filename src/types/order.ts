@@ -17,4 +17,5 @@ export interface AssignedOrder {
   droppedTime?: string | null;
   showTripStatus?: boolean;
   washType?: WashType | string;
+  reported?: boolean;
 }

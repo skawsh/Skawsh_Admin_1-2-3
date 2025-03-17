@@ -16,7 +16,8 @@ const DriverOrdersDetails = () => {
   const { 
     driver, 
     assignedOrders, 
-    completedOrders, 
+    completedOrders,
+    reportedOrders,
     isLoading
   } = useDriverOrders(driverId, navigate);
   
@@ -64,6 +65,7 @@ const DriverOrdersDetails = () => {
           <OrderTabs
             assignedOrders={assignedOrders}
             completedOrders={completedOrders}
+            reportedOrders={reportedOrders}
           />
         </main>
       </div>

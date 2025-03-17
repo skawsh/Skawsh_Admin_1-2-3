@@ -1,18 +1,20 @@
 
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Package, CheckCircle2 } from 'lucide-react';
+import { Package, CheckCircle2, Flag } from 'lucide-react';
 import OrdersList from './OrdersList';
 import { AssignedOrder } from '@/types/order';
 
 interface OrderTabsProps {
   assignedOrders: AssignedOrder[];
   completedOrders: AssignedOrder[];
+  reportedOrders?: AssignedOrder[];
 }
 
 const OrderTabs: React.FC<OrderTabsProps> = ({ 
   assignedOrders, 
-  completedOrders 
+  completedOrders,
+  reportedOrders = [] 
 }) => {
   const [activeTab, setActiveTab] = useState('assigned');
   
@@ -35,6 +37,14 @@ const OrderTabs: React.FC<OrderTabsProps> = ({
           <CheckCircle2 className="h-4 w-4 text-green-600" />
           Completed Orders ({completedOrders.length})
         </TabsTrigger>
+        <TabsTrigger 
+          value="reported" 
+          className="flex items-center gap-2" 
+          onClick={() => setActiveTab('reported')}
+        >
+          <Flag className="h-4 w-4 text-red-600" />
+          Reported Orders ({reportedOrders.length})
+        </TabsTrigger>
       </TabsList>
       
       <TabsContent value="assigned">
@@ -48,6 +58,13 @@ const OrderTabs: React.FC<OrderTabsProps> = ({
         <OrdersList 
           orders={completedOrders}
           emptyMessage="No completed orders."
+        />
+      </TabsContent>
+      
+      <TabsContent value="reported">
+        <OrdersList 
+          orders={reportedOrders}
+          emptyMessage="No reported orders."
         />
       </TabsContent>
     </Tabs>
