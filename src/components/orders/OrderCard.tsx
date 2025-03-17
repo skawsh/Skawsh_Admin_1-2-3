@@ -5,6 +5,7 @@ import StatusBadge from './StatusBadge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { formatDateString, formatDateTime } from './utils/dateUtils';
+
 interface OrderCardProps {
   id: string;
   orderId: string;
@@ -22,7 +23,9 @@ interface OrderCardProps {
   showNewOrder?: boolean;
   isDriverOrdersView?: boolean; // Prop to indicate if displayed in driver orders view
   showOriginalStatus?: boolean; // New prop to force showing the original status
+  showTripStatus?: boolean; // New prop to show special trip status for ORD-0004
 }
+
 const OrderCard: React.FC<OrderCardProps> = ({
   orderId,
   date,
@@ -38,8 +41,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   droppedTime,
   showNewOrder,
   isDriverOrdersView = false,
-  // Default to false
-  showOriginalStatus = false // Default to false
+  showOriginalStatus = false,
+  showTripStatus = false // Default to false
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -70,6 +73,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
   // Override pickup/drop status based on order ID for custom orders
   const customPickedUp = determinePickedUpStatus(orderId, pickedUp);
   const customDropped = determineDroppedStatus(orderId, dropped);
+  
+  // Special handling for ORD-0004
+  const isORD0004 = orderId === 'ORD-0004';
+
   function determinePickupTime(orderId: string, defaultTime: string | null | undefined): string | null | undefined {
     switch (orderId) {
       case 'ORD-0011':
@@ -112,6 +119,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         return defaultStatus || false;
     }
   }
+  
   return <>
       <Card className="w-full max-w-sm overflow-hidden border border-gray-100 shadow-sm">
         <div className="flex items-center justify-between border-b border-gray-100 p-4">
@@ -124,6 +132,14 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </div>
         
         <CardContent className="p-4 space-y-4">
+          {/* Trip Status Indicator - Only for ORD-0004 */}
+          {(showTripStatus || isORD0004) && (
+            <div className="bg-blue-50 text-blue-700 px-3 py-2 rounded-md text-sm font-medium flex items-center justify-between mb-2">
+              <span>Trip Status:</span>
+              <span className="font-semibold">Pickup In Progress</span>
+            </div>
+          )}
+          
           {/* Pickup Information */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -188,6 +204,16 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   Ready for {isReadyForCollection ? 'collection' : 'pickup'}
                 </span>}
             </div>
+            
+            {/* Trip Status Indicator - Only for ORD-0004 */}
+            {(showTripStatus || isORD0004) && (
+              <div className="flex items-center justify-between">
+                <span className="text-base font-medium">Trip Status:</span>
+                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium">
+                  Pickup In Progress
+                </span>
+              </div>
+            )}
             
             {/* Pickup Details */}
             <div className="space-y-4">

@@ -30,6 +30,7 @@ interface AssignedOrder {
   pickedUpTime?: string | null;
   dropped?: boolean;
   droppedTime?: string | null;
+  showTripStatus?: boolean;
 }
 
 const DriverOrdersDetails = () => {
@@ -60,7 +61,8 @@ const DriverOrdersDetails = () => {
           if (data.driverId === driverId && data.orders) {
             const orders = data.orders.map((order: AssignedOrder) => ({
               ...order,
-              originalStatus: order.originalStatus || order.status
+              originalStatus: order.originalStatus || order.status,
+              showTripStatus: order.orderId === 'ORD-0004'
             }));
             
             const processed = orders.map((order: AssignedOrder) => {
@@ -99,14 +101,21 @@ const DriverOrdersDetails = () => {
               return order;
             });
             
-            const active = processed.filter((order: AssignedOrder) => 
-              !order.dropped && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
-            );
+            const sortedActive = processed
+              .filter((order: AssignedOrder) => 
+                !order.dropped && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
+              )
+              .sort((a: AssignedOrder, b: AssignedOrder) => {
+                if (a.orderId === 'ORD-0004') return -1;
+                if (b.orderId === 'ORD-0004') return 1;
+                return 0;
+              });
+            
             const completed = processed.filter((order: AssignedOrder) => 
               order.dropped || order.orderId === 'ORD-R001' || order.orderId === 'ORD-R002'
             );
             
-            setAssignedOrders(active);
+            setAssignedOrders(sortedActive);
             setCompletedOrders(completed);
           } else {
             createMockOrders(foundDriver);
@@ -172,7 +181,8 @@ const DriverOrdersDetails = () => {
         status: 'New',
         pickedUp: true,
         pickedUpTime: '3/17/2025, 9:05:18 PM',
-        dropped: false
+        dropped: false,
+        showTripStatus: true
       });
       
       mockOrders.push({
@@ -232,19 +242,6 @@ const DriverOrdersDetails = () => {
       });
     }
     
-    for (let i = mockOrders.length; i < orderCount; i++) {
-      mockOrders.push({
-        id: `order-${driverId}-${i + 1}`,
-        orderId: `ORD-${10000 + parseInt(driverId || '0') * 100 + i}`,
-        customer: customerNames[i % customerNames.length],
-        customerAddress: generateRandomAddress(),
-        studio: studioNames[i % studioNames.length],
-        studioAddress: getStudioAddress(studioNames[i % studioNames.length]),
-        date: new Date(Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0],
-        status: statusOptions[i % statusOptions.length]
-      });
-    }
-    
     const processedMockOrders = mockOrders.map((order) => {
       if (order.orderId === 'ORD-R001') {
         return {
@@ -281,9 +278,16 @@ const DriverOrdersDetails = () => {
       return order;
     });
     
-    const active = processedMockOrders.filter(order => 
-      !order.dropped && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
-    );
+    const active = processedMockOrders
+      .filter(order => 
+        !order.dropped && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
+      )
+      .sort((a, b) => {
+        if (a.orderId === 'ORD-0004') return -1;
+        if (b.orderId === 'ORD-0004') return 1;
+        return 0;
+      });
+      
     const completed = processedMockOrders.filter(order => 
       order.dropped || order.orderId === 'ORD-R001' || order.orderId === 'ORD-R002'
     );
@@ -469,6 +473,7 @@ const DriverOrdersDetails = () => {
                       droppedTime={order.droppedTime}
                       isDriverOrdersView={true}
                       showOriginalStatus={true}
+                      showTripStatus={order.showTripStatus}
                     />
                   ))
                 ) : (
@@ -499,6 +504,7 @@ const DriverOrdersDetails = () => {
                       droppedTime={order.droppedTime}
                       isDriverOrdersView={true}
                       showOriginalStatus={true}
+                      showTripStatus={order.showTripStatus}
                     />
                   ))
                 ) : (
@@ -516,3 +522,4 @@ const DriverOrdersDetails = () => {
 };
 
 export default DriverOrdersDetails;
+

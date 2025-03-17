@@ -25,6 +25,7 @@ export interface Order {
   pickedUpTime?: string | null;
   dropped?: boolean;
   droppedTime?: string | null;
+  showTripStatus?: boolean; // Added for ORD-0004 trip status indicator
 }
 
 // Table data interface
@@ -44,6 +45,7 @@ export interface OrderTableData {
   pickedUpTime?: string | null;
   dropped?: boolean;
   droppedTime?: string | null;
+  showTripStatus?: boolean; // Added for ORD-0004 trip status indicator
 }
 
 // Component props types
