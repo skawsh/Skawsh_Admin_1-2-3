@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { NavigateFunction } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
 import { AssignedOrder } from '@/types/order';
+import { isWithinInterval, parseISO, startOfDay, endOfDay } from 'date-fns';
 
 interface UseDriverOrdersReturn {
   driver: Driver | null;
@@ -14,6 +15,13 @@ interface UseDriverOrdersReturn {
   updateLocalStorage: (orders: AssignedOrder[]) => void;
   simulatePickup: (orderId: string) => void;
   simulateDropped: (orderId: string) => void;
+  dateRange: { start: Date | null; end: Date | null } | null;
+  setDateRange: (range: { start: Date | null; end: Date | null } | null) => void;
+  selectedWashType: string;
+  setSelectedWashType: (type: string) => void;
+  filteredAssignedOrders: AssignedOrder[];
+  filteredCompletedOrders: AssignedOrder[];
+  filteredReportedOrders: AssignedOrder[];
 }
 
 export const useDriverOrders = (
@@ -25,6 +33,8 @@ export const useDriverOrders = (
   const [completedOrders, setCompletedOrders] = useState<AssignedOrder[]>([]);
   const [reportedOrders, setReportedOrders] = useState<AssignedOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null } | null>(null);
+  const [selectedWashType, setSelectedWashType] = useState<string>('all');
   const { toast } = useToast();
   
   useEffect(() => {
@@ -158,6 +168,45 @@ export const useDriverOrders = (
     
     setIsLoading(false);
   }, [driverId, navigate, toast]);
+  
+  const filteredAssignedOrders = useMemo(() => {
+    return applyFilters(assignedOrders, dateRange, selectedWashType);
+  }, [assignedOrders, dateRange, selectedWashType]);
+
+  const filteredCompletedOrders = useMemo(() => {
+    return applyFilters(completedOrders, dateRange, selectedWashType);
+  }, [completedOrders, dateRange, selectedWashType]);
+
+  const filteredReportedOrders = useMemo(() => {
+    return applyFilters(reportedOrders, dateRange, selectedWashType);
+  }, [reportedOrders, dateRange, selectedWashType]);
+
+  const applyFilters = (
+    orders: AssignedOrder[], 
+    dateRange: { start: Date | null; end: Date | null } | null, 
+    washType: string
+  ): AssignedOrder[] => {
+    return orders.filter(order => {
+      const washTypeMatch = washType === 'all' || order.washType === washType;
+      
+      let dateMatch = true;
+      if (dateRange && dateRange.start && dateRange.end) {
+        try {
+          const orderDate = order.date ? parseISO(order.date) : null;
+          if (orderDate) {
+            dateMatch = isWithinInterval(orderDate, {
+              start: startOfDay(dateRange.start),
+              end: endOfDay(dateRange.end)
+            });
+          }
+        } catch (error) {
+          console.error('Error parsing date:', error);
+        }
+      }
+      
+      return washTypeMatch && dateMatch;
+    });
+  };
   
   const createMockOrders = (driver: Driver) => {
     const mockOrders: AssignedOrder[] = [];
@@ -439,6 +488,13 @@ export const useDriverOrders = (
     isLoading,
     updateLocalStorage,
     simulatePickup,
-    simulateDropped
+    simulateDropped,
+    dateRange,
+    setDateRange,
+    selectedWashType,
+    setSelectedWashType,
+    filteredAssignedOrders,
+    filteredCompletedOrders,
+    filteredReportedOrders
   };
 };
