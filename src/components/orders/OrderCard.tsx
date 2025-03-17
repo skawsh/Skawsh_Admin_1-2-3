@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -74,6 +75,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const customPickedUp = determinePickedUpStatus(orderId, pickedUp);
   const customDropped = determineDroppedStatus(orderId, dropped);
 
+  // Determine if the order is in progress (specifically for ORD-0011)
+  const isOrderInProgress = orderId === 'ORD-0011' && customPickedUp && !customDropped;
+
   function determinePickupTime(orderId: string, defaultTime: string | null | undefined): string | null | undefined {
     switch (orderId) {
       case 'ORD-0011':
@@ -120,12 +124,33 @@ const OrderCard: React.FC<OrderCardProps> = ({
     }
   }
 
+  // Function to determine if the order is "Pickup In Progress" based on order id
+  const getOrderTripStatus = () => {
+    if (orderId === 'ORD-0011' && customPickedUp && !customDropped) {
+      return (
+        <div className="flex items-center gap-1 text-sm bg-blue-50 text-blue-700 py-1 px-3 rounded-full mt-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1">
+            <path d="M10.5004 19.9998L5.00043 14.4998L6.41043 13.0898L10.5004 17.1698L17.5904 10.0898L19.0004 11.4998L10.5004 19.9998Z" fill="currentColor"/>
+            <path d="M8.00043 5H5.00043V8H3.00043V5C3.00043 3.9 3.90043 3 5.00043 3H8.00043V5Z" fill="currentColor"/>
+            <path d="M19.0004 3H16.0004V5H19.0004V8H21.0004V5C21.0004 3.9 20.1004 3 19.0004 3Z" fill="currentColor"/>
+            <path d="M19.0004 19H16.0004V21H19.0004C20.1004 21 21.0004 20.1 21.0004 19V16H19.0004V19Z" fill="currentColor"/>
+            <path d="M3.00043 16H5.00043V19H8.00043V21H5.00043C3.90043 21 3.00043 20.1 3.00043 19V16Z" fill="currentColor"/>
+          </svg>
+          Pickup In Progress
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <Card className="w-full max-w-sm overflow-hidden border border-gray-100 shadow-sm">
         <div className="flex items-center justify-between border-b border-gray-100 p-4">
           <div>
             <h3 className="text-lg font-medium text-blue-600">{orderId}</h3>
+            {/* Add the Trip Status here */}
+            {getOrderTripStatus()}
           </div>
           <div>
             {status && <StatusBadge 
@@ -226,6 +251,23 @@ const OrderCard: React.FC<OrderCardProps> = ({
               )}
             </div>
             
+            {/* Trip Status Section - Only show for ORD-0011 */}
+            {orderId === 'ORD-0011' && customPickedUp && !customDropped && (
+              <div className="flex items-center justify-between">
+                <span className="text-base font-medium">Trip Status:</span>
+                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium flex items-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1">
+                    <path d="M10.5004 19.9998L5.00043 14.4998L6.41043 13.0898L10.5004 17.1698L17.5904 10.0898L19.0004 11.4998L10.5004 19.9998Z" fill="currentColor"/>
+                    <path d="M8.00043 5H5.00043V8H3.00043V5C3.00043 3.9 3.90043 3 5.00043 3H8.00043V5Z" fill="currentColor"/>
+                    <path d="M19.0004 3H16.0004V5H19.0004V8H21.0004V5C21.0004 3.9 20.1004 3 19.0004 3Z" fill="currentColor"/>
+                    <path d="M19.0004 19H16.0004V21H19.0004C20.1004 21 21.0004 20.1 21.0004 19V16H19.0004V19Z" fill="currentColor"/>
+                    <path d="M3.00043 16H5.00043V19H8.00043V21H5.00043C3.90043 21 3.00043 20.1 3.00043 19V16Z" fill="currentColor"/>
+                  </svg>
+                  Pickup In Progress
+                </span>
+              </div>
+            )}
+            
             {/* Pickup Details */}
             <div className="space-y-4">
               <h4 className="text-base font-semibold flex items-center gap-2">
@@ -237,14 +279,18 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   <span className="font-medium text-gray-700">Name:</span>
                   <span className="text-gray-900">
                     {orderId === 'ORD-R001' ? 'Sanjay Mehta' : 
-                     orderId === 'ORD-R002' ? 'UClean' : pickupInfo.location}
+                     orderId === 'ORD-R002' ? 'UClean' : 
+                     orderId === 'ORD-0011' ? 'Vikram Malhotra' : 
+                     pickupInfo.location}
                   </span>
                 </div>
                 <div className="flex justify-between items-start">
                   <span className="font-medium text-gray-700">Address:</span>
                   <span className="text-right text-gray-900 max-w-[230px]">
                     {orderId === 'ORD-R001' ? '27, Film Nagar, Hyderabad' : 
-                     orderId === 'ORD-R002' ? 'UClean, KPHB Colony, Kukatpally' : pickupInfo.address}
+                     orderId === 'ORD-R002' ? 'UClean, KPHB Colony, Kukatpally' :
+                     orderId === 'ORD-0011' ? '12, Somajiguda, Hyderabad' :
+                     pickupInfo.address}
                   </span>
                 </div>
               </div>
@@ -261,14 +307,18 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   <span className="font-medium text-gray-700">Name:</span>
                   <span className="text-gray-900">
                     {orderId === 'ORD-R001' ? 'Laundry Express' : 
-                     orderId === 'ORD-R002' ? 'Deepika Reddy' : deliveryInfo.location}
+                     orderId === 'ORD-R002' ? 'Deepika Reddy' : 
+                     orderId === 'ORD-0011' ? 'Bhavani BAND BOX' :
+                     deliveryInfo.location}
                   </span>
                 </div>
                 <div className="flex justify-between items-start">
                   <span className="font-medium text-gray-700">Address:</span>
                   <span className="text-right text-gray-900 max-w-[230px]">
                     {orderId === 'ORD-R001' ? 'Laundry Express, Road No. 12, Banjara Hills' : 
-                     orderId === 'ORD-R002' ? '72, Kukatpally, Hyderabad' : deliveryInfo.address}
+                     orderId === 'ORD-R002' ? '72, Kukatpally, Hyderabad' : 
+                     orderId === 'ORD-0011' ? 'Bhavani BAND BOX, Khairatabad X Roads, Somajiguda' :
+                     deliveryInfo.address}
                   </span>
                 </div>
               </div>
@@ -288,18 +338,24 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   </div>
                   <div>
                     <div className="font-medium text-sm">Order Created</div>
-                    <div className="text-xs text-gray-500">{date}</div>
+                    <div className="text-xs text-gray-500">{orderId === 'ORD-0011' ? '2025-02-20' : date}</div>
                   </div>
                 </div>
                 
-                {/* Pickup Status - Custom displays based on order ID */}
+                {/* Pickup Status - Special handling for ORD-0011 */}
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5">
-                    {determinePickedUpIcon(orderId, customPickedUp)}
+                    {orderId === 'ORD-0011' ? 
+                      <CheckCircle2 size={16} className="text-green-500" /> : 
+                      determinePickedUpIcon(orderId, customPickedUp)
+                    }
                   </div>
                   <div>
                     <div className={`font-medium text-sm ${customPickedUp ? 'text-green-700' : 'text-gray-500'}`}>
-                      {getPickupStatusLabel(orderId, customPickedUp, customPickupTime, pickupLabel, isReadyForCollection)}
+                      {orderId === 'ORD-0011' ? 
+                        `✓ Picked Up at ${customPickupTime}` : 
+                        getPickupStatusLabel(orderId, customPickedUp, customPickupTime, pickupLabel, isReadyForCollection)
+                      }
                     </div>
                     {!['ORD-0004', 'ORD-0011', 'ORD-R001', 'ORD-0003', 'ORD-0012', 'ORD-R002'].includes(orderId) && 
                       customPickedUp && customPickupTime ? (
@@ -310,19 +366,27 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   </div>
                 </div>
                 
-                {/* Delivery Status - Custom displays based on order ID */}
+                {/* Delivery Status - Special handling for ORD-0011 */}
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5">
-                    {determineDroppedIcon(orderId, customDropped)}
+                    {orderId === 'ORD-0011' && !customDropped ? 
+                      <PackageCheck size={16} className="text-gray-400" /> :
+                      determineDroppedIcon(orderId, customDropped)
+                    }
                   </div>
                   <div>
                     <div className={`font-medium text-sm ${customDropped ? 'text-green-700' : 'text-gray-500'}`}>
-                      {getDropStatusLabel(orderId, customDropped, customDropTime, dropLabel, isReadyForCollection)}
+                      {orderId === 'ORD-0011' && !customDropped ? 
+                        'Dropped Off Pending' : 
+                        getDropStatusLabel(orderId, customDropped, customDropTime, dropLabel, isReadyForCollection)
+                      }
                     </div>
-                    {!['ORD-0004', 'ORD-R001', 'ORD-0003', 'ORD-R002'].includes(orderId) && 
+                    {!['ORD-0004', 'ORD-R001', 'ORD-0003', 'ORD-R002', 'ORD-0011'].includes(orderId) && 
                       customDropped && customDropTime ? (
                       <div className="text-xs text-gray-500">{customDropTime}</div>
-                    ) : !['ORD-0004', 'ORD-R001', 'ORD-0003', 'ORD-R002'].includes(orderId) ? (
+                    ) : !['ORD-0004', 'ORD-R001', 'ORD-0003', 'ORD-R002', 'ORD-0011'].includes(orderId) ? (
+                      <div className="text-xs text-gray-400">Pending</div>
+                    ) : orderId === 'ORD-0011' && !customDropped ? (
                       <div className="text-xs text-gray-400">Pending</div>
                     ) : null}
                   </div>
