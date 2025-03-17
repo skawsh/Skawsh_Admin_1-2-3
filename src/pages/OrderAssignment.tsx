@@ -52,7 +52,7 @@ const OrderAssignment = () => {
   }, []);
 
   const newOrders = sampleOrders
-    .filter(order => (order.status === 'new' || order.status === 'received') && !assignedOrderIds.includes(order.id));
+    .filter(order => order.status === 'new' && !assignedOrderIds.includes(order.id));
   const readyForCollectionOrders = sampleOrders
     .filter(order => order.status === 'ready-for-collect' && !assignedOrderIds.includes(order.id));
   
@@ -319,12 +319,6 @@ const OrderAssignment = () => {
             <Clock size={16} />
             Rescheduled
           </TabsTrigger>
-          {assignedOrdersData.length > 0 && (
-            <TabsTrigger value="assigned" className="flex items-center gap-2">
-              <Package size={16} />
-              Assigned Orders
-            </TabsTrigger>
-          )}
         </TabsList>
         
         <TabsContent value="new" className="space-y-4">
@@ -383,27 +377,6 @@ const OrderAssignment = () => {
           ) : (
             <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
               No rescheduled orders
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="assigned">
-          {assignedOrdersData.length > 0 ? (
-            <OrdersAssignmentTable
-              title="Assigned Orders"
-              icon={<Package size={20} className="text-green-600" />}
-              statusText={<div className="flex items-center gap-1"><Clock size={16} /><span>{assignedOrdersData.length} Orders Assigned</span></div>}
-              orders={assignedOrdersData}
-              selectedOrders={[]}
-              onToggleOrderSelection={() => {}}
-              onSelectAll={() => {}}
-              onAssignSingle={() => {}}
-              useCardView={true}
-              onViewDetails={handleViewDetails}
-            />
-          ) : (
-            <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
-              No assigned orders
             </div>
           )}
         </TabsContent>
