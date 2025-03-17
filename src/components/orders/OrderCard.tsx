@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck, CheckCircle2, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -80,10 +79,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
   // Special handling for ORD-0004
   const isORD0004 = orderId === 'ORD-0004';
 
-  // Format the wash type display
+  // Format the wash type display - updated to fix the "Wash Wash" issue
   const getFormattedWashType = (type?: string) => {
     if (!type) return "Standard";
-    if (type === 'both') return "Standard & Express";
+    if (type === 'both') return "Both";
     return type.charAt(0).toUpperCase() + type.slice(1);
   };
 
@@ -150,11 +149,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </div>
           )}
           
-          {/* Wash Type Badge - Updated formatting */}
+          {/* Wash Type Badge - Fixed formatting to match image */}
           <div className="flex items-center gap-2">
             <Package size={16} className="text-blue-600" />
             <span className="text-sm font-medium bg-blue-50 text-blue-700 px-2 py-1 rounded-sm">
-              {getFormattedWashType(washType)} Wash
+              {getFormattedWashType(washType)} Wash{washType === 'both' ? ' Wash' : ''}
             </span>
           </div>
           
@@ -237,12 +236,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </div>
             )}
             
-            {/* Wash Type - Updated formatting */}
+            {/* Wash Type - Fixed formatting to match image */}
             <div className="flex items-center justify-between">
               <span className="text-base font-medium">Wash Type:</span>
               <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded text-sm font-medium flex items-center gap-1">
                 <Package size={14} className="text-blue-600" />
-                {getFormattedWashType(washType)} Wash
+                {getFormattedWashType(washType)} Wash{washType === 'both' ? ' Wash' : ''}
               </span>
             </div>
             
