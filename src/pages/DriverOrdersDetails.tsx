@@ -63,7 +63,6 @@ const DriverOrdersDetails = () => {
               originalStatus: order.originalStatus || order.status
             }));
             
-            // Split orders into active and completed
             const active = orders.filter((order: AssignedOrder) => !order.dropped);
             const completed = orders.filter((order: AssignedOrder) => order.dropped);
             
@@ -107,7 +106,6 @@ const DriverOrdersDetails = () => {
     const customerNames = ['Deepika Reddy', 'Sanjay Mehta', 'Arun Verma', 'Priya Singh', 'Rajesh Kumar'];
     
     if (orderCount > 0) {
-      // Create a sample completed order
       mockOrders.push({
         id: `order-${driverId}-complete`,
         orderId: 'ORD-0001',
@@ -123,7 +121,6 @@ const DriverOrdersDetails = () => {
         droppedTime: '3/17/2025, 9:05:20 PM'
       });
       
-      // Create a sample active order with pickup but not dropped
       mockOrders.push({
         id: `order-${driverId}-active`,
         orderId: 'ORD-0004',
@@ -138,7 +135,6 @@ const DriverOrdersDetails = () => {
         dropped: false
       });
       
-      // Create ORD-R001 sample with specific details to match the design
       mockOrders.push({
         id: `order-${driverId}-new`,
         orderId: 'ORD-R001',
@@ -167,7 +163,6 @@ const DriverOrdersDetails = () => {
       });
     }
     
-    // Split orders into active and completed
     const active = mockOrders.filter(order => !order.dropped);
     const completed = mockOrders.filter(order => order.dropped);
     
@@ -207,11 +202,9 @@ const DriverOrdersDetails = () => {
   };
   
   const handleBackClick = () => {
-    // Navigate back to the previous page in history
     window.history.back();
   };
 
-  // Simulate marking an order as picked up
   const simulatePickup = (orderId: string) => {
     const now = new Date();
     const formattedTime = now.toLocaleString();
@@ -227,7 +220,6 @@ const DriverOrdersDetails = () => {
       return order;
     }));
     
-    // Update local storage
     updateLocalStorage([...assignedOrders.map(order => 
       order.id === orderId ? {...order, pickedUp: true, pickedUpTime: formattedTime} : order
     ), ...completedOrders]);
@@ -238,7 +230,6 @@ const DriverOrdersDetails = () => {
     });
   };
   
-  // Simulate marking an order as dropped
   const simulateDropped = (orderId: string) => {
     const now = new Date();
     const formattedTime = now.toLocaleString();
@@ -251,11 +242,9 @@ const DriverOrdersDetails = () => {
         droppedTime: formattedTime
       };
       
-      // Remove from assigned and add to completed
       setAssignedOrders(prev => prev.filter(order => order.id !== orderId));
       setCompletedOrders(prev => [...prev, updatedOrder]);
       
-      // Update local storage
       updateLocalStorage([
         ...assignedOrders.filter(order => order.id !== orderId),
         ...completedOrders,
@@ -356,6 +345,7 @@ const DriverOrdersDetails = () => {
                       pickedUpTime={order.pickedUpTime}
                       dropped={order.dropped}
                       droppedTime={order.droppedTime}
+                      isDriverOrdersView={true}
                     />
                   ))
                 ) : (
@@ -384,6 +374,7 @@ const DriverOrdersDetails = () => {
                       pickedUpTime={order.pickedUpTime}
                       dropped={order.dropped}
                       droppedTime={order.droppedTime}
+                      isDriverOrdersView={true}
                     />
                   ))
                 ) : (

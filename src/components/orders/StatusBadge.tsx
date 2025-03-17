@@ -9,7 +9,8 @@ interface StatusBadgeProps {
   pickedUpTime?: string | null;
   dropped?: boolean;
   droppedTime?: string | null;
-  showNewOrder?: boolean; // New prop to control when to show "New Order"
+  showNewOrder?: boolean; // Prop to control when to show "New Order"
+  isDriverOrdersView?: boolean; // New prop to indicate if displayed in driver orders view
 }
 
 const StatusBadge = ({ 
@@ -18,7 +19,8 @@ const StatusBadge = ({
   pickedUpTime, 
   dropped, 
   droppedTime,
-  showNewOrder = false 
+  showNewOrder = false,
+  isDriverOrdersView = false // Default to false
 }: StatusBadgeProps) => {
   // For ORD-R001 special case
   if (status === "new" && pickedUp && !dropped) {
@@ -28,6 +30,12 @@ const StatusBadge = ({
   // For new orders, show "New Order" if showNewOrder is true
   if (status === "new" && showNewOrder) {
     return <span className="status-badge status-new">New Order</span>;
+  }
+  
+  // If in driver orders view and status is "new" or "ready-for-collect", 
+  // always show "Ready for collection" to match the design in the image
+  if (isDriverOrdersView && (status === "new" || status === "ready-for-collect")) {
+    return <span className="status-badge status-ready">Ready for collection</span>;
   }
   
   // For new orders, show the real-time status based on pickup and drop status
