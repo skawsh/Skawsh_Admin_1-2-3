@@ -59,7 +59,9 @@ const TripTimeline: React.FC<TripTimelineProps> = ({
         </div>
         <div>
           <div className={`font-medium text-sm ${customPickedUp ? 'text-green-700' : 'text-gray-500'}`}>
-            {getPickupStatusLabel(orderId, customPickedUp, customPickupTime, pickupLabel, isReadyForCollection)}
+            {reported ? 
+              `Pick up pending` : 
+              getPickupStatusLabel(orderId, customPickedUp, customPickupTime, pickupLabel, isReadyForCollection)}
           </div>
           {!['ORD-0004', 'ORD-0011', 'ORD-R001', 'ORD-0003', 'ORD-0012', 'ORD-R002'].includes(orderId) && customPickedUp && customPickupTime ? 
             <div className="text-xs text-gray-500">{customPickupTime}</div> : 
