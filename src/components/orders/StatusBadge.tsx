@@ -47,9 +47,10 @@ const StatusBadge = ({
     }
   }
   
-  // For ORD-R001 special case
-  if (status === "new" && pickedUp && !dropped) {
-    return <span className="status-badge status-in-progress">Picked up</span>;
+  // Special cases for specific order IDs
+  if ((status === "new" || status === "ready-for-collect") && pickedUp && !dropped) {
+    const statusLabel = status === "ready-for-collect" ? "Collected" : "Picked up";
+    return <span className="status-badge status-in-progress">{statusLabel}</span>;
   }
   
   // For new orders, show "New Order" if showNewOrder is true
@@ -63,18 +64,23 @@ const StatusBadge = ({
     return <span className="status-badge status-ready">Ready for collection</span>;
   }
   
-  // For new orders, show the real-time status based on pickup and drop status
-  if (status === "new") {
+  // For orders, show the real-time status based on pickup and drop status
+  if (status === "new" || status === "ready-for-collect") {
+    const pickupLabel = status === "ready-for-collect" ? "Collected" : "Picked up";
+    const dropLabel = status === "ready-for-collect" ? "Delivered" : "Dropped";
+    
     if (dropped && droppedTime) {
-      return <span className="status-badge status-delivered">Dropped: {droppedTime}</span>;
+      return <span className="status-badge status-delivered">{dropLabel}: {droppedTime}</span>;
     } else if (pickedUp && pickedUpTime) {
-      return <span className="status-badge status-in-progress">Picked up</span>;
+      return <span className="status-badge status-in-progress">{pickupLabel}</span>;
     } else {
-      return <span className="status-badge status-ready">Ready for collection</span>;
+      return <span className="status-badge status-ready">
+        Ready for {status === "ready-for-collect" ? "collection" : "pickup"}
+      </span>;
     }
   }
 
-  // Make sure we handle all possible status values and provide appropriate display text
+  // Standard status handling for all other cases
   switch (status) {
     case "new":
       return <span className="status-badge status-new">New Order</span>;

@@ -80,14 +80,30 @@ const DriverOrdersDetails = () => {
                   pickedUpTime: "06:40 on 17/03/2025"
                 };
               }
+              if (order.orderId === 'ORD-R002') {
+                return {
+                  ...order,
+                  pickedUp: true,
+                  pickedUpTime: "12:40 on 17/03/2025",
+                  dropped: true,
+                  droppedTime: "01:20 on 17/03/2025"
+                };
+              }
+              if (order.orderId === 'ORD-0012') {
+                return {
+                  ...order,
+                  pickedUp: true,
+                  pickedUpTime: "12:40 on 17/03/2025"
+                };
+              }
               return order;
             });
             
             const active = processed.filter((order: AssignedOrder) => 
-              !order.dropped && order.orderId !== 'ORD-R001'
+              !order.dropped && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
             );
             const completed = processed.filter((order: AssignedOrder) => 
-              order.dropped || order.orderId === 'ORD-R001'
+              order.dropped || order.orderId === 'ORD-R001' || order.orderId === 'ORD-R002'
             );
             
             setAssignedOrders(active);
@@ -172,6 +188,48 @@ const DriverOrdersDetails = () => {
         pickedUpTime: '3/17/2025, 9:05:18 PM',
         dropped: false
       });
+      
+      mockOrders.push({
+        id: `order-${driverId}-collection`,
+        orderId: 'ORD-0003',
+        customer: 'Deepika Reddy',
+        customerAddress: '72, Kukatpally, Hyderabad',
+        studio: 'UClean',
+        studioAddress: 'UClean, KPHB Colony, Kukatpally',
+        date: '2025-03-05',
+        status: 'ready-for-collect',
+        pickedUp: false,
+        dropped: false
+      });
+      
+      mockOrders.push({
+        id: `order-${driverId}-collected`,
+        orderId: 'ORD-0012',
+        customer: 'Deepika Reddy',
+        customerAddress: '72, Kukatpally, Hyderabad',
+        studio: 'UClean',
+        studioAddress: 'UClean, KPHB Colony, Kukatpally',
+        date: '2025-03-06',
+        status: 'ready-for-collect',
+        pickedUp: true,
+        pickedUpTime: '12:40 on 17/03/2025',
+        dropped: false
+      });
+      
+      mockOrders.push({
+        id: `order-${driverId}-delivery-complete`,
+        orderId: 'ORD-R002',
+        customer: 'Deepika Reddy',
+        customerAddress: '72, Kukatpally, Hyderabad',
+        studio: 'UClean',
+        studioAddress: 'UClean, KPHB Colony, Kukatpally',
+        date: '2025-03-07',
+        status: 'ready-for-collect',
+        pickedUp: true,
+        pickedUpTime: '12:40 on 17/03/2025',
+        dropped: true,
+        droppedTime: '01:20 on 17/03/2025'
+      });
     }
     
     for (let i = mockOrders.length; i < orderCount; i++) {
@@ -204,14 +262,30 @@ const DriverOrdersDetails = () => {
           pickedUpTime: "06:40 on 17/03/2025"
         };
       }
+      if (order.orderId === 'ORD-R002') {
+        return {
+          ...order,
+          pickedUp: true,
+          pickedUpTime: "12:40 on 17/03/2025",
+          dropped: true,
+          droppedTime: "01:20 on 17/03/2025"
+        };
+      }
+      if (order.orderId === 'ORD-0012') {
+        return {
+          ...order,
+          pickedUp: true,
+          pickedUpTime: "12:40 on 17/03/2025"
+        };
+      }
       return order;
     });
     
     const active = processedMockOrders.filter(order => 
-      !order.dropped && order.orderId !== 'ORD-R001'
+      !order.dropped && order.orderId !== 'ORD-R001' && order.orderId !== 'ORD-R002'
     );
     const completed = processedMockOrders.filter(order => 
-      order.dropped || order.orderId === 'ORD-R001'
+      order.dropped || order.orderId === 'ORD-R001' || order.orderId === 'ORD-R002'
     );
     
     setAssignedOrders(active);
