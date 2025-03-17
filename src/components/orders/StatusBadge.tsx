@@ -5,9 +5,24 @@ import './OrdersBadge.css';
 
 interface StatusBadgeProps {
   status: OrderStatus | string;
+  pickedUp?: boolean;
+  pickedUpTime?: string | null;
+  dropped?: boolean;
+  droppedTime?: string | null;
 }
 
-const StatusBadge = ({ status }: StatusBadgeProps) => {
+const StatusBadge = ({ status, pickedUp, pickedUpTime, dropped, droppedTime }: StatusBadgeProps) => {
+  // For new orders, show the real-time status based on pickup and drop status
+  if (status === "new") {
+    if (dropped && droppedTime) {
+      return <span className="status-badge status-delivered">Dropped: {droppedTime}</span>;
+    } else if (pickedUp && pickedUpTime) {
+      return <span className="status-badge status-in-progress">Picked up: {pickedUpTime}</span>;
+    } else {
+      return <span className="status-badge status-ready">Ready for pickup</span>;
+    }
+  }
+
   // Make sure we handle all possible status values and provide appropriate display text
   switch (status) {
     case "new":

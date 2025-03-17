@@ -208,6 +208,75 @@ const DriverOrdersDetails = () => {
     // Navigate back to the previous page in history
     window.history.back();
   };
+
+  // Simulate marking an order as picked up
+  const simulatePickup = (orderId: string) => {
+    const now = new Date();
+    const formattedTime = now.toLocaleString();
+    
+    setAssignedOrders(prev => prev.map(order => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          pickedUp: true,
+          pickedUpTime: formattedTime
+        };
+      }
+      return order;
+    }));
+    
+    // Update local storage
+    updateLocalStorage([...assignedOrders.map(order => 
+      order.id === orderId ? {...order, pickedUp: true, pickedUpTime: formattedTime} : order
+    ), ...completedOrders]);
+    
+    toast({
+      title: "Order Picked Up",
+      description: `Order ${orderId} has been marked as picked up.`
+    });
+  };
+  
+  // Simulate marking an order as dropped
+  const simulateDropped = (orderId: string) => {
+    const now = new Date();
+    const formattedTime = now.toLocaleString();
+    
+    const orderToMove = assignedOrders.find(order => order.id === orderId);
+    if (orderToMove) {
+      const updatedOrder = {
+        ...orderToMove,
+        dropped: true,
+        droppedTime: formattedTime
+      };
+      
+      // Remove from assigned and add to completed
+      setAssignedOrders(prev => prev.filter(order => order.id !== orderId));
+      setCompletedOrders(prev => [...prev, updatedOrder]);
+      
+      // Update local storage
+      updateLocalStorage([
+        ...assignedOrders.filter(order => order.id !== orderId),
+        ...completedOrders,
+        updatedOrder
+      ]);
+      
+      toast({
+        title: "Order Completed",
+        description: `Order ${orderId} has been marked as delivered and moved to completed orders.`
+      });
+    }
+  };
+  
+  const updateLocalStorage = (orders: AssignedOrder[]) => {
+    try {
+      localStorage.setItem('driverAssignments', JSON.stringify({
+        driverId,
+        orders
+      }));
+    } catch (error) {
+      console.error('Failed to update local storage:', error);
+    }
+  };
   
   if (!driver) {
     return (

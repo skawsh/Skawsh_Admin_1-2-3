@@ -64,7 +64,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
             <h3 className="text-lg font-medium text-blue-600">{orderId}</h3>
           </div>
           <div>
-            {status && <StatusBadge status={status as any} />}
+            {status && <StatusBadge 
+              status={status as any} 
+              pickedUp={pickedUp}
+              pickedUpTime={pickedUpTime}
+              dropped={dropped}
+              droppedTime={droppedTime}
+            />}
           </div>
         </div>
         
@@ -137,7 +143,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Status:</span>
                     <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                      Ready for pickup
+                      {dropped ? 'Completed' : pickedUp ? 'Picked up' : 'Ready for pickup'}
                     </span>
                   </div>
                   
@@ -164,7 +170,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
               {!isNewOrder && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Status:</span>
-                  <StatusBadge status={status as any} />
+                  <StatusBadge 
+                    status={status as any}
+                    pickedUp={pickedUp}
+                    pickedUpTime={pickedUpTime}
+                    dropped={dropped}
+                    droppedTime={droppedTime}
+                  />
                 </div>
               )}
             </div>
