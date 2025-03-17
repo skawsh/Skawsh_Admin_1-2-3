@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { studioAddressMapping } from '@/components/orders/utils/addressUtils';
 import StatusBadge from '@/components/orders/StatusBadge';
-import { OrderStatus } from '@/components/orders/types';
+import { OrderStatus, WashType } from '@/components/orders/types';
 import OrderCard from '@/components/orders/OrderCard';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
@@ -31,6 +31,7 @@ interface AssignedOrder {
   dropped?: boolean;
   droppedTime?: string | null;
   showTripStatus?: boolean;
+  washType?: WashType | string; // Added washType property
 }
 
 const DriverOrdersDetails = () => {
@@ -173,7 +174,8 @@ const DriverOrdersDetails = () => {
         pickedUp: true,
         pickedUpTime: '3/17/2025, 9:05:18 PM',
         dropped: true,
-        droppedTime: '3/17/2025, 9:05:20 PM'
+        droppedTime: '3/17/2025, 9:05:20 PM',
+        washType: 'standard'
       });
       
       mockOrders.push({
@@ -188,7 +190,8 @@ const DriverOrdersDetails = () => {
         pickedUp: true,
         pickedUpTime: '3/17/2025, 9:05:18 PM',
         dropped: false,
-        showTripStatus: true
+        showTripStatus: true,
+        washType: 'express'
       });
       
       mockOrders.push({
@@ -202,7 +205,8 @@ const DriverOrdersDetails = () => {
         status: 'New',
         pickedUp: true,
         pickedUpTime: '3/17/2025, 9:05:18 PM',
-        dropped: false
+        dropped: false,
+        washType: 'both'
       });
       
       mockOrders.push({
@@ -215,7 +219,8 @@ const DriverOrdersDetails = () => {
         date: '2025-03-05',
         status: 'ready-for-collect',
         pickedUp: false,
-        dropped: false
+        dropped: false,
+        washType: 'standard'
       });
       
       mockOrders.push({
@@ -229,7 +234,8 @@ const DriverOrdersDetails = () => {
         status: 'ready-for-collect',
         pickedUp: true,
         pickedUpTime: '12:40 on 17/03/2025',
-        dropped: false
+        dropped: false,
+        washType: 'express'
       });
       
       mockOrders.push({
@@ -244,7 +250,8 @@ const DriverOrdersDetails = () => {
         pickedUp: true,
         pickedUpTime: '12:40 on 17/03/2025',
         dropped: true,
-        droppedTime: '01:20 on 17/03/2025'
+        droppedTime: '01:20 on 17/03/2025',
+        washType: 'both'
       });
     }
     
@@ -486,6 +493,7 @@ const DriverOrdersDetails = () => {
                       isDriverOrdersView={true}
                       showOriginalStatus={true}
                       showTripStatus={order.showTripStatus}
+                      washType={order.washType}
                     />
                   ))
                 ) : (
@@ -517,6 +525,7 @@ const DriverOrdersDetails = () => {
                       isDriverOrdersView={true}
                       showOriginalStatus={true}
                       showTripStatus={order.showTripStatus}
+                      washType={order.washType}
                     />
                   ))
                 ) : (

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck, CheckCircle2, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,9 +21,10 @@ interface OrderCardProps {
   dropped?: boolean;
   droppedTime?: string | null;
   showNewOrder?: boolean;
-  isDriverOrdersView?: boolean; // Prop to indicate if displayed in driver orders view
-  showOriginalStatus?: boolean; // New prop to force showing the original status
-  showTripStatus?: boolean; // New prop to show special trip status for ORD-0004
+  isDriverOrdersView?: boolean;
+  showOriginalStatus?: boolean;
+  showTripStatus?: boolean;
+  washType?: string;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -43,7 +43,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   showNewOrder,
   isDriverOrdersView = false,
   showOriginalStatus = false,
-  showTripStatus = false // Default to false
+  showTripStatus = false,
+  washType = 'standard'
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -141,6 +142,14 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </div>
           )}
           
+          {/* Wash Type Badge - newly added */}
+          <div className="flex items-center gap-2">
+            <Package size={16} className="text-blue-600" />
+            <span className="text-sm font-medium bg-blue-50 text-blue-700 px-2 py-1 rounded-sm">
+              {washType === 'both' ? 'Express & Standard' : washType?.charAt(0).toUpperCase() + washType?.slice(1)} Wash
+            </span>
+          </div>
+          
           {/* Pickup Information */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -186,7 +195,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </CardFooter>
       </Card>
 
-      {/* Trip Details Dialog - Updated to match the design in the image */}
+      {/* Trip Details Dialog */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="sm:max-w-md p-6">
           <DialogHeader className="space-y-1 pb-2">
@@ -197,7 +206,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </DialogHeader>
           
           <div className="space-y-6 pt-4">
-            {/* Order Status Section - Now using the same logic for showing status */}
+            {/* Order Status Section */}
             <div className="flex items-center justify-between">
               <span className="text-base font-medium">Status:</span>
               {showOriginalStatus ? <StatusBadge status={status as any} showOriginalStatus={true} /> : orderId === 'ORD-R001' ? <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
@@ -219,6 +228,15 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 </span>
               </div>
             )}
+            
+            {/* Wash Type - newly added */}
+            <div className="flex items-center justify-between">
+              <span className="text-base font-medium">Wash Type:</span>
+              <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded text-sm font-medium flex items-center gap-1">
+                <Package size={14} className="text-blue-600" />
+                {washType === 'both' ? 'Express & Standard' : washType?.charAt(0).toUpperCase() + washType?.slice(1)} Wash
+              </span>
+            </div>
             
             {/* Pickup Details */}
             <div className="space-y-4">
