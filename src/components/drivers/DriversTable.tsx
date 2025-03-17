@@ -211,6 +211,7 @@ const DriversTable = ({ className }: DriversTableProps) => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-16">S.NO</TableHead>
                 <TableHead className="w-[300px]">DRIVER</TableHead>
                 <TableHead>STATUS</TableHead>
                 <TableHead>PHONE NUMBER</TableHead>
@@ -219,8 +220,9 @@ const DriversTable = ({ className }: DriversTableProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {getFilteredDrivers().map((driver) => (
+              {getFilteredDrivers().map((driver, index) => (
                 <TableRow key={driver.id}>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell className="font-medium flex items-center">
                     <div className="w-8 h-8 rounded-full bg-gray-200 mr-3 flex items-center justify-center">
                       <span className="text-gray-500">👤</span>
@@ -310,6 +312,7 @@ const DriversTable = ({ className }: DriversTableProps) => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-16">S.NO</TableHead>
                 <TableHead className="w-[300px]">DRIVER</TableHead>
                 <TableHead>STATUS</TableHead>
                 <TableHead>PHONE NUMBER</TableHead>
@@ -320,8 +323,9 @@ const DriversTable = ({ className }: DriversTableProps) => {
             <TableBody>
               {drivers
                 .filter(driver => driver.status === 'active' && (driver.assignedOrders || 0) === 0)
-                .map((driver) => (
+                .map((driver, index) => (
                   <TableRow key={driver.id}>
+                    <TableCell>{index + 1}</TableCell>
                     <TableCell className="font-medium flex items-center">
                       <div className="w-8 h-8 rounded-full bg-gray-200 mr-3 flex items-center justify-center">
                         <span className="text-gray-500">👤</span>
