@@ -7,6 +7,7 @@ interface StatusBadgeProps {
 }
 
 const StatusBadge = ({ status }: StatusBadgeProps) => {
+  // Make sure we handle all possible status values and provide appropriate display text
   switch (status) {
     case "new":
       return <span className="status-badge status-new">New Order</span>;
@@ -21,6 +22,8 @@ const StatusBadge = ({ status }: StatusBadgeProps) => {
     case "cancelled":
       return <span className="status-badge status-cancelled">Order cancelled</span>;
     default:
+      // Use a type assertion to handle cases where status might be passed as string from legacy code
+      console.warn(`Unknown order status: ${status}`);
       return <span className="status-badge status-new">New Order</span>; // Default to New Order for unknown status
   }
 };

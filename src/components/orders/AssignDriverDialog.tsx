@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -23,7 +22,7 @@ interface OrderTableData {
   washType: string;
   distance: string;
   status?: string;
-  originalStatus?: OrderStatus; // Added field to preserve original status
+  originalStatus?: OrderStatus; // Field to preserve original status
 }
 
 interface AssignDriverDialogProps {
@@ -46,119 +45,96 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
   const { toast } = useToast();
   
-  // Check if selectedOrders is an array (for backward compatibility) or an object with arrays
   const isSelectedOrdersArray = Array.isArray(selectedOrders);
   
-  // Process orders to categorize them based on status
   let newOrdersData: OrderTableData[] = [];
   let readyOrdersData: OrderTableData[] = [];
   let rescheduledOrdersData: OrderTableData[] = [];
   let allOrdersData: OrderTableData[] = [];
   
   if (isSelectedOrdersArray) {
-    // If it's an array, keep existing backward compatibility
     allOrdersData = selectedOrders;
   } else {
-    // Extract orders data from the object format
     newOrdersData = [...selectedOrders.newOrders];
     readyOrdersData = [...selectedOrders.readyOrders];
     
-    // Process rescheduled orders and categorize them
     if (selectedOrders.rescheduledOrders && selectedOrders.rescheduledOrders.length > 0) {
       selectedOrders.rescheduledOrders.forEach(order => {
-        // Store in rescheduledOrdersData for reference
         rescheduledOrdersData.push(order);
         
-        // Add the order to either new or ready based on its status
         if (order.status === 'ready-for-collect') {
           readyOrdersData.push(order);
         } else {
-          // Any status that's not ready-for-collect is considered a new order
           newOrdersData.push(order);
         }
       });
     }
     
-    // Now set allOrdersData after processing all orders
     allOrdersData = [...newOrdersData, ...readyOrdersData];
   }
   
-  // Use the drivers data from the drivers section
   const driversData = sampleDrivers;
   
-  // Filter drivers - available drivers are those with status 'active'
   const availableDrivers = driversData.filter(driver => driver.status === 'active');
   const totalDrivers = driversData.length;
   
-  // Sort drivers: first by status, then by assigned orders, then by name
   const sortedDrivers = [...driversData].sort((a, b) => {
-    // First sort by status
     if (a.status === 'active' && b.status !== 'active') return -1;
     if (a.status !== 'active' && b.status === 'active') return 1;
     
-    // Then sort by assigned orders (0 first)
     const aOrders = a.assignedOrders || 0;
     const bOrders = b.assignedOrders || 0;
     
     if (aOrders === 0 && bOrders !== 0) return -1;
     if (aOrders !== 0 && bOrders === 0) return 1;
     
-    // Then sort by name
     return a.name.localeCompare(b.name);
   });
   
   const handleAssignDriver = () => {
     if (selectedDriverId) {
-      // Call the parent component's handler
+      const ordersWithPreservedStatus = allOrdersData.map(order => {
+        return {
+          ...order,
+          originalStatus: order.status as OrderStatus
+        };
+      });
+      
       onAssignDriver(
         selectedDriverId, 
-        allOrdersData.map(order => order.id)
+        ordersWithPreservedStatus.map(order => order.id)
       );
       
-      // Preserve the original status of orders before storing in localStorage
-      const ordersWithOriginalStatus = allOrdersData.map(order => ({
-        ...order,
-        originalStatus: order.originalStatus || order.status as OrderStatus
-      }));
-      
-      // Save to localStorage and dispatch event for other components
       const assignmentData = {
         driverId: selectedDriverId,
-        orders: ordersWithOriginalStatus
+        orders: ordersWithPreservedStatus
       };
       
       localStorage.setItem('driverAssignments', JSON.stringify(assignmentData));
       
-      // Dispatch a custom event for components that may not have access to the localStorage event
       window.dispatchEvent(new CustomEvent('driverAssignment', { 
         detail: assignmentData 
       }));
       
-      // Show success toast
       toast({
         title: "Orders Assigned",
         description: `${allOrdersData.length} orders assigned to driver successfully`,
       });
       
-      // Close dialog
       onOpenChange(false);
     }
   };
 
-  // Helper function to determine if an order is from ready tab
   const isFromReadyTab = (order: OrderTableData) => {
     if (order.status === 'ready-for-collect') return true;
     if (isSelectedOrdersArray) return false;
     return readyOrdersData.some(ro => ro.id === order.id);
   };
 
-  // Determine which tables to show based on the selected orders
   const showNewOrdersTable = !isSelectedOrdersArray && newOrdersData.length > 0;
   const showReadyOrdersTable = !isSelectedOrdersArray && readyOrdersData.length > 0;
   const showSingleTable = isSelectedOrdersArray;
 
-  // Remove duplicate entries from tables to avoid showing the same order multiple times
-  // This can happen when a rescheduled order is also added to newOrders or readyOrders
   const uniqueNewOrdersData = newOrdersData.filter((order, index, self) => 
     index === self.findIndex((o) => o.id === order.id)
   );
@@ -212,7 +188,6 @@ export const AssignDriverDialog: React.FC<AssignDriverDialogProps> = ({
                 </div>
               )}
               
-              {/* Show tables based on which orders are selected */}
               {(showNewOrdersTable || showReadyOrdersTable) && (
                 <div className="space-y-4">
                   {showNewOrdersTable && uniqueNewOrdersData.length > 0 && (
