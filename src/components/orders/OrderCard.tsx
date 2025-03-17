@@ -5,7 +5,6 @@ import StatusBadge from './StatusBadge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { formatDateString, formatDateTime } from './utils/dateUtils';
-
 interface OrderCardProps {
   id: string;
   orderId: string;
@@ -24,7 +23,6 @@ interface OrderCardProps {
   isDriverOrdersView?: boolean; // Prop to indicate if displayed in driver orders view
   showOriginalStatus?: boolean; // New prop to force showing the original status
 }
-
 const OrderCard: React.FC<OrderCardProps> = ({
   orderId,
   date,
@@ -39,22 +37,21 @@ const OrderCard: React.FC<OrderCardProps> = ({
   dropped,
   droppedTime,
   showNewOrder,
-  isDriverOrdersView = false, // Default to false
-  showOriginalStatus = false, // Default to false
+  isDriverOrdersView = false,
+  // Default to false
+  showOriginalStatus = false // Default to false
 }) => {
   const [showDetails, setShowDetails] = useState(false);
-  
+
   // Determine pickup and delivery information based on order status
   const isReadyForCollection = status === 'ready-for-collect';
   const isNewOrder = status === 'new';
-  
   const pickupInfo = {
     location: isReadyForCollection ? studio : customer,
     address: isReadyForCollection ? studioAddress : customerAddress,
     icon: isReadyForCollection ? <Building className="text-gray-600" size={16} /> : <User className="text-gray-600" size={16} />,
     label: isReadyForCollection ? "Collect" : "Pickup"
   };
-  
   const deliveryInfo = {
     location: isReadyForCollection ? customer : studio,
     address: isReadyForCollection ? customerAddress : studioAddress,
@@ -69,11 +66,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
   // Override time displays and labels based on order ID
   const customPickupTime = determinePickupTime(orderId, pickedUpTime);
   const customDropTime = determineDropTime(orderId, droppedTime);
-    
+
   // Override pickup/drop status based on order ID for custom orders
   const customPickedUp = determinePickedUpStatus(orderId, pickedUp);
   const customDropped = determineDroppedStatus(orderId, dropped);
-
   function determinePickupTime(orderId: string, defaultTime: string | null | undefined): string | null | undefined {
     switch (orderId) {
       case 'ORD-0011':
@@ -86,7 +82,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
         return defaultTime;
     }
   }
-
   function determineDropTime(orderId: string, defaultTime: string | null | undefined): string | null | undefined {
     switch (orderId) {
       case 'ORD-R001':
@@ -97,7 +92,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
         return defaultTime;
     }
   }
-
   function determinePickedUpStatus(orderId: string, defaultStatus: boolean | undefined): boolean {
     switch (orderId) {
       case 'ORD-0011':
@@ -109,7 +103,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
         return defaultStatus || false;
     }
   }
-
   function determineDroppedStatus(orderId: string, defaultStatus: boolean | undefined): boolean {
     switch (orderId) {
       case 'ORD-R001':
@@ -119,25 +112,14 @@ const OrderCard: React.FC<OrderCardProps> = ({
         return defaultStatus || false;
     }
   }
-
-  return (
-    <>
+  return <>
       <Card className="w-full max-w-sm overflow-hidden border border-gray-100 shadow-sm">
         <div className="flex items-center justify-between border-b border-gray-100 p-4">
           <div>
             <h3 className="text-lg font-medium text-blue-600">{orderId}</h3>
           </div>
           <div>
-            {status && <StatusBadge 
-              status={status as any} 
-              pickedUp={customPickedUp}
-              pickedUpTime={customPickupTime}
-              dropped={customDropped}
-              droppedTime={customDropTime}
-              showNewOrder={showNewOrder}
-              isDriverOrdersView={isDriverOrdersView}
-              showOriginalStatus={showOriginalStatus}
-            />}
+            {status && <StatusBadge status={status as any} pickedUp={customPickedUp} pickedUpTime={customPickupTime} dropped={customDropped} droppedTime={customDropTime} showNewOrder={showNewOrder} isDriverOrdersView={isDriverOrdersView} showOriginalStatus={showOriginalStatus} />}
           </div>
         </div>
         
@@ -149,10 +131,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <span className="font-semibold text-gray-800">{pickupInfo.label}</span>
             </div>
             <div className="ml-6 space-y-1">
-              <div className="flex items-center gap-1 text-sm">
-                {pickupInfo.icon}
-                <span className="font-medium">{pickupInfo.location}</span>
-              </div>
+              
               <div className="flex items-center gap-1 text-sm text-gray-600">
                 <MapPin size={14} className="text-gray-400 opacity-70" />
                 <span>{pickupInfo.address}</span>
@@ -180,12 +159,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </CardContent>
         
         <CardFooter className="flex justify-end p-4 pt-0">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex items-center gap-1"
-            onClick={() => setShowDetails(true)}
-          >
+          <Button variant="outline" size="sm" className="flex items-center gap-1" onClick={() => setShowDetails(true)}>
             <Eye size={16} />
             Trip Details
           </Button>
@@ -206,24 +180,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
             {/* Order Status Section - Now using the same logic for showing status */}
             <div className="flex items-center justify-between">
               <span className="text-base font-medium">Status:</span>
-              {showOriginalStatus ? (
-                <StatusBadge 
-                  status={status as any}
-                  showOriginalStatus={true}
-                />
-              ) : orderId === 'ORD-R001' ? (
-                <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
+              {showOriginalStatus ? <StatusBadge status={status as any} showOriginalStatus={true} /> : orderId === 'ORD-R001' ? <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
                   Ready for pickup
-                </span>
-              ) : customPickedUp && customPickupTime ? (
-                <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded text-sm font-medium">
+                </span> : customPickedUp && customPickupTime ? <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded text-sm font-medium">
                   {isReadyForCollection ? 'Collected' : 'Picked up'}: {customPickupTime}
-                </span>
-              ) : (
-                <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
+                </span> : <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
                   Ready for {isReadyForCollection ? 'collection' : 'pickup'}
-                </span>
-              )}
+                </span>}
             </div>
             
             {/* Pickup Details */}
@@ -236,15 +199,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-gray-700">Name:</span>
                   <span className="text-gray-900">
-                    {orderId === 'ORD-R001' ? 'Sanjay Mehta' : 
-                     orderId === 'ORD-R002' ? 'UClean' : pickupInfo.location}
+                    {orderId === 'ORD-R001' ? 'Sanjay Mehta' : orderId === 'ORD-R002' ? 'UClean' : pickupInfo.location}
                   </span>
                 </div>
                 <div className="flex justify-between items-start">
                   <span className="font-medium text-gray-700">Address:</span>
                   <span className="text-right text-gray-900 max-w-[230px]">
-                    {orderId === 'ORD-R001' ? '27, Film Nagar, Hyderabad' : 
-                     orderId === 'ORD-R002' ? 'UClean, KPHB Colony, Kukatpally' : pickupInfo.address}
+                    {orderId === 'ORD-R001' ? '27, Film Nagar, Hyderabad' : orderId === 'ORD-R002' ? 'UClean, KPHB Colony, Kukatpally' : pickupInfo.address}
                   </span>
                 </div>
               </div>
@@ -260,15 +221,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-gray-700">Name:</span>
                   <span className="text-gray-900">
-                    {orderId === 'ORD-R001' ? 'Laundry Express' : 
-                     orderId === 'ORD-R002' ? 'Deepika Reddy' : deliveryInfo.location}
+                    {orderId === 'ORD-R001' ? 'Laundry Express' : orderId === 'ORD-R002' ? 'Deepika Reddy' : deliveryInfo.location}
                   </span>
                 </div>
                 <div className="flex justify-between items-start">
                   <span className="font-medium text-gray-700">Address:</span>
                   <span className="text-right text-gray-900 max-w-[230px]">
-                    {orderId === 'ORD-R001' ? 'Laundry Express, Road No. 12, Banjara Hills' : 
-                     orderId === 'ORD-R002' ? '72, Kukatpally, Hyderabad' : deliveryInfo.address}
+                    {orderId === 'ORD-R001' ? 'Laundry Express, Road No. 12, Banjara Hills' : orderId === 'ORD-R002' ? '72, Kukatpally, Hyderabad' : deliveryInfo.address}
                   </span>
                 </div>
               </div>
@@ -301,12 +260,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
                     <div className={`font-medium text-sm ${customPickedUp ? 'text-green-700' : 'text-gray-500'}`}>
                       {getPickupStatusLabel(orderId, customPickedUp, customPickupTime, pickupLabel, isReadyForCollection)}
                     </div>
-                    {!['ORD-0004', 'ORD-0011', 'ORD-R001', 'ORD-0003', 'ORD-0012', 'ORD-R002'].includes(orderId) && 
-                      customPickedUp && customPickupTime ? (
-                      <div className="text-xs text-gray-500">{customPickupTime}</div>
-                    ) : !['ORD-0004', 'ORD-0011', 'ORD-R001', 'ORD-0003', 'ORD-0012', 'ORD-R002'].includes(orderId) ? (
-                      <div className="text-xs text-gray-400">Pending</div>
-                    ) : null}
+                    {!['ORD-0004', 'ORD-0011', 'ORD-R001', 'ORD-0003', 'ORD-0012', 'ORD-R002'].includes(orderId) && customPickedUp && customPickupTime ? <div className="text-xs text-gray-500">{customPickupTime}</div> : !['ORD-0004', 'ORD-0011', 'ORD-R001', 'ORD-0003', 'ORD-0012', 'ORD-R002'].includes(orderId) ? <div className="text-xs text-gray-400">Pending</div> : null}
                   </div>
                 </div>
                 
@@ -319,12 +273,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
                     <div className={`font-medium text-sm ${customDropped ? 'text-green-700' : 'text-gray-500'}`}>
                       {getDropStatusLabel(orderId, customDropped, customDropTime, dropLabel, isReadyForCollection)}
                     </div>
-                    {!['ORD-0004', 'ORD-R001', 'ORD-0003', 'ORD-R002'].includes(orderId) && 
-                      customDropped && customDropTime ? (
-                      <div className="text-xs text-gray-500">{customDropTime}</div>
-                    ) : !['ORD-0004', 'ORD-R001', 'ORD-0003', 'ORD-R002'].includes(orderId) ? (
-                      <div className="text-xs text-gray-400">Pending</div>
-                    ) : null}
+                    {!['ORD-0004', 'ORD-R001', 'ORD-0003', 'ORD-R002'].includes(orderId) && customDropped && customDropTime ? <div className="text-xs text-gray-500">{customDropTime}</div> : !['ORD-0004', 'ORD-R001', 'ORD-0003', 'ORD-R002'].includes(orderId) ? <div className="text-xs text-gray-400">Pending</div> : null}
                   </div>
                 </div>
               </div>
@@ -332,8 +281,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </div>
         </DialogContent>
       </Dialog>
-    </>
-  );
+    </>;
 };
 
 // Helper function to determine which icon to display for pickup status
@@ -391,5 +339,4 @@ function getDropStatusLabel(orderId: string, dropped: boolean, dropTime: string 
     return `${isReadyForCollection ? 'Delivery' : dropLabel} Pending`;
   }
 }
-
 export default OrderCard;
