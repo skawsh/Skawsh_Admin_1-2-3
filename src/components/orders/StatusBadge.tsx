@@ -37,7 +37,7 @@ const StatusBadge = ({
     } else if (pickedUp && pickedUpTime) {
       return <span className="status-badge status-in-progress">Picked up</span>;
     } else {
-      return <span className="status-badge status-ready">Ready for pickup</span>;
+      return <span className="status-badge status-ready">Ready for collection</span>;
     }
   }
 
