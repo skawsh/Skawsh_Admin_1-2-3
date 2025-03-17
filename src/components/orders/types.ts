@@ -21,6 +21,10 @@ export interface Order {
   phone?: string;
   customerAddress?: string;
   studioAddress?: string;
+  pickedUp?: boolean;
+  pickedUpTime?: string | null;
+  dropped?: boolean;
+  droppedTime?: string | null;
 }
 
 // Table data interface
@@ -36,6 +40,10 @@ export interface OrderTableData {
   washType: string;
   distance: string;
   status?: string;
+  pickedUp?: boolean;
+  pickedUpTime?: string | null;
+  dropped?: boolean;
+  droppedTime?: string | null;
 }
 
 // Component props types
