@@ -253,13 +253,13 @@ const DriverOrdersDetails = () => {
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center">
               <Button 
-                variant="outline" 
-                size="sm" 
+                variant="ghost" 
+                size="icon" 
                 className="mr-4"
-                onClick={() => navigate(`/driver/${driverId}`)}
+                onClick={() => navigate('/')}
+                aria-label="Back to orders"
               >
-                <ArrowLeft size={16} className="mr-1" />
-                Back to Driver
+                <ArrowLeft size={20} />
               </Button>
               <h1 className="text-2xl font-bold">Assigned Orders</h1>
             </div>
