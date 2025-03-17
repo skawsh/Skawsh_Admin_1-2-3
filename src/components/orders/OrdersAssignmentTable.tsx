@@ -41,7 +41,7 @@ interface OrdersAssignmentTableProps {
   searchQuery?: string;
   onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   showSearch?: boolean;
-  showStatus?: boolean; // Add prop to conditionally show status column
+  showStatus?: boolean; // Default prop to conditionally show status column
 }
 
 export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
@@ -56,7 +56,7 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
   searchQuery = '',
   onSearchChange,
   showSearch = false,
-  showStatus = false // Default to false for backward compatibility
+  showStatus = true // Changed default to true to show status in all tables
 }) => {
   return (
     <div className="bg-white rounded-md p-4 border border-gray-100">

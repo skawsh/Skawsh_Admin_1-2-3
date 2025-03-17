@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -296,6 +297,7 @@ const OrderAssignment = () => {
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
             showSearch={true}
+            showStatus={true}
           />
         </TabsContent>
         
@@ -310,6 +312,7 @@ const OrderAssignment = () => {
               onToggleOrderSelection={toggleOrderSelection}
               onSelectAll={handleSelectAll}
               onAssignSingle={handleAssignSingle}
+              showStatus={true}
             />
           ) : (
             <div className="bg-white rounded-md p-6 border border-gray-100 flex items-center justify-center text-gray-500 h-64">
