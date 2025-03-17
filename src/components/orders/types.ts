@@ -1,3 +1,4 @@
+
 // Order status types
 export type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'delivered' | 'cancelled';
 
@@ -17,6 +18,9 @@ export interface Order {
   washType: WashType;
   assigned?: boolean;
   rescheduled?: boolean;
+  phone?: string;
+  customerAddress?: string;
+  studioAddress?: string;
 }
 
 // Table data interface
@@ -31,6 +35,7 @@ export interface OrderTableData {
   studio: string;
   washType: string;
   distance: string;
+  status?: string;
 }
 
 // Component props types

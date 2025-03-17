@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Package, ClipboardCheck, Clock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -71,21 +70,16 @@ const OrderAssignment = () => {
     };
   }, []);
 
-  // Filter out assigned orders from the order lists
+  // Filter out assigned orders from the order lists and only get orders with 'new' status
   const newOrders = sampleOrders
     .filter(order => order.status === 'new' && !assignedOrderIds.includes(order.id));
+    
+  // Filter out assigned orders and only get orders with 'ready-for-collect' status
   const readyForCollectionOrders = sampleOrders
     .filter(order => order.status === 'ready-for-collect' && !assignedOrderIds.includes(order.id));
   
-  // Create derived data for rescheduled orders
-  const rescheduledNewOrders = newOrders.filter((_, index) => index % 3 === 0);
-  const rescheduledReadyOrders = readyForCollectionOrders.filter((_, index) => index % 3 === 0);
-  
-  const rescheduledOrders = [
-    ...rescheduledNewOrders, 
-    ...rescheduledReadyOrders, 
-    ...exclusiveRescheduledOrders.filter(order => !assignedOrderIds.includes(order.id))
-  ];
+  // Use only exclusive rescheduled orders to avoid duplication
+  const rescheduledOrders = exclusiveRescheduledOrders.filter(order => !assignedOrderIds.includes(order.id));
 
   // Map orders to table data format
   const pendingOrders = mapOrdersToTableData(newOrders);

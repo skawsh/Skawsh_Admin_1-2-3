@@ -22,7 +22,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 950,
       deliveryDate: null,
       washType: 'standard',
-      assigned: true
+      assigned: true,
+      phone: '+91 9876543210',
+      customerAddress: '42, Jubilee Hills, Hyderabad',
+      studioAddress: 'PKC Laundries, Road No. 5, Banjara Hills'
     },
     {
       id: 'ORD-0002',
@@ -34,7 +37,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 755,
       deliveryDate: null,
       washType: 'express',
-      assigned: true
+      assigned: true,
+      phone: '+91 8765432109',
+      customerAddress: '28, Madhapur, Hyderabad',
+      studioAddress: 'MagicKlean, Ayyappa Society, Madhapur'
     },
     {
       id: 'ORD-0003',
@@ -46,7 +52,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 1200,
       deliveryDate: null,
       washType: 'both',
-      assigned: true
+      assigned: true,
+      phone: '+91 7654321098',
+      customerAddress: '15, Gachibowli, Hyderabad',
+      studioAddress: 'Cleanovo, Kothaguda Cross Roads, Kondapur'
     },
     {
       id: 'ORD-0004',
@@ -58,7 +67,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 890,
       deliveryDate: null,
       washType: 'standard',
-      assigned: false
+      assigned: false,
+      phone: '+91 6543210987',
+      customerAddress: '72, Kukatpally, Hyderabad',
+      studioAddress: 'UClean, KPHB Colony, Kukatpally'
     },
     {
       id: 'ORD-0005',
@@ -70,7 +82,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 0,
       deliveryDate: null,
       washType: 'express',
-      assigned: false
+      assigned: false,
+      phone: '+91 5432109876',
+      customerAddress: '39, Ameerpet, Hyderabad',
+      studioAddress: 'Tumbledry, SR Nagar, Hyderabad'
     },
     {
       id: 'ORD-0006',
@@ -82,7 +97,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 675,
       deliveryDate: null,
       washType: 'standard',
-      assigned: false
+      assigned: false,
+      phone: '+91 4321098765',
+      customerAddress: '56, Secunderabad, Hyderabad',
+      studioAddress: 'Washmart, Paradise Circle, Secunderabad'
     },
   ];
 
@@ -105,7 +123,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 1450,
       deliveryDate: formatDateString(getDeliveryDate(orderDate7)),
       washType: 'both',
-      assigned: true
+      assigned: true,
+      phone: '+91 9876543211',
+      customerAddress: '23, Hitech City, Hyderabad',
+      studioAddress: 'We Washh, Cyber Towers, Hitech City'
     },
     {
       id: 'ORD-0008',
@@ -117,7 +138,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 875,
       deliveryDate: formatDateString(getDeliveryDate(orderDate8)),
       washType: 'standard',
-      assigned: true
+      assigned: true,
+      phone: '+91 8765432110',
+      customerAddress: '48, Manikonda, Hyderabad',
+      studioAddress: 'The Laundry Basket, OU Colony, Shaikpet'
     },
     {
       id: 'ORD-0009',
@@ -129,7 +153,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 1100,
       deliveryDate: formatDateString(getDeliveryDate(orderDate9)),
       washType: 'express',
-      assigned: true
+      assigned: true,
+      phone: '+91 7654321099',
+      customerAddress: '84, Miyapur, Hyderabad',
+      studioAddress: 'FABO, Miyapur X Roads, Miyapur'
     },
     {
       id: 'ORD-0010',
@@ -141,7 +168,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 1150,
       deliveryDate: formatDateString(getDeliveryDate(orderDate10)),
       washType: 'both',
-      assigned: true
+      assigned: true,
+      phone: '+91 6543210988',
+      customerAddress: '33, Begumpet, Hyderabad',
+      studioAddress: 'Sunshine, Prakash Nagar, Begumpet'
     },
     {
       id: 'ORD-0011',
@@ -153,7 +183,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 780,
       deliveryDate: null,
       washType: 'standard',
-      assigned: false
+      assigned: false,
+      phone: '+91 5432109877',
+      customerAddress: '12, Somajiguda, Hyderabad',
+      studioAddress: 'Bhavani BAND BOX, Khairatabad X Roads, Somajiguda'
     },
     {
       id: 'ORD-0012',
@@ -165,7 +198,10 @@ export const generateSampleOrders = (): Order[] => {
       total: 1320,
       deliveryDate: null,
       washType: 'express',
-      assigned: true
+      assigned: true,
+      phone: '+91 4321098766',
+      customerAddress: '62, Tarnaka, Hyderabad',
+      studioAddress: 'Balus Modern, Habsiguda, Tarnaka'
     }
   );
 
@@ -197,7 +233,10 @@ export const generateExclusiveRescheduledOrders = (): Order[] => {
       deliveryDate: null,
       washType: 'both',
       assigned: false,
-      rescheduled: true
+      rescheduled: true,
+      phone: '+91 9876123450',
+      customerAddress: '27, Film Nagar, Hyderabad',
+      studioAddress: 'Laundry Express, Road No. 12, Banjara Hills'
     },
     {
       id: 'ORD-R002',
@@ -210,7 +249,10 @@ export const generateExclusiveRescheduledOrders = (): Order[] => {
       deliveryDate: null,
       washType: 'express',
       assigned: false,
-      rescheduled: true
+      rescheduled: true,
+      phone: '+91 8761234509',
+      customerAddress: '45, Nallagandla, Hyderabad',
+      studioAddress: 'Speed Wash, Near BHEL, Chandanagar'
     },
     {
       id: 'ORD-R003',
@@ -223,7 +265,10 @@ export const generateExclusiveRescheduledOrders = (): Order[] => {
       deliveryDate: null,
       washType: 'standard',
       assigned: false,
-      rescheduled: true
+      rescheduled: true,
+      phone: '+91 7651234098',
+      customerAddress: '19, Bowanpally, Secunderabad',
+      studioAddress: 'Wash Masters, Karkhana, Secunderabad'
     },
     {
       id: 'ORD-R004',
@@ -236,7 +281,10 @@ export const generateExclusiveRescheduledOrders = (): Order[] => {
       deliveryDate: null,
       washType: 'both',
       assigned: false,
-      rescheduled: true
+      rescheduled: true,
+      phone: '+91 6541234987',
+      customerAddress: '54, LB Nagar, Hyderabad',
+      studioAddress: 'Urban Clean, Kothapet, Hyderabad'
     },
     {
       id: 'ORD-R005',
@@ -249,7 +297,10 @@ export const generateExclusiveRescheduledOrders = (): Order[] => {
       deliveryDate: null,
       washType: 'standard',
       assigned: false,
-      rescheduled: true
+      rescheduled: true,
+      phone: '+91 5431234876',
+      customerAddress: '37, Sainikpuri, Secunderabad',
+      studioAddress: 'Fresh Laundry, Defence Colony, Sainikpuri'
     }
   ];
 

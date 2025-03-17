@@ -18,15 +18,16 @@ export interface OrderTableData {
 
 export const mapOrdersToTableData = (orders: Order[]): OrderTableData[] => {
   return orders.map(order => {
-    const customerAddress = generateRandomAddress();
-    const studioAddress = studioAddressMapping[order.studio] || `${order.studio} Studio, Hyderabad`;
+    // Use provided addresses if available, otherwise generate random ones
+    const customerAddress = order.customerAddress || generateRandomAddress();
+    const studioAddress = order.studioAddress || studioAddressMapping[order.studio] || `${order.studio} Studio, Hyderabad`;
     
     return {
       id: order.id,
       orderId: order.id,
       date: order.orderDate,
       customer: order.customer,
-      phone: '+91 ' + Math.floor(Math.random() * 9000000000 + 1000000000),
+      phone: order.phone || '+91 ' + Math.floor(Math.random() * 9000000000 + 1000000000),
       customerAddress: customerAddress,
       studioAddress: studioAddress,
       studio: order.studio,
