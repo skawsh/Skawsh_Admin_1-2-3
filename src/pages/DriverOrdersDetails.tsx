@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -64,8 +63,32 @@ const DriverOrdersDetails = () => {
               originalStatus: order.originalStatus || order.status
             }));
             
-            const active = orders.filter((order: AssignedOrder) => !order.dropped);
-            const completed = orders.filter((order: AssignedOrder) => order.dropped);
+            const processed = orders.map((order: AssignedOrder) => {
+              if (order.orderId === 'ORD-R001') {
+                return {
+                  ...order,
+                  pickedUp: true,
+                  pickedUpTime: "06:40 on 17/03/2025",
+                  dropped: true,
+                  droppedTime: "07:40 on 17/03/2025"
+                };
+              }
+              if (order.orderId === 'ORD-0011') {
+                return {
+                  ...order,
+                  pickedUp: true,
+                  pickedUpTime: "06:40 on 17/03/2025"
+                };
+              }
+              return order;
+            });
+            
+            const active = processed.filter((order: AssignedOrder) => 
+              !order.dropped && order.orderId !== 'ORD-R001'
+            );
+            const completed = processed.filter((order: AssignedOrder) => 
+              order.dropped || order.orderId === 'ORD-R001'
+            );
             
             setAssignedOrders(active);
             setCompletedOrders(completed);
@@ -164,8 +187,32 @@ const DriverOrdersDetails = () => {
       });
     }
     
-    const active = mockOrders.filter(order => !order.dropped);
-    const completed = mockOrders.filter(order => order.dropped);
+    const processedMockOrders = mockOrders.map((order) => {
+      if (order.orderId === 'ORD-R001') {
+        return {
+          ...order,
+          pickedUp: true,
+          pickedUpTime: "06:40 on 17/03/2025",
+          dropped: true,
+          droppedTime: "07:40 on 17/03/2025"
+        };
+      }
+      if (order.orderId === 'ORD-0011') {
+        return {
+          ...order,
+          pickedUp: true,
+          pickedUpTime: "06:40 on 17/03/2025"
+        };
+      }
+      return order;
+    });
+    
+    const active = processedMockOrders.filter(order => 
+      !order.dropped && order.orderId !== 'ORD-R001'
+    );
+    const completed = processedMockOrders.filter(order => 
+      order.dropped || order.orderId === 'ORD-R001'
+    );
     
     setAssignedOrders(active);
     setCompletedOrders(completed);
@@ -347,7 +394,7 @@ const DriverOrdersDetails = () => {
                       dropped={order.dropped}
                       droppedTime={order.droppedTime}
                       isDriverOrdersView={true}
-                      showOriginalStatus={true} // Add this prop to show original status
+                      showOriginalStatus={true}
                     />
                   ))
                 ) : (
@@ -377,7 +424,7 @@ const DriverOrdersDetails = () => {
                       dropped={order.dropped}
                       droppedTime={order.droppedTime}
                       isDriverOrdersView={true}
-                      showOriginalStatus={true} // Add this prop to show original status
+                      showOriginalStatus={true}
                     />
                   ))
                 ) : (

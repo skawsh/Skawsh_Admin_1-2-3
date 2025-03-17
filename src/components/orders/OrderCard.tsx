@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
-import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck } from 'lucide-react';
+import { MapPin, Truck, Calendar, User, Building, Eye, Clock, Package, PackageCheck, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from './StatusBadge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { formatDateString } from './utils/dateUtils';
+import { formatDateString, formatDateTime } from './utils/dateUtils';
 
 interface OrderCardProps {
   id: string;
@@ -67,6 +66,16 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const pickupLabel = isReadyForCollection ? "Collected" : "Picked Up";
   const dropLabel = isReadyForCollection ? "Delivered" : "Dropped Off";
 
+  // Override time displays based on order ID
+  const customPickupTime = orderId === 'ORD-0011' || orderId === 'ORD-R001' ? 
+    "06:40 on 17/03/2025" : pickedUpTime;
+  const customDropTime = orderId === 'ORD-R001' ? 
+    "07:40 on 17/03/2025" : droppedTime;
+    
+  // Override pickup/drop status based on order ID for custom orders
+  const customPickedUp = orderId === 'ORD-0011' || orderId === 'ORD-R001' ? true : pickedUp;
+  const customDropped = orderId === 'ORD-R001' ? true : dropped;
+
   return (
     <>
       <Card className="w-full max-w-sm overflow-hidden border border-gray-100 shadow-sm">
@@ -77,10 +86,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
           <div>
             {status && <StatusBadge 
               status={status as any} 
-              pickedUp={pickedUp}
-              pickedUpTime={pickedUpTime}
-              dropped={dropped}
-              droppedTime={droppedTime}
+              pickedUp={customPickedUp}
+              pickedUpTime={customPickupTime}
+              dropped={customDropped}
+              droppedTime={customDropTime}
               showNewOrder={showNewOrder}
               isDriverOrdersView={isDriverOrdersView}
               showOriginalStatus={showOriginalStatus}
@@ -162,9 +171,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
                   Ready for pickup
                 </span>
-              ) : pickedUp && pickedUpTime ? (
+              ) : customPickedUp && customPickupTime ? (
                 <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded text-sm font-medium">
-                  Picked up: {pickedUpTime}
+                  Picked up: {customPickupTime}
                 </span>
               ) : (
                 <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
@@ -219,7 +228,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </div>
             </div>
             
-            {/* Trip Tracking Timeline - New section */}
+            {/* Trip Tracking Timeline - Updated with order ID-specific conditions */}
             <div className="space-y-4 border-t pt-4">
               <h4 className="text-base font-semibold flex items-center gap-2">
                 <Clock size={18} className="text-blue-500" />
@@ -237,37 +246,63 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   </div>
                 </div>
                 
-                {/* Pickup Status */}
+                {/* Pickup Status - Custom displays based on order ID */}
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5">
-                    <Package size={16} className={`${pickedUp ? 'text-green-500' : 'text-gray-400'}`} />
+                    {orderId === 'ORD-0011' || orderId === 'ORD-R001' ? (
+                      <CheckCircle2 size={16} className="text-green-500" />
+                    ) : (
+                      <Package size={16} className={`${customPickedUp ? 'text-green-500' : 'text-gray-400'}`} />
+                    )}
                   </div>
                   <div>
-                    <div className={`font-medium text-sm ${pickedUp ? 'text-green-700' : 'text-gray-500'}`}>
-                      {pickupLabel}
+                    <div className={`font-medium text-sm ${(orderId === 'ORD-0011' || orderId === 'ORD-R001' || customPickedUp) ? 'text-green-700' : 'text-gray-500'}`}>
+                      {orderId === 'ORD-0004' ? (
+                        `${pickupLabel} Pending`
+                      ) : orderId === 'ORD-0011' || orderId === 'ORD-R001' ? (
+                        `✅ ${pickupLabel} at ${customPickupTime}`
+                      ) : customPickedUp && customPickupTime ? (
+                        `✅ ${pickupLabel} at ${customPickupTime}`
+                      ) : (
+                        `${pickupLabel} Pending`
+                      )}
                     </div>
-                    {pickedUp && pickedUpTime ? (
-                      <div className="text-xs text-gray-500">{pickedUpTime}</div>
-                    ) : (
+                    {!(orderId === 'ORD-0004' || orderId === 'ORD-0011' || orderId === 'ORD-R001') && 
+                      customPickedUp && customPickupTime ? (
+                      <div className="text-xs text-gray-500">{customPickupTime}</div>
+                    ) : !(orderId === 'ORD-0004' || orderId === 'ORD-0011' || orderId === 'ORD-R001') ? (
                       <div className="text-xs text-gray-400">Pending</div>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 
-                {/* Delivery Status */}
+                {/* Delivery Status - Custom displays based on order ID */}
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5">
-                    <PackageCheck size={16} className={`${dropped ? 'text-green-500' : 'text-gray-400'}`} />
+                    {orderId === 'ORD-R001' ? (
+                      <CheckCircle2 size={16} className="text-green-500" />
+                    ) : (
+                      <PackageCheck size={16} className={`${customDropped ? 'text-green-500' : 'text-gray-400'}`} />
+                    )}
                   </div>
                   <div>
-                    <div className={`font-medium text-sm ${dropped ? 'text-green-700' : 'text-gray-500'}`}>
-                      {dropLabel}
+                    <div className={`font-medium text-sm ${(orderId === 'ORD-R001' || customDropped) ? 'text-green-700' : 'text-gray-500'}`}>
+                      {orderId === 'ORD-0004' ? (
+                        `${dropLabel} Pending`
+                      ) : orderId === 'ORD-R001' ? (
+                        `✅ ${dropLabel} at ${customDropTime}`
+                      ) : customDropped && customDropTime ? (
+                        `✅ ${dropLabel} at ${customDropTime}`
+                      ) : (
+                        `${dropLabel} Pending`
+                      )}
                     </div>
-                    {dropped && droppedTime ? (
-                      <div className="text-xs text-gray-500">{droppedTime}</div>
-                    ) : (
+                    {!(orderId === 'ORD-0004' || orderId === 'ORD-R001') && 
+                      customDropped && customDropTime ? (
+                      <div className="text-xs text-gray-500">{customDropTime}</div>
+                    ) : !(orderId === 'ORD-0004' || orderId === 'ORD-R001') ? (
                       <div className="text-xs text-gray-400">Pending</div>
-                    )}
+                    ) : null}
                   </div>
                 </div>
               </div>

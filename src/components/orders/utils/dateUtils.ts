@@ -18,3 +18,19 @@ export const getDeliveryDate = (orderDate: Date) => {
   // Make sure delivery date is not in the future beyond today
   return deliveryDate > new Date() ? new Date() : deliveryDate;
 };
+
+// Format date and time in the format HH:MM on DD/MM/YYYY
+export const formatDateTime = (dateString: string | Date) => {
+  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+  
+  // Format hours and minutes
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  
+  // Format day, month, and year
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  
+  return `${hours}:${minutes} on ${day}/${month}/${year}`;
+};
