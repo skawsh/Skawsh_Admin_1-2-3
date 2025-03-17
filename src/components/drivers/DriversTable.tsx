@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Table, 
@@ -9,7 +10,7 @@ import {
 } from '@/components/ui/table';
 import { DriversTableProps } from './types';
 import { sampleDrivers } from './mockData';
-import { MoreHorizontal, Package, User, FileText, Map } from 'lucide-react';
+import { MoreHorizontal, Package, User, FileText } from 'lucide-react';
 import DriverStatusBadge from './DriverStatusBadge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Driver } from './types';
@@ -155,7 +156,7 @@ const DriversTable = ({ className }: DriversTableProps) => {
     return drivers.filter(driver => driver.assignedOrders && driver.assignedOrders > 0);
   };
   
-  const viewTripDetails = (driverId: string) => {
+  const viewOrderDetails = (driverId: string) => {
     const orders = assignedOrders[driverId] || [];
     if (orders.length === 0) {
       toast({
@@ -167,6 +168,11 @@ const DriversTable = ({ className }: DriversTableProps) => {
     
     // Navigate to the driver orders details page
     navigate(`/driver/${driverId}/orders`);
+  };
+  
+  const viewDriverDetails = (driverId: string) => {
+    // Navigate to the driver details page
+    navigate(`/driver/${driverId}`);
   };
   
   return (
@@ -205,7 +211,6 @@ const DriversTable = ({ className }: DriversTableProps) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-16">S.NO</TableHead>
                 <TableHead className="w-[300px]">DRIVER</TableHead>
                 <TableHead>STATUS</TableHead>
                 <TableHead>PHONE NUMBER</TableHead>
@@ -214,9 +219,8 @@ const DriversTable = ({ className }: DriversTableProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {getFilteredDrivers().map((driver, index) => (
+              {getFilteredDrivers().map((driver) => (
                 <TableRow key={driver.id}>
-                  <TableCell>{index + 1}</TableCell>
                   <TableCell className="font-medium flex items-center">
                     <div className="w-8 h-8 rounded-full bg-gray-200 mr-3 flex items-center justify-center">
                       <span className="text-gray-500">👤</span>
@@ -274,11 +278,20 @@ const DriversTable = ({ className }: DriversTableProps) => {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          className="text-purple-600 hover:text-purple-800 flex items-center gap-1"
-                          onClick={() => viewTripDetails(driver.id)}
+                          className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                          onClick={() => viewOrderDetails(driver.id)}
                         >
-                          <Map size={14} />
-                          <span className="hidden sm:inline">Trip Details</span>
+                          <FileText size={14} />
+                          <span className="hidden sm:inline">Orders</span>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="text-green-600 hover:text-green-800 flex items-center gap-1"
+                          onClick={() => viewDriverDetails(driver.id)}
+                        >
+                          <User size={14} />
+                          <span className="hidden sm:inline">Driver</span>
                         </Button>
                       </div>
                     </TableCell>
@@ -297,7 +310,6 @@ const DriversTable = ({ className }: DriversTableProps) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-16">S.NO</TableHead>
                 <TableHead className="w-[300px]">DRIVER</TableHead>
                 <TableHead>STATUS</TableHead>
                 <TableHead>PHONE NUMBER</TableHead>
@@ -308,9 +320,8 @@ const DriversTable = ({ className }: DriversTableProps) => {
             <TableBody>
               {drivers
                 .filter(driver => driver.status === 'active' && (driver.assignedOrders || 0) === 0)
-                .map((driver, index) => (
+                .map((driver) => (
                   <TableRow key={driver.id}>
-                    <TableCell>{index + 1}</TableCell>
                     <TableCell className="font-medium flex items-center">
                       <div className="w-8 h-8 rounded-full bg-gray-200 mr-3 flex items-center justify-center">
                         <span className="text-gray-500">👤</span>
