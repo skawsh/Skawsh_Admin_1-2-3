@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { studioAddressMapping } from '@/components/orders/utils/addressUtils';
 import StatusBadge from '@/components/orders/StatusBadge';
 import { OrderStatus } from '@/components/orders/types';
+import OrderCard from '@/components/orders/OrderCard';
 
 interface AssignedOrder {
   id: string;
@@ -280,71 +281,19 @@ const DriverOrdersDetails = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {assignedOrders.length > 0 ? (
-              assignedOrders.map((order) => {
-                const { pickupAddress, pickupName, deliveryAddress, deliveryName } = getAddressInfo(order);
-                
-                const orderStatus = order.originalStatus || getSimplifiedStatus(order.status);
-                
-                return (
-                  <Card 
-                    key={order.id} 
-                    className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
-                  >
-                    <div className="p-4 border-b flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-bold text-blue-600">{order.orderId}</h3>
-                        <div className="flex items-center gap-1 text-gray-500 text-sm mt-1">
-                          <Calendar size={14} />
-                          <span>{order.date}</span>
-                        </div>
-                      </div>
-                      {orderStatus && <StatusBadge status={orderStatus} />}
-                    </div>
-                    
-                    <div className="p-4">
-                      <div className="mb-5">
-                        <h4 className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                          <MapPin size={16} className="text-red-500 mr-2" />
-                          Pickup
-                        </h4>
-                        <div className="ml-6 space-y-1">
-                          <div className="flex items-center">
-                            <User size={14} className="text-gray-400 mr-2" />
-                            <p className="text-sm font-medium">{pickupName}</p>
-                          </div>
-                          <div className="flex items-start">
-                            <Building size={14} className="text-gray-400 mr-2 mt-1" />
-                            <p className="text-sm text-gray-600">{pickupAddress}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <h4 className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                          <TruckIcon size={16} className="text-green-500 mr-2" />
-                          Delivery
-                        </h4>
-                        <div className="ml-6 space-y-1">
-                          <div className="flex items-center">
-                            <User size={14} className="text-gray-400 mr-2" />
-                            <p className="text-sm font-medium">{deliveryName}</p>
-                          </div>
-                          <div className="flex items-start">
-                            <Building size={14} className="text-gray-400 mr-2 mt-1" />
-                            <p className="text-sm text-gray-600">{deliveryAddress}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="p-3 bg-gray-50 border-t flex justify-end">
-                      <Button variant="outline" size="sm">
-                        Trip Details
-                      </Button>
-                    </div>
-                  </Card>
-                );
-              })
+              assignedOrders.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  id={order.id}
+                  orderId={order.orderId || ""}
+                  date={order.date || ""}
+                  status={order.originalStatus || getSimplifiedStatus(order.status) || "new"}
+                  customer={order.customer || ""}
+                  customerAddress={order.customerAddress || ""}
+                  studio={order.studio || ""}
+                  studioAddress={order.studioAddress || ""}
+                />
+              ))
             ) : (
               <div className="text-center py-8 text-gray-500 col-span-3">
                 This driver has no assigned orders.

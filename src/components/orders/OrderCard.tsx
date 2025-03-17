@@ -4,6 +4,7 @@ import { MapPin, Truck, Calendar, User, Building, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from './StatusBadge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface OrderCardProps {
   id: string;
@@ -27,87 +28,158 @@ const OrderCard: React.FC<OrderCardProps> = ({
   studioAddress,
   onViewDetails
 }) => {
+  const [showDetails, setShowDetails] = React.useState(false);
+  
   // Determine pickup and delivery information based on order status
   const isReadyForCollection = status === 'ready-for-collect';
+  const isNewOrder = status === 'new';
   
   const pickupInfo = {
     location: isReadyForCollection ? studio : customer,
     address: isReadyForCollection ? studioAddress : customerAddress,
-    icon: isReadyForCollection ? <Building className="text-gray-600" size={16} /> : <User className="text-gray-600" size={16} />
+    icon: isReadyForCollection ? <Building className="text-gray-600" size={16} /> : <User className="text-gray-600" size={16} />,
+    label: isReadyForCollection ? "Collect" : "Pickup"
   };
   
   const deliveryInfo = {
     location: isReadyForCollection ? customer : studio,
     address: isReadyForCollection ? customerAddress : studioAddress,
-    icon: isReadyForCollection ? <User className="text-gray-600" size={16} /> : <Building className="text-gray-600" size={16} />
+    icon: isReadyForCollection ? <User className="text-gray-600" size={16} /> : <Building className="text-gray-600" size={16} />,
+    label: isNewOrder ? "Drop" : "Delivery"
   };
 
   return (
-    <Card className="w-full max-w-sm overflow-hidden border border-gray-100 shadow-sm">
-      <div className="flex items-center justify-between border-b border-gray-100 p-4">
-        <div className="space-y-1">
-          <h3 className="text-lg font-medium text-blue-600">{orderId}</h3>
-          <div className="flex items-center text-sm text-gray-500">
-            <Calendar size={14} className="mr-1" />
-            {date}
+    <>
+      <Card className="w-full max-w-sm overflow-hidden border border-gray-100 shadow-sm">
+        <div className="flex items-center justify-between border-b border-gray-100 p-4">
+          <div>
+            <h3 className="text-lg font-medium text-blue-600">{orderId}</h3>
           </div>
-        </div>
-        <div>
-          {status && <StatusBadge status={status as any} />}
-        </div>
-      </div>
-      
-      <CardContent className="p-4 space-y-4">
-        {/* Pickup Information */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <MapPin size={18} className="text-red-500" />
-            <span className="font-semibold text-gray-800">Pickup</span>
-          </div>
-          <div className="ml-6 space-y-1">
-            <div className="flex items-center gap-1 text-sm">
-              {pickupInfo.icon}
-              <span className="font-medium">{pickupInfo.location}</span>
-            </div>
-            <div className="flex items-center gap-1 text-sm text-gray-600">
-              <MapPin size={14} className="text-gray-400 opacity-70" />
-              <span>{pickupInfo.address}</span>
-            </div>
+          <div>
+            {status && <StatusBadge status={status as any} />}
           </div>
         </div>
         
-        {/* Delivery Information */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Truck size={18} className="text-green-500" />
-            <span className="font-semibold text-gray-800">Delivery</span>
-          </div>
-          <div className="ml-6 space-y-1">
-            <div className="flex items-center gap-1 text-sm">
-              {deliveryInfo.icon}
-              <span className="font-medium">{deliveryInfo.location}</span>
+        <CardContent className="p-4 space-y-4">
+          {/* Pickup Information */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <MapPin size={18} className="text-red-500" />
+              <span className="font-semibold text-gray-800">{pickupInfo.label}</span>
             </div>
-            <div className="flex items-center gap-1 text-sm text-gray-600">
-              <MapPin size={14} className="text-gray-400 opacity-70" />
-              <span>{deliveryInfo.address}</span>
+            <div className="ml-6 space-y-1">
+              <div className="flex items-center gap-1 text-sm">
+                {pickupInfo.icon}
+                <span className="font-medium">{pickupInfo.location}</span>
+              </div>
+              <div className="flex items-center gap-1 text-sm text-gray-600">
+                <MapPin size={14} className="text-gray-400 opacity-70" />
+                <span>{pickupInfo.address}</span>
+              </div>
             </div>
           </div>
-        </div>
-      </CardContent>
-      
-      <CardFooter className="flex justify-end p-4 pt-0">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="flex items-center gap-1"
-          onClick={onViewDetails}
-        >
-          <Eye size={16} />
-          Trip Details
-        </Button>
-      </CardFooter>
-    </Card>
+          
+          {/* Delivery Information */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Truck size={18} className="text-green-500" />
+              <span className="font-semibold text-gray-800">{deliveryInfo.label}</span>
+            </div>
+            <div className="ml-6 space-y-1">
+              <div className="flex items-center gap-1 text-sm">
+                {deliveryInfo.icon}
+                <span className="font-medium">{deliveryInfo.location}</span>
+              </div>
+              <div className="flex items-center gap-1 text-sm text-gray-600">
+                <MapPin size={14} className="text-gray-400 opacity-70" />
+                <span>{deliveryInfo.address}</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+        
+        <CardFooter className="flex justify-end p-4 pt-0">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-1"
+            onClick={() => setShowDetails(true)}
+          >
+            <Eye size={16} />
+            Trip Details
+          </Button>
+        </CardFooter>
+      </Card>
+
+      {/* Trip Details Dialog */}
+      <Dialog open={showDetails} onOpenChange={setShowDetails}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Order Details - {orderId}</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {/* Order Details */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Order Date:</span>
+                <span className="text-sm">{date}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Status:</span>
+                <StatusBadge status={status as any} />
+              </div>
+            </div>
+            
+            {/* Pickup Details */}
+            <div className="space-y-2 border-t pt-3">
+              <h4 className="text-sm font-semibold flex items-center gap-2">
+                <MapPin size={16} className="text-red-500" />
+                {pickupInfo.label} Details
+              </h4>
+              <div className="ml-6 space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="font-medium">Name:</span>
+                  <span>{pickupInfo.location}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Address:</span>
+                  <span className="text-right max-w-[200px]">{pickupInfo.address}</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Delivery Details */}
+            <div className="space-y-2 border-t pt-3">
+              <h4 className="text-sm font-semibold flex items-center gap-2">
+                <Truck size={16} className="text-green-500" />
+                {deliveryInfo.label} Details
+              </h4>
+              <div className="ml-6 space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="font-medium">Name:</span>
+                  <span>{deliveryInfo.location}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Address:</span>
+                  <span className="text-right max-w-[200px]">{deliveryInfo.address}</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Additional Trip Information (could be extended) */}
+            <div className="space-y-2 border-t pt-3">
+              <h4 className="text-sm font-semibold">Trip Notes</h4>
+              <p className="text-sm text-gray-600">
+                No additional notes for this trip.
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
 export default OrderCard;
+
