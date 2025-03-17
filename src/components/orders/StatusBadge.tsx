@@ -22,6 +22,8 @@ const StatusBadge = ({ status }: StatusBadgeProps) => {
       return <span className="status-badge status-delivered">Order Delivered</span>;
     case "cancelled":
       return <span className="status-badge status-cancelled">Order cancelled</span>;
+    case "completed":
+      return <span className="status-badge status-delivered">Completed</span>;
     default:
       // Use a type assertion to handle cases where status might be passed as string from legacy code
       console.warn(`Unknown order status: ${status}`);

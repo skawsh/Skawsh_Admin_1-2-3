@@ -16,6 +16,10 @@ interface OrderCardProps {
   studio: string;
   studioAddress: string;
   onViewDetails?: () => void;
+  pickedUp?: boolean;
+  pickedUpTime?: string | null;
+  dropped?: boolean;
+  droppedTime?: string | null;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -26,14 +30,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
   customerAddress,
   studio,
   studioAddress,
-  onViewDetails
+  onViewDetails,
+  pickedUp,
+  pickedUpTime,
+  dropped,
+  droppedTime
 }) => {
   const [showDetails, setShowDetails] = useState(false);
-  // Simulate pickup and drop statuses with timestamps
-  const [pickedUp, setPickedUp] = useState(false);
-  const [pickedUpTime, setPickedUpTime] = useState<string | null>(null);
-  const [dropped, setDropped] = useState(false);
-  const [droppedTime, setDroppedTime] = useState<string | null>(null);
   
   // Determine pickup and delivery information based on order status
   const isReadyForCollection = status === 'ready-for-collect';
@@ -51,16 +54,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
     address: isReadyForCollection ? customerAddress : studioAddress,
     icon: isReadyForCollection ? <User className="text-gray-600" size={16} /> : <Building className="text-gray-600" size={16} />,
     label: isNewOrder ? "Drop" : "Delivery"
-  };
-
-  const handlePickupAction = () => {
-    setPickedUp(true);
-    setPickedUpTime(new Date().toLocaleString());
-  };
-
-  const handleDropAction = () => {
-    setDropped(true);
-    setDroppedTime(new Date().toLocaleString());
   };
 
   return (
@@ -148,17 +141,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
                     </span>
                   </div>
                   
-                  {!pickedUp && (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="w-full mt-2"
-                      onClick={handlePickupAction}
-                    >
-                      Mark as Picked Up
-                    </Button>
-                  )}
-                  
                   {pickedUp && (
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-sm font-medium">Picked Up:</span>
@@ -166,17 +148,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
                         {pickedUpTime}
                       </span>
                     </div>
-                  )}
-                  
-                  {pickedUp && !dropped && (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="w-full mt-2"
-                      onClick={handleDropAction}
-                    >
-                      Mark as Dropped
-                    </Button>
                   )}
                   
                   {dropped && (

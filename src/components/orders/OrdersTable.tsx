@@ -12,7 +12,7 @@ import './OrdersBadge.css';
 import { startOfDay, endOfDay, isWithinInterval, parseISO } from 'date-fns';
 
 const OrdersTable = ({ className }: OrdersTableProps) => {
-  const [activeTab, setActiveTab] = useState<'all' | OrderStatus | 'assigned'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | OrderStatus | 'assigned' | 'completed'>('all');
   const [filteredOrders, setFilteredOrders] = useState(sampleOrders);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -30,6 +30,8 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
     if (activeTab !== 'all') {
       if (activeTab === 'assigned') {
         result = result.filter(order => order.assigned === true);
+      } else if (activeTab === 'completed') {
+        result = result.filter(order => order.status === 'delivered' || order.status === 'completed');
       } else {
         result = result.filter(order => order.status === activeTab);
       }
@@ -69,7 +71,7 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
     setFilteredOrders(result);
   };
 
-  const filterOrders = (tab: 'all' | OrderStatus | 'assigned') => {
+  const filterOrders = (tab: 'all' | OrderStatus | 'assigned' | 'completed') => {
     setActiveTab(tab);
   };
 
@@ -113,8 +115,8 @@ const OrdersTable = ({ className }: OrdersTableProps) => {
         
         {/* Tabs section */}
         <OrderStatusTabs 
-          activeTab={activeTab as any}
-          onTabChange={filterOrders as any}
+          activeTab={activeTab}
+          onTabChange={filterOrders}
         />
         
         <div className="mt-6">

@@ -36,6 +36,12 @@ export const calculateOrderMetrics = (orders: Order[]) => {
     order.assigned === true
   ).length;
 
+  // Calculate completed orders
+  const completedOrders = orders.filter(order => 
+    order.status === 'completed' || 
+    (order.status === 'new' && order.dropped === true)
+  ).length;
+
   // Calculate total revenue
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
 
@@ -50,6 +56,7 @@ export const calculateOrderMetrics = (orders: Order[]) => {
     readyForCollectOrders,
     cancelledOrders,
     assignedOrders,
+    completedOrders,
     totalRevenue,
     avgOrderValue
   };

@@ -4,8 +4,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { OrderStatus } from './types';
 
 interface OrderStatusTabsProps {
-  activeTab: 'all' | OrderStatus;
-  onTabChange: (value: 'all' | OrderStatus) => void;
+  activeTab: 'all' | OrderStatus | 'assigned' | 'completed';
+  onTabChange: (value: 'all' | OrderStatus | 'assigned' | 'completed') => void;
 }
 
 const OrderStatusTabs = ({ activeTab, onTabChange }: OrderStatusTabsProps) => {
@@ -15,7 +15,7 @@ const OrderStatusTabs = ({ activeTab, onTabChange }: OrderStatusTabsProps) => {
         defaultValue={activeTab} 
         value={activeTab}
         className="w-full" 
-        onValueChange={(value) => onTabChange(value as 'all' | OrderStatus)}
+        onValueChange={(value) => onTabChange(value as 'all' | OrderStatus | 'assigned' | 'completed')}
       >
         <div className="relative w-full overflow-x-auto no-scrollbar pb-1">
           <TabsList className="bg-gray-100 h-auto p-1.5 w-max min-w-full flex space-x-1">
@@ -66,6 +66,12 @@ const OrderStatusTabs = ({ activeTab, onTabChange }: OrderStatusTabsProps) => {
               className="px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
             >
               Assigned
+            </TabsTrigger>
+            <TabsTrigger 
+              value="completed" 
+              className="px-3 py-1.5 text-xs data-[state=active]:bg-white rounded-md flex-shrink-0"
+            >
+              Completed
             </TabsTrigger>
           </TabsList>
         </div>

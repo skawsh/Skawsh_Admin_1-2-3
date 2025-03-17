@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -7,13 +8,14 @@ import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Package, MapPin, Calendar, User, Building, TruckIcon } from 'lucide-react';
+import { ArrowLeft, Package, MapPin, Calendar, User, Building, TruckIcon, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { studioAddressMapping } from '@/components/orders/utils/addressUtils';
 import StatusBadge from '@/components/orders/StatusBadge';
 import { OrderStatus } from '@/components/orders/types';
 import OrderCard from '@/components/orders/OrderCard';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 interface AssignedOrder {
   id: string;
@@ -25,6 +27,10 @@ interface AssignedOrder {
   date?: string;
   status?: string;
   originalStatus?: OrderStatus;
+  pickedUp?: boolean;
+  pickedUpTime?: string | null;
+  dropped?: boolean;
+  droppedTime?: string | null;
 }
 
 const DriverOrdersDetails = () => {
@@ -34,6 +40,8 @@ const DriverOrdersDetails = () => {
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const [driver, setDriver] = useState<Driver | null>(null);
   const [assignedOrders, setAssignedOrders] = useState<AssignedOrder[]>([]);
+  const [completedOrders, setCompletedOrders] = useState<AssignedOrder[]>([]);
+  const [activeTab, setActiveTab] = useState('assigned');
   const { toast } = useToast();
   
   useEffect(() => {
@@ -55,7 +63,13 @@ const DriverOrdersDetails = () => {
               ...order,
               originalStatus: order.originalStatus || order.status
             }));
-            setAssignedOrders(orders);
+            
+            // Split orders into active and completed
+            const active = orders.filter((order: AssignedOrder) => !order.dropped);
+            const completed = orders.filter((order: AssignedOrder) => order.dropped);
+            
+            setAssignedOrders(active);
+            setCompletedOrders(completed);
           } else {
             createMockOrders(foundDriver);
           }
@@ -94,19 +108,40 @@ const DriverOrdersDetails = () => {
     const customerNames = ['Deepika Reddy', 'Sanjay Mehta', 'Arun Verma', 'Priya Singh', 'Rajesh Kumar'];
     
     if (orderCount > 0) {
+      // Create a sample completed order
       mockOrders.push({
-        id: `order-${driverId}-1`,
-        orderId: 'ORD-0004',
+        id: `order-${driverId}-complete`,
+        orderId: 'ORD-0001',
         customer: 'Deepika Reddy',
-        customerAddress: '8-2-120, Ameerpet, Highway, Hyderabad',
+        customerAddress: '72, Kukatpally, Hyderabad',
         studio: 'UClean',
-        studioAddress: '10-4-789, Madhapur, Cross Road, Hyderabad',
-        date: '2025-03-03',
-        status: 'New'
+        studioAddress: 'UClean, KPHB Colony, Kukatpally',
+        date: '2025-03-02',
+        status: 'New',
+        pickedUp: true,
+        pickedUpTime: '3/17/2025, 9:05:18 PM',
+        dropped: true,
+        droppedTime: '3/17/2025, 9:05:20 PM'
       });
       
+      // Create a sample active order with pickup but not dropped
       mockOrders.push({
-        id: `order-${driverId}-2`,
+        id: `order-${driverId}-active`,
+        orderId: 'ORD-0004',
+        customer: 'Deepika Reddy',
+        customerAddress: '72, Kukatpally, Hyderabad',
+        studio: 'UClean',
+        studioAddress: 'UClean, KPHB Colony, Kukatpally',
+        date: '2025-03-03',
+        status: 'New',
+        pickedUp: true,
+        pickedUpTime: '3/17/2025, 9:05:18 PM',
+        dropped: false
+      });
+      
+      // Create a sample new order
+      mockOrders.push({
+        id: `order-${driverId}-new`,
         orderId: 'ORD-R001',
         customer: 'Sanjay Mehta',
         customerAddress: '7-1-397, Banjara Hills, Junction Street, Hyderabad',
@@ -114,17 +149,6 @@ const DriverOrdersDetails = () => {
         studioAddress: 'Laundry Express Studio, Hyderabad',
         date: '2025-02-24',
         status: 'New'
-      });
-      
-      mockOrders.push({
-        id: `order-${driverId}-3`,
-        orderId: 'ORD-0003',
-        customer: 'Arun Verma',
-        customerAddress: '10-4-789, Gachibowli, Junction Street, Hyderabad',
-        studio: 'Cleanovo',
-        studioAddress: '9-3-456, Ameerpet, Junction Street, Hyderabad',
-        date: '2025-02-24',
-        status: 'Ready for Collection'
       });
     }
     
@@ -141,7 +165,12 @@ const DriverOrdersDetails = () => {
       });
     }
     
-    setAssignedOrders(mockOrders);
+    // Split orders into active and completed
+    const active = mockOrders.filter(order => !order.dropped);
+    const completed = mockOrders.filter(order => order.dropped);
+    
+    setAssignedOrders(active);
+    setCompletedOrders(completed);
   };
   
   const generateRandomAddress = (): string => {
@@ -154,50 +183,6 @@ const DriverOrdersDetails = () => {
   
   const toggleSidebar = () => {
     setSidebarOpen(prev => !prev);
-  };
-
-  const getAddressInfo = (order: AssignedOrder) => {
-    const orderStatus = order.originalStatus || order.status;
-    
-    if (orderStatus === 'new') {
-      return {
-        pickupAddress: order.customerAddress,
-        pickupName: order.customer,
-        deliveryAddress: order.studioAddress,
-        deliveryName: order.studio
-      };
-    } else if (orderStatus === 'ready-for-collect') {
-      return {
-        pickupAddress: order.studioAddress,
-        pickupName: order.studio,
-        deliveryAddress: order.customerAddress,
-        deliveryName: order.customer
-      };
-    } else {
-      return {
-        pickupAddress: order.studioAddress,
-        pickupName: order.studio,
-        deliveryAddress: order.customerAddress,
-        deliveryName: order.customer
-      };
-    }
-  };
-  
-  const getStatusColor = (status: string | undefined) => {
-    switch(status?.toLowerCase()) {
-      case 'delivered':
-        return 'bg-green-100 text-green-800';
-      case 'in progress':
-        return 'bg-blue-100 text-blue-800';
-      case 'collected':
-        return 'bg-purple-100 text-purple-800';
-      case 'ready for collection':
-        return 'bg-amber-100 text-amber-800';
-      case 'new':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
   };
   
   const getSimplifiedStatus = (status: string | undefined): OrderStatus | undefined => {
@@ -270,36 +255,74 @@ const DriverOrdersDetails = () => {
             </div>
           </div>
           
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5 text-blue-600" />
-                Total Assigned Orders: {assignedOrders.length}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {assignedOrders.length > 0 ? (
-              assignedOrders.map((order) => (
-                <OrderCard
-                  key={order.id}
-                  id={order.id}
-                  orderId={order.orderId || ""}
-                  date={order.date || ""}
-                  status={order.originalStatus || getSimplifiedStatus(order.status) || "new"}
-                  customer={order.customer || ""}
-                  customerAddress={order.customerAddress || ""}
-                  studio={order.studio || ""}
-                  studioAddress={order.studioAddress || ""}
-                />
-              ))
-            ) : (
-              <div className="text-center py-8 text-gray-500 col-span-3">
-                This driver has no assigned orders.
+          <Tabs defaultValue="assigned" className="mb-6">
+            <TabsList>
+              <TabsTrigger value="assigned" className="flex items-center gap-2" onClick={() => setActiveTab('assigned')}>
+                <Package className="h-4 w-4 text-blue-600" />
+                Assigned Orders ({assignedOrders.length})
+              </TabsTrigger>
+              <TabsTrigger value="completed" className="flex items-center gap-2" onClick={() => setActiveTab('completed')}>
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                Completed Orders ({completedOrders.length})
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="assigned">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {assignedOrders.length > 0 ? (
+                  assignedOrders.map((order) => (
+                    <OrderCard
+                      key={order.id}
+                      id={order.id}
+                      orderId={order.orderId || ""}
+                      date={order.date || ""}
+                      status={order.originalStatus || getSimplifiedStatus(order.status) || "new"}
+                      customer={order.customer || ""}
+                      customerAddress={order.customerAddress || ""}
+                      studio={order.studio || ""}
+                      studioAddress={order.studioAddress || ""}
+                      pickedUp={order.pickedUp}
+                      pickedUpTime={order.pickedUpTime}
+                      dropped={order.dropped}
+                      droppedTime={order.droppedTime}
+                    />
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500 col-span-3">
+                    This driver has no assigned orders.
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </TabsContent>
+            
+            <TabsContent value="completed">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {completedOrders.length > 0 ? (
+                  completedOrders.map((order) => (
+                    <OrderCard
+                      key={order.id}
+                      id={order.id}
+                      orderId={order.orderId || ""}
+                      date={order.date || ""}
+                      status={order.originalStatus || getSimplifiedStatus(order.status) || "new"}
+                      customer={order.customer || ""}
+                      customerAddress={order.customerAddress || ""}
+                      studio={order.studio || ""}
+                      studioAddress={order.studioAddress || ""}
+                      pickedUp={order.pickedUp}
+                      pickedUpTime={order.pickedUpTime}
+                      dropped={order.dropped}
+                      droppedTime={order.droppedTime}
+                    />
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500 col-span-3">
+                    No completed orders.
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         </main>
       </div>
     </div>
