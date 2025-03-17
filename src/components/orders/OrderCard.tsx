@@ -145,10 +145,15 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </DialogHeader>
           
           <div className="space-y-6 pt-4">
-            {/* Order Status Section */}
+            {/* Order Status Section - Now using the same logic for showing status */}
             <div className="flex items-center justify-between">
               <span className="text-base font-medium">Status:</span>
-              {orderId === 'ORD-R001' ? (
+              {showOriginalStatus ? (
+                <StatusBadge 
+                  status={status as any}
+                  showOriginalStatus={true}
+                />
+              ) : orderId === 'ORD-R001' ? (
                 <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded text-sm font-medium">
                   Ready for pickup
                 </span>
