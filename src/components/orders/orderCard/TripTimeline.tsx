@@ -55,7 +55,7 @@ const TripTimeline: React.FC<TripTimelineProps> = ({
       {/* Pickup Status */}
       <div className="flex items-start gap-3">
         <div className="mt-0.5">
-          {determinePickedUpIcon(orderId, customPickedUp)}
+          {determinePickedUpIcon(orderId, customPickedUp, reported)}
         </div>
         <div>
           <div className={`font-medium text-sm ${reported ? 'text-gray-400' : customPickedUp ? 'text-green-700' : 'text-gray-500'}`}>
@@ -109,9 +109,11 @@ const TripTimeline: React.FC<TripTimelineProps> = ({
 };
 
 // Helper function to determine which icon to display for pickup status
-function determinePickedUpIcon(orderId: string, pickedUp: boolean) {
+function determinePickedUpIcon(orderId: string, pickedUp: boolean, reported: boolean = false) {
   if (['ORD-0011', 'ORD-R001', 'ORD-0012', 'ORD-R002'].includes(orderId)) {
     return <CheckCircle2 size={16} className="text-green-500" />;
+  } else if (reported) {
+    return <Package size={16} className="text-black" />;
   } else {
     return <Package size={16} className={`${pickedUp ? 'text-green-500' : 'text-gray-400'}`} />;
   }
