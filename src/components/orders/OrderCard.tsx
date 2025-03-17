@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MapPin, Truck, User, Building, Eye } from 'lucide-react';
+import { MapPin, Truck, Calendar, User, Building, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from './StatusBadge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -46,12 +46,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
     address: isReadyForCollection ? customerAddress : studioAddress,
     icon: isReadyForCollection ? <User className="text-gray-600" size={16} /> : <Building className="text-gray-600" size={16} />,
     label: isNewOrder ? "Drop" : "Delivery"
-  };
-
-  // Mock data for pickup and drop timestamps
-  const getStatusTimestamp = () => {
-    const now = new Date();
-    return `${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
   };
 
   return (
@@ -121,30 +115,19 @@ const OrderCard: React.FC<OrderCardProps> = ({
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Order Details</DialogTitle>
-            <div className="text-sm text-blue-600 mt-1">{orderId}</div>
+            <DialogTitle>Order Details - {orderId}</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
-            {/* Status Section */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Status:</span>
-              <div className="flex flex-col items-end gap-1">
+            {/* Order Details */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Order Date:</span>
+                <span className="text-sm">{date}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Status:</span>
                 <StatusBadge status={status as any} />
-                
-                {/* Status timestamps - these would come from real data in a production app */}
-                {status === 'ready-for-collect' && (
-                  <span className="text-xs text-gray-500">Ready for pickup</span>
-                )}
-                {status === 'in-progress' && (
-                  <span className="text-xs text-gray-500">Picked Up: {getStatusTimestamp()}</span>
-                )}
-                {status === 'delivered' && (
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs text-gray-500">Picked Up: {getStatusTimestamp()}</span>
-                    <span className="text-xs text-gray-500">Dropped: {getStatusTimestamp()}</span>
-                  </div>
-                )}
               </div>
             </div>
             
@@ -183,6 +166,14 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 </div>
               </div>
             </div>
+            
+            {/* Additional Trip Information (could be extended) */}
+            <div className="space-y-2 border-t pt-3">
+              <h4 className="text-sm font-semibold">Trip Notes</h4>
+              <p className="text-sm text-gray-600">
+                No additional notes for this trip.
+              </p>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -191,3 +182,4 @@ const OrderCard: React.FC<OrderCardProps> = ({
 };
 
 export default OrderCard;
+
