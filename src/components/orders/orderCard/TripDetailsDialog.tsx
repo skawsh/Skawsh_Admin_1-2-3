@@ -23,6 +23,9 @@ interface TripDetailsDialogProps {
   isReadyForCollection: boolean;
   showOriginalStatus?: boolean;
   washType?: string;
+  reported?: boolean;
+  reportedIssue?: string;
+  reportedDescription?: string;
 }
 
 const TripDetailsDialog: React.FC<TripDetailsDialogProps> = ({
@@ -41,7 +44,10 @@ const TripDetailsDialog: React.FC<TripDetailsDialogProps> = ({
   droppedTime,
   isReadyForCollection,
   showOriginalStatus = false,
-  washType = 'standard'
+  washType = 'standard',
+  reported = false,
+  reportedIssue = 'Customer Not Responding',
+  reportedDescription = ''
 }) => {
   // Override pickup/drop status based on order ID for custom orders
   const customPickedUp = determinePickedUpStatus(orderId, pickedUp);
@@ -77,6 +83,16 @@ const TripDetailsDialog: React.FC<TripDetailsDialogProps> = ({
                   </span>
             }
           </div>
+          
+          {/* Reported Issue Banner - Only for reported orders */}
+          {reported && (
+            <div className="flex items-center justify-between">
+              <span className="text-base font-medium">Issue:</span>
+              <span className="bg-red-100 text-red-700 px-3 py-1 rounded text-sm font-medium">
+                {reportedIssue || "Customer Not Responding"}
+              </span>
+            </div>
+          )}
           
           {/* Trip Status Indicator - Only for ORD-0004 */}
           {isORD0004 && (
@@ -157,6 +173,9 @@ const TripDetailsDialog: React.FC<TripDetailsDialogProps> = ({
               dropped={dropped}
               droppedTime={droppedTime}
               isReadyForCollection={isReadyForCollection}
+              reported={reported}
+              reportedIssue={reportedIssue}
+              reportedDescription={reportedDescription}
             />
           </div>
         </div>

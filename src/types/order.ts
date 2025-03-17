@@ -18,4 +18,6 @@ export interface AssignedOrder {
   showTripStatus?: boolean;
   washType?: WashType | string;
   reported?: boolean;
+  reportedIssue?: string;
+  reportedDescription?: string;
 }

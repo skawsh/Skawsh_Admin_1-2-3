@@ -51,6 +51,9 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders, emptyMessage }) => {
             showOriginalStatus={true}
             showTripStatus={order.showTripStatus}
             washType={order.washType}
+            reported={order.reported}
+            reportedIssue={order.reportedIssue}
+            reportedDescription={order.reportedDescription}
           />
         ))
       ) : (

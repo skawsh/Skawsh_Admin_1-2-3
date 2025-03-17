@@ -1,3 +1,4 @@
+
 // Order status types
 export type OrderStatus = 'new' | 'received' | 'in-progress' | 'ready-for-collect' | 'delivered' | 'cancelled' | 'completed';
 
@@ -25,6 +26,9 @@ export interface Order {
   dropped?: boolean;
   droppedTime?: string | null;
   showTripStatus?: boolean; // Added for ORD-0004 trip status indicator
+  reported?: boolean;
+  reportedIssue?: string;
+  reportedDescription?: string;
 }
 
 // Table data interface
@@ -45,6 +49,9 @@ export interface OrderTableData {
   dropped?: boolean;
   droppedTime?: string | null;
   showTripStatus?: boolean; // Added for ORD-0004 trip status indicator
+  reported?: boolean;
+  reportedIssue?: string;
+  reportedDescription?: string;
 }
 
 // Component props types

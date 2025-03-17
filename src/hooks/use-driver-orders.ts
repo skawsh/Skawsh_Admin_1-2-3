@@ -105,6 +105,8 @@ export const useDriverOrders = (
               pickedUpTime: '3/15/2025, 2:30:18 PM',
               dropped: false,
               reported: true,
+              reportedIssue: 'Customer Not Responding',
+              reportedDescription: 'Driver tried to contact customer multiple times but no response.',
               washType: 'express'
             };
             
@@ -274,6 +276,8 @@ export const useDriverOrders = (
         pickedUpTime: '3/15/2025, 2:30:18 PM',
         dropped: false,
         reported: true,
+        reportedIssue: 'Customer Not Responding',
+        reportedDescription: 'Driver tried to contact customer multiple times but no response.',
         washType: 'express'
       });
     }

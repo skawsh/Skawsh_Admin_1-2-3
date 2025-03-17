@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, Package, PackageCheck, CheckCircle2 } from 'lucide-react';
+import { Calendar, Package, PackageCheck, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 interface TripTimelineProps {
   orderId: string;
@@ -10,6 +10,9 @@ interface TripTimelineProps {
   dropped?: boolean;
   droppedTime?: string | null;
   isReadyForCollection: boolean;
+  reported?: boolean;
+  reportedIssue?: string;
+  reportedDescription?: string;
 }
 
 const TripTimeline: React.FC<TripTimelineProps> = ({
@@ -19,7 +22,10 @@ const TripTimeline: React.FC<TripTimelineProps> = ({
   pickedUpTime,
   dropped,
   droppedTime,
-  isReadyForCollection
+  isReadyForCollection,
+  reported,
+  reportedIssue,
+  reportedDescription
 }) => {
   // Override pickup/drop status based on order ID for custom orders
   const customPickedUp = determinePickedUpStatus(orderId, pickedUp);
@@ -77,6 +83,25 @@ const TripTimeline: React.FC<TripTimelineProps> = ({
               <div className="text-xs text-gray-400">Pending</div> : null}
         </div>
       </div>
+      
+      {/* Reported Issue - Only shown for reported orders */}
+      {reported && (
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5">
+            <AlertTriangle size={16} className="text-red-500" />
+          </div>
+          <div>
+            <div className="font-medium text-sm text-red-700">
+              Reported Issue: {reportedIssue || "Customer Not Responding"}
+            </div>
+            {reportedDescription && (
+              <div className="text-xs text-gray-500">
+                {reportedDescription}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
