@@ -140,6 +140,7 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
                             // for ready-for-collect orders in the rescheduled tab
                             showNewOrder || (isRescheduledTab && order.status === "ready-for-collect")
                           }
+                          isRescheduledTab={isRescheduledTab}
                         />
                       )}
                     </TableCell>

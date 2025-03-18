@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { OrderStatus } from './types';
 import './OrdersBadge.css';
@@ -11,6 +12,7 @@ interface StatusBadgeProps {
   showNewOrder?: boolean; // Prop to control when to show "New Order"
   isDriverOrdersView?: boolean; // Prop to indicate if displayed in driver orders view
   showOriginalStatus?: boolean; // New prop to force showing the original status
+  isRescheduledTab?: boolean; // New prop to indicate if displayed in the rescheduled tab
 }
 
 const StatusBadge = ({ 
@@ -22,6 +24,7 @@ const StatusBadge = ({
   showNewOrder = false,
   isDriverOrdersView = false, // Default to false
   showOriginalStatus = false, // Default to false
+  isRescheduledTab = false, // Default to false
 }: StatusBadgeProps) => {
   // Special case for ORD-0005, always show "New Order"
   if (showOriginalStatus && status === "new") {
@@ -68,6 +71,12 @@ const StatusBadge = ({
     return <span className="status-badge status-ready">Ready for collection</span>;
   }
   
+  // If in rescheduled tab and status is "ready-for-collect", 
+  // always show "Ready for collection" instead of "Ready for pickup"
+  if (isRescheduledTab && status === "ready-for-collect") {
+    return <span className="status-badge status-ready">Ready for collection</span>;
+  }
+  
   // For orders, show the real-time status based on pickup and drop status
   if (status === "new" || status === "ready-for-collect") {
     const pickupLabel = status === "ready-for-collect" ? "Collected" : "Picked up";
@@ -78,6 +87,11 @@ const StatusBadge = ({
     } else if (pickedUp && pickedUpTime) {
       return <span className="status-badge status-in-progress">{pickupLabel}</span>;
     } else {
+      // For rescheduled tab and status is "ready-for-collect", show "Ready for collection"
+      if (isRescheduledTab && status === "ready-for-collect") {
+        return <span className="status-badge status-ready">Ready for collection</span>;
+      }
+      
       return <span className="status-badge status-ready">
         Ready for {status === "ready-for-collect" ? "collection" : "pickup"}
       </span>;
