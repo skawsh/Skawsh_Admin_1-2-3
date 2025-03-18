@@ -49,47 +49,47 @@ const DriverDetails = () => {
   }, [isMobile]);
   
   useEffect(() => {
-    // Find the driver in our sample data
-    // In a real app, you would fetch this from an API
-    const foundDriver = sampleDrivers.find(d => d.id === driverId);
+    if (!driverId) return;
+    
+    // Start with empty driver
+    let foundDriver: ExtendedDriver | null = null;
+    
+    // First check localStorage for the driver
+    try {
+      const savedDriversJson = localStorage.getItem('driversList');
+      if (savedDriversJson) {
+        const savedDrivers = JSON.parse(savedDriversJson);
+        foundDriver = savedDrivers.find((d: Driver) => d.id === driverId) || null;
+      }
+    } catch (error) {
+      console.error('Error fetching driver data from localStorage:', error);
+    }
+    
+    // If not found in localStorage, check sample data
+    if (!foundDriver) {
+      foundDriver = sampleDrivers.find(d => d.id === driverId) || null;
+    }
     
     if (foundDriver) {
-      // Check if we have more data in localStorage
-      let extendedDriver: ExtendedDriver = { ...foundDriver };
-      
-      try {
-        const savedDriversJson = localStorage.getItem('driversList');
-        if (savedDriversJson) {
-          const savedDrivers = JSON.parse(savedDriversJson);
-          const savedDriver = savedDrivers.find((d: Driver) => d.id === driverId);
-          
-          if (savedDriver) {
-            extendedDriver = { ...extendedDriver, ...savedDriver };
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching driver data from localStorage:', error);
-      }
-      
-      // Extend the driver with additional mock data for demo purposes
-      extendedDriver = {
-        ...extendedDriver,
-        emergencyContact: extendedDriver.emergencyContact || "+1 (555) 765-4321",
-        address: extendedDriver.address || "123 Driver Lane, Los Angeles, CA 90001",
-        vehicleDetails: extendedDriver.vehicleDetails || {
-          make: "Toyota",
-          model: "Prius",
-          year: "2020",
-          color: "Silver",
-          licensePlate: "DRV-1234"
+      // Set default values for any missing fields to avoid undefined errors
+      const extendedDriver: ExtendedDriver = {
+        ...foundDriver,
+        emergencyContact: foundDriver.emergencyContact || "",
+        address: foundDriver.address || "",
+        vehicleDetails: foundDriver.vehicleDetails || {
+          make: "",
+          model: "",
+          year: "",
+          color: "",
+          licensePlate: ""
         },
-        dateOfBirth: extendedDriver.dateOfBirth || "1990-01-01",
-        secondaryPhone: extendedDriver.secondaryPhone || "+1 (555) 987-6543",
-        email: extendedDriver.email || "driver@example.com",
-        emergencyContactName: extendedDriver.emergencyContactName || "Emergency Contact",
-        emergencyContactRelation: extendedDriver.emergencyContactRelation || "Family",
-        currentAddress: extendedDriver.currentAddress || "123 Current St, City, State 12345",
-        permanentAddress: extendedDriver.permanentAddress || "456 Permanent Ave, City, State 12345"
+        dateOfBirth: foundDriver.dateOfBirth || "",
+        secondaryPhone: foundDriver.secondaryPhone || "",
+        email: foundDriver.email || "",
+        emergencyContactName: foundDriver.emergencyContactName || "",
+        emergencyContactRelation: foundDriver.emergencyContactRelation || "",
+        currentAddress: foundDriver.currentAddress || "",
+        permanentAddress: foundDriver.permanentAddress || ""
       };
       
       setDriver(extendedDriver);
@@ -129,10 +129,22 @@ const DriverDetails = () => {
       const savedDriversJson = localStorage.getItem('driversList');
       if (savedDriversJson) {
         const savedDrivers = JSON.parse(savedDriversJson);
-        const updatedDrivers = savedDrivers.map((d: Driver) => 
-          d.id === editedDriver.id ? { ...d, ...editedDriver } : d
-        );
-        localStorage.setItem('driversList', JSON.stringify(updatedDrivers));
+        
+        // Check if driver already exists in the list
+        const driverIndex = savedDrivers.findIndex((d: Driver) => d.id === editedDriver.id);
+        
+        if (driverIndex !== -1) {
+          // Update existing driver
+          savedDrivers[driverIndex] = { ...savedDrivers[driverIndex], ...editedDriver };
+        } else {
+          // Add new driver
+          savedDrivers.push(editedDriver);
+        }
+        
+        localStorage.setItem('driversList', JSON.stringify(savedDrivers));
+      } else {
+        // If no drivers list exists yet, create one with this driver
+        localStorage.setItem('driversList', JSON.stringify([editedDriver]));
       }
     } catch (error) {
       console.error('Error saving driver data:', error);
