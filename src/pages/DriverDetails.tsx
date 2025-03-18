@@ -8,15 +8,40 @@ import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, User, Home, Car, ArrowLeft } from 'lucide-react';
+import { Phone, User, Home, Car, ArrowLeft, Pencil, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+
+// Extended driver type with all the fields from the add new driver form
+interface ExtendedDriver extends Driver {
+  emergencyContact?: string;
+  address?: string;
+  vehicleDetails?: {
+    make: string;
+    model: string;
+    year: string;
+    color: string;
+    licensePlate: string;
+  };
+  dateOfBirth?: string;
+  secondaryPhone?: string;
+  email?: string;
+  emergencyContactName?: string;
+  emergencyContactRelation?: string;
+  currentAddress?: string;
+  permanentAddress?: string;
+}
 
 const DriverDetails = () => {
   const { driverId } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
-  const [driver, setDriver] = useState<Driver | null>(null);
+  const [driver, setDriver] = useState<ExtendedDriver | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedDriver, setEditedDriver] = useState<ExtendedDriver | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -29,21 +54,46 @@ const DriverDetails = () => {
     const foundDriver = sampleDrivers.find(d => d.id === driverId);
     
     if (foundDriver) {
+      // Check if we have more data in localStorage
+      let extendedDriver: ExtendedDriver = { ...foundDriver };
+      
+      try {
+        const savedDriversJson = localStorage.getItem('driversList');
+        if (savedDriversJson) {
+          const savedDrivers = JSON.parse(savedDriversJson);
+          const savedDriver = savedDrivers.find((d: Driver) => d.id === driverId);
+          
+          if (savedDriver) {
+            extendedDriver = { ...extendedDriver, ...savedDriver };
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching driver data from localStorage:', error);
+      }
+      
       // Extend the driver with additional mock data for demo purposes
-      const extendedDriver = {
-        ...foundDriver,
-        emergencyContact: "+1 (555) 765-4321",
-        address: "123 Driver Lane, Los Angeles, CA 90001",
-        vehicleDetails: {
+      extendedDriver = {
+        ...extendedDriver,
+        emergencyContact: extendedDriver.emergencyContact || "+1 (555) 765-4321",
+        address: extendedDriver.address || "123 Driver Lane, Los Angeles, CA 90001",
+        vehicleDetails: extendedDriver.vehicleDetails || {
           make: "Toyota",
           model: "Prius",
           year: "2020",
           color: "Silver",
           licensePlate: "DRV-1234"
-        }
+        },
+        dateOfBirth: extendedDriver.dateOfBirth || "1990-01-01",
+        secondaryPhone: extendedDriver.secondaryPhone || "+1 (555) 987-6543",
+        email: extendedDriver.email || "driver@example.com",
+        emergencyContactName: extendedDriver.emergencyContactName || "Emergency Contact",
+        emergencyContactRelation: extendedDriver.emergencyContactRelation || "Family",
+        currentAddress: extendedDriver.currentAddress || "123 Current St, City, State 12345",
+        permanentAddress: extendedDriver.permanentAddress || "456 Permanent Ave, City, State 12345"
       };
       
       setDriver(extendedDriver);
+      setEditedDriver(extendedDriver);
     } else {
       toast({
         title: "Driver Not Found",
@@ -57,6 +107,66 @@ const DriverDetails = () => {
   
   const toggleSidebar = () => {
     setSidebarOpen(prev => !prev);
+  };
+  
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+  
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditedDriver(driver);
+  };
+  
+  const handleSave = () => {
+    if (!editedDriver) return;
+    
+    // Save to state
+    setDriver(editedDriver);
+    
+    // Save to localStorage
+    try {
+      const savedDriversJson = localStorage.getItem('driversList');
+      if (savedDriversJson) {
+        const savedDrivers = JSON.parse(savedDriversJson);
+        const updatedDrivers = savedDrivers.map((d: Driver) => 
+          d.id === editedDriver.id ? { ...d, ...editedDriver } : d
+        );
+        localStorage.setItem('driversList', JSON.stringify(updatedDrivers));
+      }
+    } catch (error) {
+      console.error('Error saving driver data:', error);
+    }
+    
+    setIsEditing(false);
+    
+    toast({
+      title: "Driver Updated",
+      description: "Driver details have been updated successfully.",
+    });
+  };
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (!editedDriver) return;
+    
+    const { name, value } = e.target;
+    
+    // Handle nested properties
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setEditedDriver({
+        ...editedDriver,
+        [parent]: {
+          ...editedDriver[parent as keyof ExtendedDriver],
+          [child]: value
+        }
+      });
+    } else {
+      setEditedDriver({
+        ...editedDriver,
+        [name]: value
+      });
+    }
   };
   
   if (!driver) {
@@ -90,17 +200,49 @@ const DriverDetails = () => {
         />
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div className="mb-6 flex items-center">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mr-4"
-              onClick={() => navigate('/drivers')}
-            >
-              <ArrowLeft size={16} className="mr-1" />
-              Back to Drivers
-            </Button>
-            <h1 className="text-2xl font-bold">Driver Details</h1>
+          <div className="mb-6 flex items-center justify-between">
+            <div className="flex items-center">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mr-4"
+                onClick={() => navigate('/drivers')}
+              >
+                <ArrowLeft size={16} className="mr-1" />
+                Back to Drivers
+              </Button>
+              <h1 className="text-2xl font-bold">Driver Details</h1>
+            </div>
+            
+            {isEditing ? (
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleCancel}
+                >
+                  <X size={16} className="mr-1" />
+                  Cancel
+                </Button>
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  onClick={handleSave}
+                >
+                  <Save size={16} className="mr-1" />
+                  Save Changes
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleEdit}
+              >
+                <Pencil size={16} className="mr-1" />
+                Edit Details
+              </Button>
+            )}
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -113,18 +255,128 @@ const DriverDetails = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Name</span>
-                  <span className="font-medium">{driver.name}</span>
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="name">Name</Label>
+                      <Input 
+                        id="name"
+                        name="name"
+                        value={editedDriver?.name || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Name</span>
+                      <span className="font-medium">{driver.name}</span>
+                    </>
+                  )}
                 </div>
+                
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Status</span>
-                  <span className={`font-medium ${driver.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-                    {driver.status.charAt(0).toUpperCase() + driver.status.slice(1)}
-                  </span>
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                      <Input 
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        value={editedDriver?.dateOfBirth || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Date of Birth</span>
+                      <span className="font-medium">{driver.dateOfBirth}</span>
+                    </>
+                  )}
                 </div>
+                
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Address</span>
-                  <span className="font-medium">{(driver as any).address}</span>
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="email">Email</Label>
+                      <Input 
+                        id="email"
+                        name="email"
+                        value={editedDriver?.email || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Email</span>
+                      <span className="font-medium">{driver.email}</span>
+                    </>
+                  )}
+                </div>
+                
+                <div className="flex flex-col">
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="status">Status</Label>
+                      <select
+                        id="status"
+                        name="status"
+                        value={editedDriver?.status || 'active'}
+                        onChange={(e) => handleInputChange(e as any)}
+                        className="mt-1 rounded-md border border-input px-3 py-2"
+                      >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Status</span>
+                      <span className={`font-medium ${driver.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+                        {driver.status.charAt(0).toUpperCase() + driver.status.slice(1)}
+                      </span>
+                    </>
+                  )}
+                </div>
+                
+                <div className="flex flex-col">
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="currentAddress">Current Address</Label>
+                      <Textarea 
+                        id="currentAddress"
+                        name="currentAddress"
+                        value={editedDriver?.currentAddress || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Current Address</span>
+                      <span className="font-medium">{driver.currentAddress}</span>
+                    </>
+                  )}
+                </div>
+                
+                <div className="flex flex-col">
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="permanentAddress">Permanent Address</Label>
+                      <Textarea 
+                        id="permanentAddress"
+                        name="permanentAddress"
+                        value={editedDriver?.permanentAddress || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Permanent Address</span>
+                      <span className="font-medium">{driver.permanentAddress}</span>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -138,12 +390,103 @@ const DriverDetails = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Phone Number</span>
-                  <span className="font-medium">{driver.phoneNumber}</span>
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="phoneNumber">Phone Number</Label>
+                      <Input 
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        value={editedDriver?.phoneNumber || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Phone Number</span>
+                      <span className="font-medium">{driver.phoneNumber}</span>
+                    </>
+                  )}
                 </div>
+                
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Emergency Contact</span>
-                  <span className="font-medium">{(driver as any).emergencyContact}</span>
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="secondaryPhone">Secondary Phone</Label>
+                      <Input 
+                        id="secondaryPhone"
+                        name="secondaryPhone"
+                        value={editedDriver?.secondaryPhone || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Secondary Phone</span>
+                      <span className="font-medium">{driver.secondaryPhone}</span>
+                    </>
+                  )}
+                </div>
+                
+                <div className="flex flex-col">
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="emergencyContactName">Emergency Contact Name</Label>
+                      <Input 
+                        id="emergencyContactName"
+                        name="emergencyContactName"
+                        value={editedDriver?.emergencyContactName || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Emergency Contact Name</span>
+                      <span className="font-medium">{driver.emergencyContactName}</span>
+                    </>
+                  )}
+                </div>
+                
+                <div className="flex flex-col">
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="emergencyContactRelation">Relation with Driver</Label>
+                      <Input 
+                        id="emergencyContactRelation"
+                        name="emergencyContactRelation"
+                        value={editedDriver?.emergencyContactRelation || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Relation with Driver</span>
+                      <span className="font-medium">{driver.emergencyContactRelation}</span>
+                    </>
+                  )}
+                </div>
+                
+                <div className="flex flex-col">
+                  {isEditing ? (
+                    <>
+                      <Label htmlFor="emergencyContact">Emergency Contact Number</Label>
+                      <Input 
+                        id="emergencyContact"
+                        name="emergencyContact"
+                        value={editedDriver?.emergencyContact || ''}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm text-gray-500">Emergency Contact Number</span>
+                      <span className="font-medium">{driver.emergencyContact}</span>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -158,24 +501,103 @@ const DriverDetails = () => {
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Make</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.make}</span>
+                    {isEditing ? (
+                      <>
+                        <Label htmlFor="vehicleDetails.make">Make</Label>
+                        <Input 
+                          id="vehicleDetails.make"
+                          name="vehicleDetails.make"
+                          value={editedDriver?.vehicleDetails?.make || ''}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-sm text-gray-500">Make</span>
+                        <span className="font-medium">{driver.vehicleDetails?.make}</span>
+                      </>
+                    )}
                   </div>
+                  
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Model</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.model}</span>
+                    {isEditing ? (
+                      <>
+                        <Label htmlFor="vehicleDetails.model">Model</Label>
+                        <Input 
+                          id="vehicleDetails.model"
+                          name="vehicleDetails.model"
+                          value={editedDriver?.vehicleDetails?.model || ''}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-sm text-gray-500">Model</span>
+                        <span className="font-medium">{driver.vehicleDetails?.model}</span>
+                      </>
+                    )}
                   </div>
+                  
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Year</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.year}</span>
+                    {isEditing ? (
+                      <>
+                        <Label htmlFor="vehicleDetails.year">Year</Label>
+                        <Input 
+                          id="vehicleDetails.year"
+                          name="vehicleDetails.year"
+                          value={editedDriver?.vehicleDetails?.year || ''}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-sm text-gray-500">Year</span>
+                        <span className="font-medium">{driver.vehicleDetails?.year}</span>
+                      </>
+                    )}
                   </div>
+                  
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Color</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.color}</span>
+                    {isEditing ? (
+                      <>
+                        <Label htmlFor="vehicleDetails.color">Color</Label>
+                        <Input 
+                          id="vehicleDetails.color"
+                          name="vehicleDetails.color"
+                          value={editedDriver?.vehicleDetails?.color || ''}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-sm text-gray-500">Color</span>
+                        <span className="font-medium">{driver.vehicleDetails?.color}</span>
+                      </>
+                    )}
                   </div>
+                  
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">License Plate</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.licensePlate}</span>
+                    {isEditing ? (
+                      <>
+                        <Label htmlFor="vehicleDetails.licensePlate">License Plate</Label>
+                        <Input 
+                          id="vehicleDetails.licensePlate"
+                          name="vehicleDetails.licensePlate"
+                          value={editedDriver?.vehicleDetails?.licensePlate || ''}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-sm text-gray-500">License Plate</span>
+                        <span className="font-medium">{driver.vehicleDetails?.licensePlate}</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </CardContent>
