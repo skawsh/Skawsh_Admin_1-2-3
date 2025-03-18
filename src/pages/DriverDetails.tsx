@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -896,9 +895,9 @@ const DriverDetails = () => {
                     )}
                   </div>
                   
-                  <div className="flex flex-col space-y-2">
-                    <Label htmlFor="paymentDetails.confirmAccountNumber">Confirm Account Number</Label>
-                    {isEditing ? (
+                  {isEditing && (
+                    <div className="flex flex-col space-y-2">
+                      <Label htmlFor="paymentDetails.confirmAccountNumber">Confirm Account Number</Label>
                       <Input 
                         id="paymentDetails.confirmAccountNumber"
                         name="paymentDetails.confirmAccountNumber"
@@ -906,10 +905,8 @@ const DriverDetails = () => {
                         onChange={handleInputChange}
                         placeholder="Re-enter account number"
                       />
-                    ) : (
-                      <div className="p-2 border rounded-md bg-gray-50">{driver.paymentDetails?.confirmAccountNumber || 'Not provided'}</div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   
                   <div className="flex flex-col space-y-2">
                     <Label htmlFor="paymentDetails.ifscCode">IFSC Code</Label>
