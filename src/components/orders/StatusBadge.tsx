@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { OrderStatus } from './types';
 import './OrdersBadge.css';
@@ -71,11 +70,15 @@ const StatusBadge = ({
     return <span className="status-badge status-ready">Ready for collection</span>;
   }
   
-  // If in rescheduled tab and status is "ready-for-collect", always show "Ready for collection"
-  // This is the key fix - show "Ready for collection" only for "ready-for-collect" status orders,
-  // while respecting the original status for "new" orders
-  if (isRescheduledTab && status === "ready-for-collect") {
-    return <span className="status-badge status-ready">Ready for collection</span>;
+  // If in rescheduled tab and status is "ready-for-collect", show "Ready for collection"
+  // For "new" status in rescheduled tab, show "New Order"
+  if (isRescheduledTab) {
+    if (status === "ready-for-collect") {
+      return <span className="status-badge status-ready">Ready for collection</span>;
+    }
+    if (status === "new") {
+      return <span className="status-badge status-new">New Order</span>;
+    }
   }
   
   // For orders, show the real-time status based on pickup and drop status

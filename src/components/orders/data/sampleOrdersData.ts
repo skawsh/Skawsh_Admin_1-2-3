@@ -395,7 +395,7 @@ export const generateExclusiveRescheduledOrders = (): Order[] => {
       id: 'ORD-R004',
       orderDate: formatDateString(getRandomDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date())),
       customer: 'Meera Sharma',
-      status: 'ready-for-collect',
+      status: 'new', // Changed from ready-for-collect to new
       studio: 'Urban Clean',
       driver: 'Unassigned',
       total: 1100,
