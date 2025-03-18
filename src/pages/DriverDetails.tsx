@@ -154,10 +154,13 @@ const DriverDetails = () => {
     // Handle nested properties
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
+      // Fix: Use type assertion to avoid TypeScript error with spread operator
+      const parentObj = editedDriver[parent as keyof ExtendedDriver] as Record<string, any> || {};
+      
       setEditedDriver({
         ...editedDriver,
         [parent]: {
-          ...editedDriver[parent as keyof ExtendedDriver],
+          ...parentObj,
           [child]: value
         }
       });
