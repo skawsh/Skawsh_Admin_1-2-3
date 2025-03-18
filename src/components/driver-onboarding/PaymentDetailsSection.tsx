@@ -17,6 +17,7 @@ interface PaymentDetailsSectionProps {
   setIfscCode: React.Dispatch<React.SetStateAction<string>>;
   branchName: string;
   setBranchName: React.Dispatch<React.SetStateAction<string>>;
+  isEditMode?: boolean;
 }
 
 const PaymentDetailsSection = ({
@@ -31,7 +32,8 @@ const PaymentDetailsSection = ({
   ifscCode,
   setIfscCode,
   branchName,
-  setBranchName
+  setBranchName,
+  isEditMode = true
 }: PaymentDetailsSectionProps) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-6">
@@ -71,15 +73,17 @@ const PaymentDetailsSection = ({
           />
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="confirmAccountNumber">Confirm Account Number</Label>
-          <Input 
-            id="confirmAccountNumber" 
-            placeholder="Re-enter account number" 
-            value={confirmAccountNumber}
-            onChange={(e) => setConfirmAccountNumber(e.target.value)}
-          />
-        </div>
+        {isEditMode && (
+          <div className="space-y-2">
+            <Label htmlFor="confirmAccountNumber">Confirm Account Number</Label>
+            <Input 
+              id="confirmAccountNumber" 
+              placeholder="Re-enter account number" 
+              value={confirmAccountNumber}
+              onChange={(e) => setConfirmAccountNumber(e.target.value)}
+            />
+          </div>
+        )}
         
         <div className="space-y-2">
           <Label htmlFor="ifscCode">IFSC Code</Label>

@@ -16,9 +16,6 @@ export interface Driver {
   dateOfBirth?: string;
   secondaryPhone?: string;
   email?: string;
-  otp?: string;
-  password?: string;
-  confirmPassword?: string;
   emergencyContactName?: string;
   emergencyContactRelation?: string;
   emergencyContact?: string;
