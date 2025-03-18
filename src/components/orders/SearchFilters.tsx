@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Filter, Search, CalendarIcon } from 'lucide-react';
+import { Filter, Search, CalendarIcon, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WashType } from './types';
@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 
 interface DateRangeFilter {
   label: string;
@@ -33,8 +34,14 @@ const SearchFilters = ({
   selectedDate 
 }: SearchFiltersProps) => {
   const [washType, setWashType] = useState<WashType | 'all'>('all');
-  const [dateFilter, setDateFilter] = useState<string>('all');
+  const [dateFilter, setDateFilter] = useState<string>('today'); // Default to today
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(new Date()); // Set default date to today
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(),
+    to: undefined
+  });
+  const [calendarMode, setCalendarMode] = useState<'single' | 'range'>('single');
 
   const dateFilters: DateRangeFilter[] = [
     {
@@ -93,6 +100,14 @@ const SearchFilters = ({
     }
   ];
 
+  // Initialize with today's date range
+  useEffect(() => {
+    const todayFilter = dateFilters.find(filter => filter.value === 'today');
+    if (todayFilter && onDateRangeChange) {
+      onDateRangeChange(todayFilter.getDateRange());
+    }
+  }, []);
+
   useEffect(() => {
     // When dateFilter is set to custom, open the calendar
     if (dateFilter === 'custom') {
@@ -122,11 +137,40 @@ const SearchFilters = ({
     }
   };
 
-  const handleCustomDateChange = (date: Date | undefined) => {
-    if (onDateChange && date) {
-      onDateChange(date);
-    }
+  const handleSingleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
     // Don't auto-close the calendar to give user more control
+  };
+
+  const handleDateRangeSelect = (range: DateRange | undefined) => {
+    setDateRange(range);
+  };
+
+  const handleCalendarModeToggle = () => {
+    setCalendarMode(prev => prev === 'single' ? 'range' : 'single');
+    // Reset selections when switching modes
+    if (calendarMode === 'single') {
+      setDateRange({ from: new Date(), to: undefined });
+    } else {
+      setDate(new Date());
+    }
+  };
+
+  const handleConfirm = () => {
+    if (calendarMode === 'single' && date && onDateChange) {
+      onDateChange(date);
+    } else if (calendarMode === 'range' && dateRange && dateRange.from && dateRange.to && onDateRangeChange) {
+      onDateRangeChange({
+        start: startOfDay(dateRange.from),
+        end: endOfDay(dateRange.to)
+      });
+    }
+    setCalendarOpen(false);
+  };
+
+  const handleCancel = () => {
+    // Reset to previous selections or defaults
+    setCalendarOpen(false);
   };
 
   return (
@@ -161,13 +205,54 @@ const SearchFilters = ({
           </PopoverTrigger>
           
           <PopoverContent className="w-auto p-0 z-50" align="end" side="bottom">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={handleCustomDateChange}
-              initialFocus
-              className="pointer-events-auto"
-            />
+            <div className="flex flex-col p-2">
+              <div className="flex justify-between mb-2">
+                <Button 
+                  variant={calendarMode === 'single' ? 'default' : 'outline'} 
+                  size="sm" 
+                  onClick={() => setCalendarMode('single')}
+                  className="text-xs"
+                >
+                  Single Date
+                </Button>
+                <Button 
+                  variant={calendarMode === 'range' ? 'default' : 'outline'} 
+                  size="sm" 
+                  onClick={() => setCalendarMode('range')}
+                  className="text-xs"
+                >
+                  Date Range
+                </Button>
+              </div>
+              
+              {calendarMode === 'single' ? (
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={handleSingleDateSelect}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              ) : (
+                <Calendar
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={handleDateRangeSelect}
+                  initialFocus
+                  numberOfMonths={1}
+                  className="pointer-events-auto"
+                />
+              )}
+              
+              <div className="flex justify-end gap-2 mt-2">
+                <Button variant="outline" size="sm" onClick={handleCancel}>
+                  Cancel
+                </Button>
+                <Button size="sm" onClick={handleConfirm}>
+                  OK
+                </Button>
+              </div>
+            </div>
           </PopoverContent>
         </Popover>
         
