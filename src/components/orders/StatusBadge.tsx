@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { OrderStatus } from './types';
 import './OrdersBadge.css';
@@ -59,8 +60,8 @@ const StatusBadge = ({
     return <span className="status-badge status-in-progress">{statusLabel}</span>;
   }
   
-  // For new orders, show "New Order" if showNewOrder is true
-  if (status === "new" && showNewOrder) {
+  // For new orders, always show "New Order" (changed to display "New Order" for all items in the New tab)
+  if (status === "new") {
     return <span className="status-badge status-new">New Order</span>;
   }
   
