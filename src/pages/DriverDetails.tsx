@@ -7,16 +7,32 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, User, Home, Car, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import PersonalInfoCard from '@/components/riders/PersonalInfoCard';
+import ContactInfoCard from '@/components/riders/ContactInfoCard';
+import VehicleInfoCard from '@/components/riders/VehicleInfoCard';
+import DeliveryStatsCard from '@/components/riders/DeliveryStatsCard';
+
+// Extended Rider type with additional fields
+interface ExtendedRider extends Driver {
+  emergencyContact?: string;
+  address?: string;
+  vehicleDetails?: {
+    make: string;
+    model: string;
+    year: string;
+    color: string;
+    licensePlate: string;
+  };
+}
 
 const RiderDetails = () => {
   const { driverId } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
-  const [rider, setRider] = useState<Driver | null>(null);
+  const [rider, setRider] = useState<ExtendedRider | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -104,107 +120,15 @@ const RiderDetails = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-laundry-blue" />
-                  Personal Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Name</span>
-                  <span className="font-medium">{rider.name}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Status</span>
-                  <span className={`font-medium ${rider.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-                    {rider.status.charAt(0).toUpperCase() + rider.status.slice(1)}
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Address</span>
-                  <span className="font-medium">{(rider as any).address}</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 text-laundry-blue" />
-                  Contact Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Phone Number</span>
-                  <span className="font-medium">{rider.phoneNumber}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Emergency Contact</span>
-                  <span className="font-medium">{(rider as any).emergencyContact}</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Car className="h-5 w-5 text-laundry-blue" />
-                  Vehicle Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Make</span>
-                    <span className="font-medium">{(rider as any).vehicleDetails?.make}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Model</span>
-                    <span className="font-medium">{(rider as any).vehicleDetails?.model}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Year</span>
-                    <span className="font-medium">{(rider as any).vehicleDetails?.year}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Color</span>
-                    <span className="font-medium">{(rider as any).vehicleDetails?.color}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">License Plate</span>
-                    <span className="font-medium">{(rider as any).vehicleDetails?.licensePlate}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Home className="h-5 w-5 text-laundry-blue" />
-                  Delivery Statistics
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Assigned Orders</span>
-                    <span className="font-medium">{rider.assignedOrders || 0}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Total Deliveries</span>
-                    <span className="font-medium">{rider.totalDeliveries || 0}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Rating</span>
-                    <span className="font-medium">{rider.rating || 'N/A'} {rider.rating ? '⭐' : ''}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <PersonalInfoCard rider={rider} />
+            <ContactInfoCard 
+              phoneNumber={rider.phoneNumber} 
+              emergencyContact={rider.emergencyContact} 
+            />
+            {rider.vehicleDetails && (
+              <VehicleInfoCard vehicleDetails={rider.vehicleDetails} />
+            )}
+            <DeliveryStatsCard rider={rider} />
           </div>
         </main>
       </div>
