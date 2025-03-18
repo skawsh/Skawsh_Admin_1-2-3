@@ -118,12 +118,22 @@ const DriverOnboarding = () => {
                   </div>
                   
                   <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input id="password" type="password" placeholder="Enter password" required />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <Input id="confirmPassword" type="password" placeholder="Confirm password" required />
+                  </div>
+                  
+                  <div className="space-y-2">
                     <Label htmlFor="emergencyContactName">Emergency Contact Name</Label>
                     <Input id="emergencyContactName" placeholder="Enter emergency contact name" />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="relation">Relation to you</Label>
+                    <Label htmlFor="relation">Relation with driver</Label>
                     <Input id="relation" placeholder="Enter relation" />
                   </div>
                   
