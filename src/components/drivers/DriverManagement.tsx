@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Download, Filter, Plus, Users } from 'lucide-react';
 import DriverMetricsCard from './DriverMetricsCard';
 import DriversTable from './DriversTable';
@@ -12,6 +13,12 @@ import {
 } from './mockData';
 
 const DriverManagement = () => {
+  const navigate = useNavigate();
+  
+  const handleAddDriver = () => {
+    navigate('/driver/onboarding');
+  };
+  
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -31,6 +38,7 @@ const DriverManagement = () => {
           
           <Button
             className="px-4 h-10 bg-laundry-blue hover:bg-laundry-blue-dark transition-colors"
+            onClick={handleAddDriver}
           >
             <Plus size={18} className="mr-2" />
             Add Driver
