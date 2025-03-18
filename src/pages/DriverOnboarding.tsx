@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Save, UserCheck, IdCard, Car, CircleCheck, Upload } from 'lucide-react';
@@ -23,6 +22,14 @@ const DriverOnboarding = () => {
   const [aadharFile, setAadharFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  
+  // Vehicle document states
+  const [rcFile, setRcFile] = useState<File | null>(null);
+  const [insuranceFile, setInsuranceFile] = useState<File | null>(null);
+  const [vehicleFrontImage, setVehicleFrontImage] = useState<File | null>(null);
+  const [vehicleBackImage, setVehicleBackImage] = useState<File | null>(null);
+  const [vehicleRightImage, setVehicleRightImage] = useState<File | null>(null);
+  const [vehicleLeftImage, setVehicleLeftImage] = useState<File | null>(null);
   
   useEffect(() => {
     setSidebarOpen(!isMobile);
@@ -130,6 +137,7 @@ const DriverOnboarding = () => {
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Personal Information Section */}
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <UserCheck className="h-5 w-5 text-laundry-blue" />
@@ -215,6 +223,7 @@ const DriverOnboarding = () => {
                 </div>
               </div>
               
+              {/* Driver Documentation Section */}
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <IdCard className="h-5 w-5 text-laundry-blue" />
@@ -235,7 +244,7 @@ const DriverOnboarding = () => {
                     setFile={setAadharFile} 
                   />
                   
-                  {/* License Number and Expiry - kept the same */}
+                  {/* License Number and Expiry */}
                   <div className="space-y-2">
                     <Label htmlFor="licenseNumber">License Number</Label>
                     <Input id="licenseNumber" placeholder="Enter license number" required />
@@ -263,6 +272,7 @@ const DriverOnboarding = () => {
                 </div>
               </div>
               
+              {/* Vehicle Information Section - Updated */}
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <Car className="h-5 w-5 text-laundry-blue" />
@@ -270,6 +280,7 @@ const DriverOnboarding = () => {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Keep existing fields */}
                   <div className="space-y-2">
                     <Label htmlFor="vehicleModel">Vehicle Model</Label>
                     <Input id="vehicleModel" placeholder="Enter vehicle model" required />
@@ -278,6 +289,60 @@ const DriverOnboarding = () => {
                   <div className="space-y-2">
                     <Label htmlFor="licensePlate">License Plate</Label>
                     <Input id="licensePlate" placeholder="Enter license plate" required />
+                  </div>
+                  
+                  {/* Upload Documents Section */}
+                  <div className="md:col-span-2 mt-4">
+                    <h3 className="text-base font-medium mb-4">Upload Images</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FileUploadField 
+                        id="rcUpload" 
+                        label="RC (Registration Certificate)" 
+                        file={rcFile} 
+                        setFile={setRcFile} 
+                      />
+                      
+                      <FileUploadField 
+                        id="insuranceUpload" 
+                        label="Insurance Copy" 
+                        file={insuranceFile} 
+                        setFile={setInsuranceFile} 
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Vehicle Images Section */}
+                  <div className="md:col-span-2 mt-4">
+                    <h3 className="text-base font-medium mb-4">Vehicle Images</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FileUploadField 
+                        id="frontImage" 
+                        label="Vehicle Front side Image" 
+                        file={vehicleFrontImage} 
+                        setFile={setVehicleFrontImage} 
+                      />
+                      
+                      <FileUploadField 
+                        id="backImage" 
+                        label="Vehicle Back side Image" 
+                        file={vehicleBackImage} 
+                        setFile={setVehicleBackImage} 
+                      />
+                      
+                      <FileUploadField 
+                        id="rightImage" 
+                        label="Vehicle Right side Image" 
+                        file={vehicleRightImage} 
+                        setFile={setVehicleRightImage} 
+                      />
+                      
+                      <FileUploadField 
+                        id="leftImage" 
+                        label="Vehicle Left side Image" 
+                        file={vehicleLeftImage} 
+                        setFile={setVehicleLeftImage} 
+                      />
+                    </div>
                   </div>
                   
                   <div className="space-y-2 md:col-span-2">
