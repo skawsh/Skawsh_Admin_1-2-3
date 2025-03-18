@@ -20,6 +20,10 @@ const DriverOnboarding = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  // Driver details state
+  const [driverName, setDriverName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  
   // File upload states
   const [aadharFile, setAadharFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
@@ -43,10 +47,38 @@ const DriverOnboarding = () => {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Generate a unique ID for the new driver
+    const newDriverId = `new-${Date.now()}`;
+    
+    // Create new driver object
+    const newDriver = {
+      id: newDriverId,
+      name: driverName || 'New Driver', // Fallback in case name is empty
+      status: 'active' as const,
+      phoneNumber: phoneNumber || '--',
+      assignedOrders: 0,
+      totalDeliveries: 0,
+      rating: 0
+    };
+    
+    // Get existing drivers from localStorage or use empty array
+    const existingDriversJson = localStorage.getItem('driversList');
+    const existingDrivers = existingDriversJson ? JSON.parse(existingDriversJson) : [];
+    
+    // Add new driver to the list
+    const updatedDrivers = [...existingDrivers, newDriver];
+    
+    // Save updated drivers list to localStorage
+    localStorage.setItem('driversList', JSON.stringify(updatedDrivers));
+    
+    // Show success toast
     toast({
       title: "Driver Created",
-      description: "New driver has been successfully added",
+      description: "New driver has been successfully added to the list",
     });
+    
+    // Navigate back to drivers page
     navigate('/drivers');
   };
   
@@ -85,8 +117,12 @@ const DriverOnboarding = () => {
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Use the refactored component sections */}
-              <PersonalInformationSection />
+              <PersonalInformationSection 
+                driverName={driverName}
+                setDriverName={setDriverName}
+                phoneNumber={phoneNumber}
+                setPhoneNumber={setPhoneNumber}
+              />
               
               <DriverDocumentationSection 
                 aadharFile={aadharFile}

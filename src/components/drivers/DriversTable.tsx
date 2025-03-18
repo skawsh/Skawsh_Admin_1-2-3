@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Table, 
@@ -39,8 +38,36 @@ const DriversTable = ({ className }: DriversTableProps) => {
   
   // Initialize with driver data and load assignments
   useEffect(() => {
-    // Start with the sample drivers
-    setDrivers(sampleDrivers);
+    // Load drivers from localStorage first
+    const savedDriversJson = localStorage.getItem('driversList');
+    let initialDrivers = [...sampleDrivers];
+    
+    if (savedDriversJson) {
+      try {
+        const savedDrivers = JSON.parse(savedDriversJson);
+        // Merge saved drivers with sample drivers, overwriting duplicates
+        const mergedDrivers = [...initialDrivers];
+        
+        // Add new drivers from localStorage that aren't in the sample data
+        savedDrivers.forEach((savedDriver: Driver) => {
+          const existingIndex = mergedDrivers.findIndex(d => d.id === savedDriver.id);
+          if (existingIndex !== -1) {
+            // Update existing driver
+            mergedDrivers[existingIndex] = savedDriver;
+          } else {
+            // Add new driver
+            mergedDrivers.push(savedDriver);
+          }
+        });
+        
+        initialDrivers = mergedDrivers;
+      } catch (error) {
+        console.error('Failed to parse drivers from localStorage:', error);
+      }
+    }
+    
+    // Set the drivers state
+    setDrivers(initialDrivers);
     
     // Check for existing assignments in localStorage
     const existingAssignments = localStorage.getItem('driverAssignments');
@@ -78,6 +105,34 @@ const DriversTable = ({ className }: DriversTableProps) => {
           updateDriverAssignments(data.driverId, data.orders);
         } catch (error) {
           console.error('Failed to parse driver assignment data:', error);
+        }
+      } else if (event.key === 'driversList') {
+        // Reload drivers list when it changes
+        try {
+          const savedDriversJson = event.newValue;
+          if (savedDriversJson) {
+            const savedDrivers = JSON.parse(savedDriversJson);
+            
+            setDrivers(prevDrivers => {
+              const updatedDrivers = [...prevDrivers];
+              
+              // Update or add drivers from localStorage
+              savedDrivers.forEach((savedDriver: Driver) => {
+                const existingIndex = updatedDrivers.findIndex(d => d.id === savedDriver.id);
+                if (existingIndex !== -1) {
+                  // Update existing driver
+                  updatedDrivers[existingIndex] = savedDriver;
+                } else {
+                  // Add new driver
+                  updatedDrivers.push(savedDriver);
+                }
+              });
+              
+              return updatedDrivers;
+            });
+          }
+        } catch (error) {
+          console.error('Failed to parse updated drivers list:', error);
         }
       }
     };
@@ -123,6 +178,20 @@ const DriversTable = ({ className }: DriversTableProps) => {
     setDrivers(drivers.map(driver => 
       driver.id === driverId ? { ...driver, status: newStatus } : driver
     ));
+    
+    // Update the driver in localStorage
+    const savedDriversJson = localStorage.getItem('driversList');
+    if (savedDriversJson) {
+      try {
+        const savedDrivers = JSON.parse(savedDriversJson);
+        const updatedDrivers = savedDrivers.map((driver: Driver) => 
+          driver.id === driverId ? { ...driver, status: newStatus } : driver
+        );
+        localStorage.setItem('driversList', JSON.stringify(updatedDrivers));
+      } catch (error) {
+        console.error('Failed to update driver status in localStorage:', error);
+      }
+    }
   };
   
   const getFilteredDrivers = (): Driver[] => {
