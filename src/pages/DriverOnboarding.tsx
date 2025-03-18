@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 
-const DriverOnboarding = () => {
+const RiderOnboarding = () => {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const navigate = useNavigate();
@@ -29,10 +29,10 @@ const DriverOnboarding = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Driver Created",
-      description: "New driver has been successfully added",
+      title: "Rider Created",
+      description: "New rider has been successfully added",
     });
-    navigate('/drivers');
+    navigate('/riders');
   };
   
   return (
@@ -61,12 +61,12 @@ const DriverOnboarding = () => {
               <Button 
                 variant="ghost" 
                 size="icon"
-                onClick={() => navigate('/drivers')}
+                onClick={() => navigate('/riders')}
                 className="h-9 w-9 rounded-full"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
-              <h1 className="text-2xl font-bold">Add New Driver</h1>
+              <h1 className="text-2xl font-bold">Add New Rider</h1>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -133,7 +133,7 @@ const DriverOnboarding = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="relation">Relation with driver</Label>
+                    <Label htmlFor="relation">Relation with rider</Label>
                     <Input id="relation" placeholder="Enter relation" />
                   </div>
                   
@@ -157,7 +157,7 @@ const DriverOnboarding = () => {
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <IdCard className="h-5 w-5 text-laundry-blue" />
-                  <h2 className="text-lg font-semibold">Driver Documentation</h2>
+                  <h2 className="text-lg font-semibold">Rider Documentation</h2>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -194,7 +194,7 @@ const DriverOnboarding = () => {
                     <Label htmlFor="notes">Additional Notes</Label>
                     <Textarea 
                       id="notes" 
-                      placeholder="Enter any additional information about the driver or vehicle" 
+                      placeholder="Enter any additional information about the rider or vehicle" 
                       className="h-24"
                     />
                   </div>
@@ -204,7 +204,7 @@ const DriverOnboarding = () => {
               <div className="flex items-center space-x-2 my-4">
                 <Checkbox id="isActive" />
                 <Label htmlFor="isActive" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Set as active driver
+                  Set as active rider
                 </Label>
               </div>
               
@@ -212,7 +212,7 @@ const DriverOnboarding = () => {
                 <Button 
                   type="button" 
                   variant="outline"
-                  onClick={() => navigate('/drivers')}
+                  onClick={() => navigate('/riders')}
                 >
                   Cancel
                 </Button>
@@ -221,7 +221,7 @@ const DriverOnboarding = () => {
                   className="bg-laundry-blue hover:bg-laundry-blue-dark"
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  Save Driver
+                  Save Rider
                 </Button>
               </div>
             </form>
@@ -232,4 +232,4 @@ const DriverOnboarding = () => {
   );
 };
 
-export default DriverOnboarding;
+export default RiderOnboarding;

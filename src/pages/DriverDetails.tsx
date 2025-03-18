@@ -11,12 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, User, Home, Car, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-const DriverDetails = () => {
+const RiderDetails = () => {
   const { driverId } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
-  const [driver, setDriver] = useState<Driver | null>(null);
+  const [rider, setRider] = useState<Driver | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -24,16 +24,16 @@ const DriverDetails = () => {
   }, [isMobile]);
   
   useEffect(() => {
-    // Find the driver in our sample data
+    // Find the rider in our sample data
     // In a real app, you would fetch this from an API
-    const foundDriver = sampleDrivers.find(d => d.id === driverId);
+    const foundRider = sampleDrivers.find(d => d.id === driverId);
     
-    if (foundDriver) {
-      // Extend the driver with additional mock data for demo purposes
-      const extendedDriver = {
-        ...foundDriver,
+    if (foundRider) {
+      // Extend the rider with additional mock data for demo purposes
+      const extendedRider = {
+        ...foundRider,
         emergencyContact: "+1 (555) 765-4321",
-        address: "123 Driver Lane, Los Angeles, CA 90001",
+        address: "123 Rider Lane, Los Angeles, CA 90001",
         vehicleDetails: {
           make: "Toyota",
           model: "Prius",
@@ -43,15 +43,15 @@ const DriverDetails = () => {
         }
       };
       
-      setDriver(extendedDriver);
+      setRider(extendedRider);
     } else {
       toast({
-        title: "Driver Not Found",
-        description: "Could not find the selected driver.",
+        title: "Rider Not Found",
+        description: "Could not find the selected rider.",
         variant: "destructive"
       });
-      // Redirect back to drivers page if driver not found
-      navigate('/drivers');
+      // Redirect back to riders page if rider not found
+      navigate('/riders');
     }
   }, [driverId, navigate, toast]);
   
@@ -59,11 +59,11 @@ const DriverDetails = () => {
     setSidebarOpen(prev => !prev);
   };
   
-  if (!driver) {
+  if (!rider) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">Loading driver details...</h2>
+          <h2 className="text-xl font-semibold">Loading rider details...</h2>
         </div>
       </div>
     );
@@ -95,12 +95,12 @@ const DriverDetails = () => {
               variant="outline" 
               size="sm" 
               className="mr-4"
-              onClick={() => navigate('/drivers')}
+              onClick={() => navigate('/riders')}
             >
               <ArrowLeft size={16} className="mr-1" />
-              Back to Drivers
+              Back to Riders
             </Button>
-            <h1 className="text-2xl font-bold">Driver Details</h1>
+            <h1 className="text-2xl font-bold">Rider Details</h1>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -114,17 +114,17 @@ const DriverDetails = () => {
               <CardContent className="space-y-4">
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">Name</span>
-                  <span className="font-medium">{driver.name}</span>
+                  <span className="font-medium">{rider.name}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">Status</span>
-                  <span className={`font-medium ${driver.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-                    {driver.status.charAt(0).toUpperCase() + driver.status.slice(1)}
+                  <span className={`font-medium ${rider.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+                    {rider.status.charAt(0).toUpperCase() + rider.status.slice(1)}
                   </span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">Address</span>
-                  <span className="font-medium">{(driver as any).address}</span>
+                  <span className="font-medium">{(rider as any).address}</span>
                 </div>
               </CardContent>
             </Card>
@@ -139,11 +139,11 @@ const DriverDetails = () => {
               <CardContent className="space-y-4">
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">Phone Number</span>
-                  <span className="font-medium">{driver.phoneNumber}</span>
+                  <span className="font-medium">{rider.phoneNumber}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">Emergency Contact</span>
-                  <span className="font-medium">{(driver as any).emergencyContact}</span>
+                  <span className="font-medium">{(rider as any).emergencyContact}</span>
                 </div>
               </CardContent>
             </Card>
@@ -159,23 +159,23 @@ const DriverDetails = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">Make</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.make}</span>
+                    <span className="font-medium">{(rider as any).vehicleDetails?.make}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">Model</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.model}</span>
+                    <span className="font-medium">{(rider as any).vehicleDetails?.model}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">Year</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.year}</span>
+                    <span className="font-medium">{(rider as any).vehicleDetails?.year}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">Color</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.color}</span>
+                    <span className="font-medium">{(rider as any).vehicleDetails?.color}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">License Plate</span>
-                    <span className="font-medium">{(driver as any).vehicleDetails?.licensePlate}</span>
+                    <span className="font-medium">{(rider as any).vehicleDetails?.licensePlate}</span>
                   </div>
                 </div>
               </CardContent>
@@ -192,15 +192,15 @@ const DriverDetails = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">Assigned Orders</span>
-                    <span className="font-medium">{driver.assignedOrders || 0}</span>
+                    <span className="font-medium">{rider.assignedOrders || 0}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">Total Deliveries</span>
-                    <span className="font-medium">{driver.totalDeliveries || 0}</span>
+                    <span className="font-medium">{rider.totalDeliveries || 0}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">Rating</span>
-                    <span className="font-medium">{driver.rating || 'N/A'} {driver.rating ? '⭐' : ''}</span>
+                    <span className="font-medium">{rider.rating || 'N/A'} {rider.rating ? '⭐' : ''}</span>
                   </div>
                 </div>
               </CardContent>
@@ -212,4 +212,4 @@ const DriverDetails = () => {
   );
 };
 
-export default DriverDetails;
+export default RiderDetails;

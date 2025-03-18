@@ -5,10 +5,10 @@ import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useDriverOrders } from '@/hooks/use-driver-orders';
-import DriverOrderHeader from '@/components/drivers/DriverOrderHeader';
+import RiderOrderHeader from '@/components/drivers/DriverOrderHeader';
 import OrderTabs from '@/components/orders/OrderTabs';
 
-const DriverOrdersDetails = () => {
+const RiderOrdersDetails = () => {
   const { driverId } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -33,7 +33,7 @@ const DriverOrdersDetails = () => {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">Loading driver details...</h2>
+          <h2 className="text-xl font-semibold">Loading rider details...</h2>
         </div>
       </div>
     );
@@ -60,7 +60,7 @@ const DriverOrdersDetails = () => {
         />
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <DriverOrderHeader onBackClick={() => window.history.back()} />
+          <RiderOrderHeader onBackClick={() => window.history.back()} />
           
           <OrderTabs
             assignedOrders={assignedOrders}
@@ -73,4 +73,4 @@ const DriverOrdersDetails = () => {
   );
 };
 
-export default DriverOrdersDetails;
+export default RiderOrdersDetails;
