@@ -396,12 +396,6 @@ const DriverOnboarding = () => {
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2 my-4">
-                <Checkbox id="isActive" />
-                <Label htmlFor="isActive" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Set as active driver
-                </Label>
-              </div>
               
               <div className="flex justify-end gap-3">
                 <Button 
