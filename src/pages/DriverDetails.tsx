@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -8,13 +7,13 @@ import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, User, Home, Car, ArrowLeft, Pencil, Save, X, CreditCard, IdCard, Calendar, Upload } from 'lucide-react';
+import { Phone, User, Home, Car, ArrowLeft, Pencil, Save, X, CreditCard, IdCard, Calendar, Upload, KeyRound } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 
-// Extended driver type with all the fields
 interface ExtendedDriver extends Driver {
   // All fields are already included in the updated Driver interface
 }
@@ -29,6 +28,10 @@ const DriverDetails = () => {
   const [editedDriver, setEditedDriver] = useState<ExtendedDriver | null>(null);
   const { toast } = useToast();
   const [activeSection, setActiveSection] = useState<string>('personal');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   
   useEffect(() => {
     setSidebarOpen(!isMobile);
@@ -37,10 +40,8 @@ const DriverDetails = () => {
   useEffect(() => {
     if (!driverId) return;
     
-    // Start with empty driver
     let foundDriver: ExtendedDriver | null = null;
     
-    // First check localStorage for the driver
     try {
       const savedDriversJson = localStorage.getItem('driversList');
       if (savedDriversJson) {
@@ -51,13 +52,11 @@ const DriverDetails = () => {
       console.error('Error fetching driver data from localStorage:', error);
     }
     
-    // If not found in localStorage, check sample data
     if (!foundDriver) {
       foundDriver = sampleDrivers.find(d => d.id === driverId) || null;
     }
     
     if (foundDriver) {
-      // Set default values for any missing fields to avoid undefined errors
       const extendedDriver: ExtendedDriver = {
         ...foundDriver,
         dateOfBirth: foundDriver.dateOfBirth || "",
@@ -110,7 +109,6 @@ const DriverDetails = () => {
         description: "Could not find the selected driver.",
         variant: "destructive"
       });
-      // Redirect back to drivers page if driver not found
       navigate('/drivers');
     }
   }, [driverId, navigate, toast]);
@@ -131,29 +129,23 @@ const DriverDetails = () => {
   const handleSave = () => {
     if (!editedDriver) return;
     
-    // Save to state
     setDriver(editedDriver);
     
-    // Save to localStorage
     try {
       const savedDriversJson = localStorage.getItem('driversList');
       if (savedDriversJson) {
         const savedDrivers = JSON.parse(savedDriversJson);
         
-        // Check if driver already exists in the list
         const driverIndex = savedDrivers.findIndex((d: Driver) => d.id === editedDriver.id);
         
         if (driverIndex !== -1) {
-          // Update existing driver
           savedDrivers[driverIndex] = { ...savedDrivers[driverIndex], ...editedDriver };
         } else {
-          // Add new driver
           savedDrivers.push(editedDriver);
         }
         
         localStorage.setItem('driversList', JSON.stringify(savedDrivers));
       } else {
-        // If no drivers list exists yet, create one with this driver
         localStorage.setItem('driversList', JSON.stringify([editedDriver]));
       }
     } catch (error) {
@@ -173,12 +165,9 @@ const DriverDetails = () => {
     
     const { name, value } = e.target;
     
-    // Handle nested properties
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
       
-      // Use type assertion to treat the property as a Record to avoid TypeScript error
-      // and provide fallback empty object if the property doesn't exist
       const parentObj = (editedDriver[parent as keyof ExtendedDriver] as Record<string, any>) || {};
       
       setEditedDriver({
@@ -192,6 +181,62 @@ const DriverDetails = () => {
       setEditedDriver({
         ...editedDriver,
         [name]: value
+      });
+    }
+  };
+  
+  const handlePasswordReset = () => {
+    if (!driver) return;
+    
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError("Passwords don't match");
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      return;
+    }
+    
+    try {
+      const savedDriversJson = localStorage.getItem('driversList');
+      if (savedDriversJson) {
+        const savedDrivers = JSON.parse(savedDriversJson);
+        const driverIndex = savedDrivers.findIndex((d: Driver) => d.id === driver.id);
+        
+        if (driverIndex !== -1) {
+          savedDrivers[driverIndex].password = newPassword;
+          localStorage.setItem('driversList', JSON.stringify(savedDrivers));
+          
+          setDriver({
+            ...driver,
+            password: newPassword
+          });
+          
+          if (editedDriver) {
+            setEditedDriver({
+              ...editedDriver,
+              password: newPassword
+            });
+          }
+          
+          toast({
+            title: "Password Updated",
+            description: "Driver password has been updated successfully.",
+          });
+          
+          setNewPassword('');
+          setConfirmNewPassword('');
+          setPasswordError('');
+          setPasswordDialogOpen(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating password:', error);
+      toast({
+        title: "Password Update Failed",
+        description: "There was an error updating the password.",
+        variant: "destructive"
       });
     }
   };
@@ -245,38 +290,88 @@ const DriverDetails = () => {
               <h1 className="text-2xl font-bold">Driver Details</h1>
             </div>
             
-            {isEditing ? (
-              <div className="flex gap-2">
+            <div className="flex gap-2">
+              <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                  >
+                    <KeyRound size={16} className="mr-1" />
+                    Reset Password
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Reset Driver Password</DialogTitle>
+                    <DialogDescription>
+                      Enter a new password for the driver.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="new-password">New Password</Label>
+                      <Input 
+                        id="new-password" 
+                        type="password" 
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="confirm-password">Confirm Password</Label>
+                      <Input 
+                        id="confirm-password" 
+                        type="password" 
+                        value={confirmNewPassword}
+                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      />
+                    </div>
+                    {passwordError && (
+                      <p className="text-sm text-red-500">{passwordError}</p>
+                    )}
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                    <Button type="submit" onClick={handlePasswordReset}>Save Password</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              
+              {isEditing ? (
+                <>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleCancel}
+                  >
+                    <X size={16} className="mr-1" />
+                    Cancel
+                  </Button>
+                  <Button 
+                    variant="default" 
+                    size="sm"
+                    onClick={handleSave}
+                  >
+                    <Save size={16} className="mr-1" />
+                    Save Changes
+                  </Button>
+                </>
+              ) : (
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={handleCancel}
+                  onClick={handleEdit}
                 >
-                  <X size={16} className="mr-1" />
-                  Cancel
+                  <Pencil size={16} className="mr-1" />
+                  Edit Details
                 </Button>
-                <Button 
-                  variant="default" 
-                  size="sm"
-                  onClick={handleSave}
-                >
-                  <Save size={16} className="mr-1" />
-                  Save Changes
-                </Button>
-              </div>
-            ) : (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleEdit}
-              >
-                <Pencil size={16} className="mr-1" />
-                Edit Details
-              </Button>
-            )}
+              )}
+            </div>
           </div>
 
-          {/* Section Navigation */}
           <div className="flex flex-wrap gap-2 mb-6">
             <Button 
               variant={activeSection === 'personal' ? 'default' : 'outline'} 
@@ -312,7 +407,6 @@ const DriverDetails = () => {
             </Button>
           </div>
           
-          {/* Personal Information Section */}
           {activeSection === 'personal' && (
             <div className="grid grid-cols-1 gap-6">
               <Card>
@@ -369,21 +463,6 @@ const DriverDetails = () => {
                   </div>
                   
                   <div className="flex flex-col space-y-2">
-                    <Label htmlFor="otp">OTP</Label>
-                    {isEditing ? (
-                      <Input 
-                        id="otp"
-                        name="otp"
-                        value={editedDriver?.otp || ''}
-                        onChange={handleInputChange}
-                        placeholder="Enter OTP"
-                      />
-                    ) : (
-                      <div className="p-2 border rounded-md bg-gray-50">{driver.otp || 'Not provided'}</div>
-                    )}
-                  </div>
-                  
-                  <div className="flex flex-col space-y-2">
                     <Label htmlFor="secondaryPhone">Secondary Contact Number</Label>
                     {isEditing ? (
                       <Input 
@@ -411,38 +490,6 @@ const DriverDetails = () => {
                       />
                     ) : (
                       <div className="p-2 border rounded-md bg-gray-50">{driver.email || 'Not provided'}</div>
-                    )}
-                  </div>
-                  
-                  <div className="flex flex-col space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    {isEditing ? (
-                      <Input 
-                        id="password"
-                        name="password"
-                        type="password"
-                        value={editedDriver?.password || ''}
-                        onChange={handleInputChange}
-                        placeholder="Enter password"
-                      />
-                    ) : (
-                      <div className="p-2 border rounded-md bg-gray-50">••••••••</div>
-                    )}
-                  </div>
-                  
-                  <div className="flex flex-col space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    {isEditing ? (
-                      <Input 
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type="password"
-                        value={editedDriver?.confirmPassword || ''}
-                        onChange={handleInputChange}
-                        placeholder="Confirm password"
-                      />
-                    ) : (
-                      <div className="p-2 border rounded-md bg-gray-50">••••••••</div>
                     )}
                   </div>
                   
@@ -525,7 +572,6 @@ const DriverDetails = () => {
             </div>
           )}
           
-          {/* Documentation Section */}
           {activeSection === 'documentation' && (
             <div className="grid grid-cols-1 gap-6">
               <Card>
@@ -633,7 +679,6 @@ const DriverDetails = () => {
             </div>
           )}
           
-          {/* Vehicle Information Section */}
           {activeSection === 'vehicle' && (
             <div className="grid grid-cols-1 gap-6">
               <Card>
@@ -786,7 +831,6 @@ const DriverDetails = () => {
             </div>
           )}
           
-          {/* Payment Details Section */}
           {activeSection === 'payment' && (
             <div className="grid grid-cols-1 gap-6">
               <Card>
