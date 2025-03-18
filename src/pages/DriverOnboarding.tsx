@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Save, UserCheck, IdCard, Car } from 'lucide-react';
+import { ChevronLeft, Save, UserCheck, IdCard, Car, CircleCheck } from 'lucide-react';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -78,13 +78,38 @@ const DriverOnboarding = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" placeholder="Enter first name" required />
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input id="fullName" placeholder="Enter full name" required />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" placeholder="Enter last name" required />
+                    <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                    <Input id="dateOfBirth" type="date" required />
+                  </div>
+                  
+                  <div className="space-y-2 relative">
+                    <Label htmlFor="primaryContact">Primary Contact Number</Label>
+                    <div className="relative">
+                      <Input id="primaryContact" placeholder="Enter primary contact number" required />
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                      >
+                        <CircleCheck className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="otp">OTP</Label>
+                    <Input id="otp" placeholder="Enter OTP" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="secondaryContact">Secondary Contact Number</Label>
+                    <Input id="secondaryContact" placeholder="Enter secondary contact number" />
                   </div>
                   
                   <div className="space-y-2">
@@ -93,9 +118,29 @@ const DriverOnboarding = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" placeholder="Enter phone number" required />
+                    <Label htmlFor="emergencyContactName">Emergency Contact Name</Label>
+                    <Input id="emergencyContactName" placeholder="Enter emergency contact name" />
                   </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="relation">Relation to you</Label>
+                    <Input id="relation" placeholder="Enter relation" />
+                  </div>
+                  
+                  <div className="space-y-2 md:col-span-1">
+                    <Label htmlFor="emergencyContactNumber">Emergency Contact Number</Label>
+                    <Input id="emergencyContactNumber" placeholder="Enter emergency contact number" />
+                  </div>
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="currentAddress">Current Address</Label>
+                  <Textarea id="currentAddress" placeholder="Enter current address" className="h-20" />
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="permanentAddress">Permanent Address</Label>
+                  <Textarea id="permanentAddress" placeholder="Enter permanent address" className="h-20" />
                 </div>
               </div>
               
