@@ -3,11 +3,11 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
-interface RiderOrderHeaderProps {
+interface DriverOrderHeaderProps {
   onBackClick: () => void;
 }
 
-const RiderOrderHeader: React.FC<RiderOrderHeaderProps> = ({ onBackClick }) => {
+const DriverOrderHeader: React.FC<DriverOrderHeaderProps> = ({ onBackClick }) => {
   return (
     <div className="mb-6 flex items-center justify-between">
       <div className="flex items-center">
@@ -26,4 +26,4 @@ const RiderOrderHeader: React.FC<RiderOrderHeaderProps> = ({ onBackClick }) => {
   );
 };
 
-export default RiderOrderHeader;
+export default DriverOrderHeader;

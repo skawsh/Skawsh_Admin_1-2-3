@@ -11,7 +11,7 @@ import {
 import { DriversTableProps } from './types';
 import { sampleDrivers } from './mockData';
 import { MoreHorizontal, Package, User, FileText } from 'lucide-react';
-import RiderStatusBadge from './DriverStatusBadge';
+import DriverStatusBadge from './DriverStatusBadge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Driver } from './types';
 import { useToast } from '@/hooks/use-toast';
@@ -30,17 +30,17 @@ interface AssignedOrder {
   status?: string;
 }
 
-const RidersTable = ({ className }: DriversTableProps) => {
-  const [riders, setRiders] = useState<Driver[]>([]);
+const DriversTable = ({ className }: DriversTableProps) => {
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [activeTab, setActiveTab] = useState<string>('all');
   const [assignedOrders, setAssignedOrders] = useState<Record<string, AssignedOrder[]>>({});
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // Initialize with rider data and load assignments
+  // Initialize with driver data and load assignments
   useEffect(() => {
-    // Start with the sample riders
-    setRiders(sampleDrivers);
+    // Start with the sample drivers
+    setDrivers(sampleDrivers);
     
     // Check for existing assignments in localStorage
     const existingAssignments = localStorage.getItem('driverAssignments');
@@ -48,23 +48,23 @@ const RidersTable = ({ className }: DriversTableProps) => {
       try {
         const data = JSON.parse(existingAssignments);
         if (data.driverId && Array.isArray(data.orders)) {
-          // Store the orders for this rider
+          // Store the orders for this driver
           setAssignedOrders(prev => ({
             ...prev,
             [data.driverId]: data.orders
           }));
           
-          // Update the rider's assigned orders count
-          setRiders(prevRiders => 
-            prevRiders.map(rider => 
-              rider.id === data.driverId 
-                ? { ...rider, assignedOrders: data.orders.length } 
-                : rider
+          // Update the driver's assigned orders count
+          setDrivers(prevDrivers => 
+            prevDrivers.map(driver => 
+              driver.id === data.driverId 
+                ? { ...driver, assignedOrders: data.orders.length } 
+                : driver
             )
           );
         }
       } catch (error) {
-        console.error('Failed to parse existing rider assignments:', error);
+        console.error('Failed to parse existing driver assignments:', error);
       }
     }
   }, []);
@@ -75,104 +75,104 @@ const RidersTable = ({ className }: DriversTableProps) => {
       if (event.key === 'driverAssignments') {
         try {
           const data = JSON.parse(event.newValue || '{}');
-          updateRiderAssignments(data.driverId, data.orders);
+          updateDriverAssignments(data.driverId, data.orders);
         } catch (error) {
-          console.error('Failed to parse rider assignment data:', error);
+          console.error('Failed to parse driver assignment data:', error);
         }
       }
     };
     
-    const handleRiderAssignment = ((event: CustomEvent) => {
-      updateRiderAssignments(event.detail.driverId, event.detail.orders);
+    const handleDriverAssignment = ((event: CustomEvent) => {
+      updateDriverAssignments(event.detail.driverId, event.detail.orders);
     }) as EventListener;
     
     window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('driverAssignment', handleRiderAssignment);
+    window.addEventListener('driverAssignment', handleDriverAssignment);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('driverAssignment', handleRiderAssignment);
+      window.removeEventListener('driverAssignment', handleDriverAssignment);
     };
   }, []);
   
-  const updateRiderAssignments = (riderId: string, orders: AssignedOrder[]) => {
-    if (!riderId || !orders || orders.length === 0) return;
+  const updateDriverAssignments = (driverId: string, orders: AssignedOrder[]) => {
+    if (!driverId || !orders || orders.length === 0) return;
     
-    // Update the assigned orders for this rider - store all orders from the event
+    // Update the assigned orders for this driver - store all orders from the event
     setAssignedOrders(prev => ({
       ...prev,
-      [riderId]: orders
+      [driverId]: orders
     }));
     
-    // Update the rider's assigned orders count
-    setRiders(prevRiders => 
-      prevRiders.map(rider => 
-        rider.id === riderId 
-          ? { ...rider, assignedOrders: orders.length } 
-          : rider
+    // Update the driver's assigned orders count
+    setDrivers(prevDrivers => 
+      prevDrivers.map(driver => 
+        driver.id === driverId 
+          ? { ...driver, assignedOrders: orders.length } 
+          : driver
       )
     );
     
     toast({
       title: "Orders Updated",
-      description: `Rider now has ${orders.length} assigned orders`,
+      description: `Driver now has ${orders.length} assigned orders`,
     });
   };
   
-  const handleStatusChange = (riderId: string, newStatus: 'active' | 'inactive') => {
-    setRiders(riders.map(rider => 
-      rider.id === riderId ? { ...rider, status: newStatus } : rider
+  const handleStatusChange = (driverId: string, newStatus: 'active' | 'inactive') => {
+    setDrivers(drivers.map(driver => 
+      driver.id === driverId ? { ...driver, status: newStatus } : driver
     ));
   };
   
-  const getFilteredRiders = (): Driver[] => {
+  const getFilteredDrivers = (): Driver[] => {
     switch (activeTab) {
       case 'active':
-        return riders.filter(rider => rider.status === 'active');
+        return drivers.filter(driver => driver.status === 'active');
       case 'inactive':
-        return riders.filter(rider => rider.status === 'inactive');
+        return drivers.filter(driver => driver.status === 'inactive');
       case 'assignments':
-        return riders.filter(rider => (rider.assignedOrders || 0) > 0);
+        return drivers.filter(driver => (driver.assignedOrders || 0) > 0);
       case 'available':
-        return riders.filter(rider => rider.status === 'active' && (rider.assignedOrders || 0) === 0);
+        return drivers.filter(driver => driver.status === 'active' && (driver.assignedOrders || 0) === 0);
       default:
-        return riders;
+        return drivers;
     }
   };
 
-  // Get all assigned orders across all riders
+  // Get all assigned orders across all drivers
   const getAllAssignedOrders = () => {
-    return Object.entries(assignedOrders).flatMap(([riderId, orders]) => 
+    return Object.entries(assignedOrders).flatMap(([driverId, orders]) => 
       orders.map(order => ({
         ...order,
-        riderId,
-        riderName: riders.find(d => d.id === riderId)?.name || 'Unknown'
+        driverId,
+        driverName: drivers.find(d => d.id === driverId)?.name || 'Unknown'
       }))
     );
   };
 
-  // Get riders who have assigned orders
-  const getRidersWithAssignments = () => {
-    return riders.filter(rider => rider.assignedOrders && rider.assignedOrders > 0);
+  // Get drivers who have assigned orders
+  const getDriversWithAssignments = () => {
+    return drivers.filter(driver => driver.assignedOrders && driver.assignedOrders > 0);
   };
   
-  const viewOrderDetails = (riderId: string) => {
-    const orders = assignedOrders[riderId] || [];
+  const viewOrderDetails = (driverId: string) => {
+    const orders = assignedOrders[driverId] || [];
     if (orders.length === 0) {
       toast({
         title: "No Orders Found",
-        description: "This rider has no assigned orders to view.",
+        description: "This driver has no assigned orders to view.",
       });
       return;
     }
     
-    // Navigate to the rider orders details page
-    navigate(`/rider/${riderId}/orders`);
+    // Navigate to the driver orders details page
+    navigate(`/driver/${driverId}/orders`);
   };
   
-  const viewRiderDetails = (riderId: string) => {
-    // Navigate to the rider details page
-    navigate(`/rider/${riderId}`);
+  const viewDriverDetails = (driverId: string) => {
+    // Navigate to the driver details page
+    navigate(`/driver/${driverId}`);
   };
   
   return (
@@ -185,7 +185,7 @@ const RidersTable = ({ className }: DriversTableProps) => {
               className="h-14 px-0 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-laundry-blue data-[state=active]:shadow-none data-[state=active]:bg-transparent"
             >
               <div className="flex items-center gap-2">
-                <span className="text-base">Riders List</span>
+                <span className="text-base">Drivers List</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
@@ -201,7 +201,7 @@ const RidersTable = ({ className }: DriversTableProps) => {
               className="h-14 px-0 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-laundry-blue data-[state=active]:shadow-none data-[state=active]:bg-transparent"
             >
               <div className="flex items-center gap-2">
-                <span className="text-base">Available Riders</span>
+                <span className="text-base">Available Drivers</span>
               </div>
             </TabsTrigger>
           </TabsList>
@@ -212,7 +212,7 @@ const RidersTable = ({ className }: DriversTableProps) => {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-16">S.NO</TableHead>
-                <TableHead className="w-[300px]">RIDER</TableHead>
+                <TableHead className="w-[300px]">DRIVER</TableHead>
                 <TableHead>STATUS</TableHead>
                 <TableHead>PHONE NUMBER</TableHead>
                 <TableHead>ASSIGNED ORDERS</TableHead>
@@ -220,23 +220,23 @@ const RidersTable = ({ className }: DriversTableProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {getFilteredRiders().map((rider, index) => (
-                <TableRow key={rider.id}>
+              {getFilteredDrivers().map((driver, index) => (
+                <TableRow key={driver.id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell className="font-medium flex items-center">
                     <div className="w-8 h-8 rounded-full bg-gray-200 mr-3 flex items-center justify-center">
                       <span className="text-gray-500">👤</span>
                     </div>
-                    {rider.name}
+                    {driver.name}
                   </TableCell>
                   <TableCell>
-                    <RiderStatusBadge 
-                      status={rider.status} 
-                      onChange={(newStatus) => handleStatusChange(rider.id, newStatus)}
+                    <DriverStatusBadge 
+                      status={driver.status} 
+                      onChange={(newStatus) => handleStatusChange(driver.id, newStatus)}
                     />
                   </TableCell>
-                  <TableCell>{rider.phoneNumber}</TableCell>
-                  <TableCell>{rider.assignedOrders || 0}</TableCell>
+                  <TableCell>{driver.phoneNumber}</TableCell>
+                  <TableCell>{driver.assignedOrders || 0}</TableCell>
                   <TableCell className="text-right">
                     <button className="text-gray-500 hover:text-gray-700">
                       <MoreHorizontal size={20} />
@@ -249,30 +249,30 @@ const RidersTable = ({ className }: DriversTableProps) => {
         </TabsContent>
         
         <TabsContent value="assignments" className="p-0 mt-0">
-          {getRidersWithAssignments().length > 0 ? (
+          {getDriversWithAssignments().length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-16">S.NO</TableHead>
-                  <TableHead>RIDER</TableHead>
+                  <TableHead>DRIVER</TableHead>
                   <TableHead>ASSIGNED ORDERS</TableHead>
                   <TableHead className="text-right">ACTIONS</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {getRidersWithAssignments().map((rider, index) => (
-                  <TableRow key={rider.id}>
+                {getDriversWithAssignments().map((driver, index) => (
+                  <TableRow key={driver.id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell className="font-medium flex items-center">
                       <div className="w-6 h-6 rounded-full bg-gray-200 mr-2 flex items-center justify-center">
                         <span className="text-gray-500 text-xs">👤</span>
                       </div>
-                      {rider.name}
+                      {driver.name}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Package size={16} className="text-blue-600" />
-                        <span>{rider.assignedOrders} orders</span>
+                        <span>{driver.assignedOrders} orders</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -281,7 +281,7 @@ const RidersTable = ({ className }: DriversTableProps) => {
                           variant="outline" 
                           size="sm"
                           className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                          onClick={() => viewOrderDetails(rider.id)}
+                          onClick={() => viewOrderDetails(driver.id)}
                         >
                           <FileText size={14} />
                           <span className="hidden sm:inline">Orders</span>
@@ -290,10 +290,10 @@ const RidersTable = ({ className }: DriversTableProps) => {
                           variant="outline" 
                           size="sm"
                           className="text-green-600 hover:text-green-800 flex items-center gap-1"
-                          onClick={() => viewRiderDetails(rider.id)}
+                          onClick={() => viewDriverDetails(driver.id)}
                         >
                           <User size={14} />
-                          <span className="hidden sm:inline">Rider</span>
+                          <span className="hidden sm:inline">Driver</span>
                         </Button>
                       </div>
                     </TableCell>
@@ -303,7 +303,7 @@ const RidersTable = ({ className }: DriversTableProps) => {
             </Table>
           ) : (
             <div className="p-8 text-center text-gray-500">
-              No orders have been assigned to riders yet
+              No orders have been assigned to drivers yet
             </div>
           )}
         </TabsContent>
@@ -313,7 +313,7 @@ const RidersTable = ({ className }: DriversTableProps) => {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-16">S.NO</TableHead>
-                <TableHead className="w-[300px]">RIDER</TableHead>
+                <TableHead className="w-[300px]">DRIVER</TableHead>
                 <TableHead>STATUS</TableHead>
                 <TableHead>PHONE NUMBER</TableHead>
                 <TableHead>TOTAL DELIVERIES</TableHead>
@@ -321,25 +321,25 @@ const RidersTable = ({ className }: DriversTableProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {riders
-                .filter(rider => rider.status === 'active' && (rider.assignedOrders || 0) === 0)
-                .map((rider, index) => (
-                  <TableRow key={rider.id}>
+              {drivers
+                .filter(driver => driver.status === 'active' && (driver.assignedOrders || 0) === 0)
+                .map((driver, index) => (
+                  <TableRow key={driver.id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell className="font-medium flex items-center">
                       <div className="w-8 h-8 rounded-full bg-gray-200 mr-3 flex items-center justify-center">
                         <span className="text-gray-500">👤</span>
                       </div>
-                      {rider.name}
+                      {driver.name}
                     </TableCell>
                     <TableCell>
-                      <RiderStatusBadge 
-                        status={rider.status} 
-                        onChange={(newStatus) => handleStatusChange(rider.id, newStatus)}
+                      <DriverStatusBadge 
+                        status={driver.status} 
+                        onChange={(newStatus) => handleStatusChange(driver.id, newStatus)}
                       />
                     </TableCell>
-                    <TableCell>{rider.phoneNumber}</TableCell>
-                    <TableCell>{rider.totalDeliveries || 0}</TableCell>
+                    <TableCell>{driver.phoneNumber}</TableCell>
+                    <TableCell>{driver.totalDeliveries || 0}</TableCell>
                     <TableCell className="text-right">
                       <button className="text-gray-500 hover:text-gray-700">
                         <MoreHorizontal size={20} />
@@ -356,4 +356,4 @@ const RidersTable = ({ className }: DriversTableProps) => {
   );
 };
 
-export default RidersTable;
+export default DriversTable;

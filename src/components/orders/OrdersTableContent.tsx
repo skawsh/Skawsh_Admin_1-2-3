@@ -30,7 +30,7 @@ const OrdersTableContent = ({
             <th className="table-head">Wash Type</th>
             <th className="table-head">Total</th>
             <th className="table-head">Delivery Date</th>
-            <th className="table-head">Rider</th>
+            <th className="table-head">Driver</th>
             <th className="table-head">Actions</th>
           </tr>
         </thead>

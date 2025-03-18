@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 
-const RiderOnboarding = () => {
+const DriverOnboarding = () => {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const navigate = useNavigate();
@@ -29,10 +29,10 @@ const RiderOnboarding = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Rider Created",
-      description: "New rider has been successfully added",
+      title: "Driver Created",
+      description: "New driver has been successfully added",
     });
-    navigate('/riders');
+    navigate('/drivers');
   };
   
   return (
@@ -61,12 +61,12 @@ const RiderOnboarding = () => {
               <Button 
                 variant="ghost" 
                 size="icon"
-                onClick={() => navigate('/riders')}
+                onClick={() => navigate('/drivers')}
                 className="h-9 w-9 rounded-full"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
-              <h1 className="text-2xl font-bold">Add New Rider</h1>
+              <h1 className="text-2xl font-bold">Add New Driver</h1>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -118,22 +118,12 @@ const RiderOnboarding = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" placeholder="Enter password" required />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input id="confirmPassword" type="password" placeholder="Confirm password" required />
-                  </div>
-                  
-                  <div className="space-y-2">
                     <Label htmlFor="emergencyContactName">Emergency Contact Name</Label>
                     <Input id="emergencyContactName" placeholder="Enter emergency contact name" />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="relation">Relation with rider</Label>
+                    <Label htmlFor="relation">Relation to you</Label>
                     <Input id="relation" placeholder="Enter relation" />
                   </div>
                   
@@ -157,7 +147,7 @@ const RiderOnboarding = () => {
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <IdCard className="h-5 w-5 text-laundry-blue" />
-                  <h2 className="text-lg font-semibold">Rider Documentation</h2>
+                  <h2 className="text-lg font-semibold">Driver Documentation</h2>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -194,7 +184,7 @@ const RiderOnboarding = () => {
                     <Label htmlFor="notes">Additional Notes</Label>
                     <Textarea 
                       id="notes" 
-                      placeholder="Enter any additional information about the rider or vehicle" 
+                      placeholder="Enter any additional information about the driver or vehicle" 
                       className="h-24"
                     />
                   </div>
@@ -204,7 +194,7 @@ const RiderOnboarding = () => {
               <div className="flex items-center space-x-2 my-4">
                 <Checkbox id="isActive" />
                 <Label htmlFor="isActive" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Set as active rider
+                  Set as active driver
                 </Label>
               </div>
               
@@ -212,7 +202,7 @@ const RiderOnboarding = () => {
                 <Button 
                   type="button" 
                   variant="outline"
-                  onClick={() => navigate('/riders')}
+                  onClick={() => navigate('/drivers')}
                 >
                   Cancel
                 </Button>
@@ -221,7 +211,7 @@ const RiderOnboarding = () => {
                   className="bg-laundry-blue hover:bg-laundry-blue-dark"
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  Save Rider
+                  Save Driver
                 </Button>
               </div>
             </form>
@@ -232,4 +222,4 @@ const RiderOnboarding = () => {
   );
 };
 
-export default RiderOnboarding;
+export default DriverOnboarding;

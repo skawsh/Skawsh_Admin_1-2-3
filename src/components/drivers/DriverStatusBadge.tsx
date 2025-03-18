@@ -3,12 +3,12 @@ import React from 'react';
 import { DriverStatus } from './types';
 import { Switch } from '@/components/ui/switch';
 
-interface RiderStatusBadgeProps {
+interface DriverStatusBadgeProps {
   status: DriverStatus;
   onChange?: (newStatus: DriverStatus) => void;
 }
 
-const RiderStatusBadge = ({ status, onChange }: RiderStatusBadgeProps) => {
+const DriverStatusBadge = ({ status, onChange }: DriverStatusBadgeProps) => {
   const handleToggle = () => {
     if (onChange) {
       onChange(status === 'active' ? 'inactive' : 'active');
@@ -29,4 +29,4 @@ const RiderStatusBadge = ({ status, onChange }: RiderStatusBadgeProps) => {
   );
 };
 
-export default RiderStatusBadge;
+export default DriverStatusBadge;

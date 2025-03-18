@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
-import RiderManagement from '@/components/drivers/DriverManagement';
+import DriverManagement from '@/components/drivers/DriverManagement';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const Riders = () => {
+const Drivers = () => {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   
@@ -38,11 +38,11 @@ const Riders = () => {
         />
         
         <main className="flex-1 overflow-y-auto">
-          <RiderManagement />
+          <DriverManagement />
         </main>
       </div>
     </div>
   );
 };
 
-export default Riders;
+export default Drivers;

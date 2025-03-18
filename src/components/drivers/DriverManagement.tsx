@@ -2,8 +2,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Download, Filter, Plus, Users } from 'lucide-react';
-import RiderMetricsCard from './DriverMetricsCard';
-import RidersTable from './DriversTable';
+import DriverMetricsCard from './DriverMetricsCard';
+import DriversTable from './DriversTable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
@@ -12,18 +12,18 @@ import {
   inactiveDrivers
 } from './mockData';
 
-const RiderManagement = () => {
+const DriverManagement = () => {
   const navigate = useNavigate();
   
-  const handleAddRider = () => {
-    navigate('/rider/onboarding');
+  const handleAddDriver = () => {
+    navigate('/driver/onboarding');
   };
   
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-1">Rider Management</h1>
+          <h1 className="text-3xl font-bold mb-1">Driver Management</h1>
           <p className="text-gray-500">Manage and monitor your delivery staff</p>
         </div>
         
@@ -38,31 +38,31 @@ const RiderManagement = () => {
           
           <Button
             className="px-4 h-10 bg-laundry-blue hover:bg-laundry-blue-dark transition-colors"
-            onClick={handleAddRider}
+            onClick={handleAddDriver}
           >
             <Plus size={18} className="mr-2" />
-            Add Rider
+            Add Driver
           </Button>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <RiderMetricsCard 
-          title="Total Riders"
+        <DriverMetricsCard 
+          title="Total Drivers"
           value={totalDrivers.toString()}
           icon="drivers"
           className="hover:shadow-md transition-shadow"
         />
         
-        <RiderMetricsCard 
-          title="Active Riders"
+        <DriverMetricsCard 
+          title="Active Drivers"
           value={activeDrivers.toString()}
           icon="active"
           className="hover:shadow-md transition-shadow"
         />
         
-        <RiderMetricsCard 
-          title="Inactive Riders"
+        <DriverMetricsCard 
+          title="Inactive Drivers"
           value={inactiveDrivers.toString()}
           icon="inactive"
           className="hover:shadow-md transition-shadow"
@@ -73,7 +73,7 @@ const RiderManagement = () => {
         <div className="relative flex-1">
           <Input 
             type="text" 
-            placeholder="Search riders..." 
+            placeholder="Search drivers..." 
             className="pl-10 pr-4 h-11 w-full"
           />
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -93,9 +93,9 @@ const RiderManagement = () => {
         </Button>
       </div>
       
-      <RidersTable />
+      <DriversTable />
     </div>
   );
 };
 
-export default RiderManagement;
+export default DriverManagement;
