@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Save, UserCheck, IdCard, Car, CircleCheck, Upload, CreditCard } from 'lucide-react';
@@ -378,6 +377,11 @@ const DriverOnboarding = () => {
                   <div className="space-y-2">
                     <Label htmlFor="accountNumber">Account Number</Label>
                     <Input id="accountNumber" placeholder="Enter account number" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmAccountNumber">Confirm Account Number</Label>
+                    <Input id="confirmAccountNumber" placeholder="Re-enter account number" />
                   </div>
                   
                   <div className="space-y-2">
