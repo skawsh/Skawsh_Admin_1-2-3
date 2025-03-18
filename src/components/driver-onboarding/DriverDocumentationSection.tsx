@@ -12,6 +12,12 @@ interface DriverDocumentationSectionProps {
   setLicenseFile: React.Dispatch<React.SetStateAction<File | null>>;
   profilePicture: File | null;
   setProfilePicture: React.Dispatch<React.SetStateAction<File | null>>;
+  aadharNumber: string;
+  setAadharNumber: React.Dispatch<React.SetStateAction<string>>;
+  licenseNumber: string;
+  setLicenseNumber: React.Dispatch<React.SetStateAction<string>>;
+  licenseExpiry: string;
+  setLicenseExpiry: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const DriverDocumentationSection = ({
@@ -20,7 +26,13 @@ const DriverDocumentationSection = ({
   licenseFile,
   setLicenseFile,
   profilePicture,
-  setProfilePicture
+  setProfilePicture,
+  aadharNumber,
+  setAadharNumber,
+  licenseNumber,
+  setLicenseNumber,
+  licenseExpiry,
+  setLicenseExpiry
 }: DriverDocumentationSectionProps) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-6">
@@ -33,7 +45,13 @@ const DriverDocumentationSection = ({
         {/* Aadhar Number and Upload */}
         <div className="space-y-2">
           <Label htmlFor="aadharNumber">Aadhar Number</Label>
-          <Input id="aadharNumber" placeholder="Enter Aadhar number" required />
+          <Input 
+            id="aadharNumber" 
+            placeholder="Enter Aadhar number" 
+            value={aadharNumber}
+            onChange={(e) => setAadharNumber(e.target.value)}
+            required 
+          />
         </div>
         
         <FileUploadField 
@@ -46,12 +64,24 @@ const DriverDocumentationSection = ({
         {/* License Number and Expiry */}
         <div className="space-y-2">
           <Label htmlFor="licenseNumber">License Number</Label>
-          <Input id="licenseNumber" placeholder="Enter license number" required />
+          <Input 
+            id="licenseNumber" 
+            placeholder="Enter license number" 
+            value={licenseNumber}
+            onChange={(e) => setLicenseNumber(e.target.value)}
+            required 
+          />
         </div>
         
         <div className="space-y-2">
           <Label htmlFor="licenseExpiry">License Expiry Date</Label>
-          <Input id="licenseExpiry" type="date" required />
+          <Input 
+            id="licenseExpiry" 
+            type="date" 
+            value={licenseExpiry}
+            onChange={(e) => setLicenseExpiry(e.target.value)}
+            required 
+          />
         </div>
         
         {/* License Upload and Driver Picture */}

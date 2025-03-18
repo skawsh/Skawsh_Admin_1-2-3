@@ -11,21 +11,55 @@ export interface Driver {
   assignedOrders?: number;
   totalDeliveries?: number;
   rating?: number;
-  // Additional fields from the driver onboarding form
+  
+  // Personal Information
   dateOfBirth?: string;
   secondaryPhone?: string;
   email?: string;
+  otp?: string;
+  password?: string;
+  confirmPassword?: string;
   emergencyContactName?: string;
   emergencyContactRelation?: string;
   emergencyContact?: string;
   currentAddress?: string;
   permanentAddress?: string;
+  
+  // Driver Documentation
+  aadharNumber?: string;
+  licenseNumber?: string;
+  licenseExpiry?: string;
+  
+  // Vehicle Information
   vehicleDetails?: {
-    make: string;
-    model: string;
-    year: string;
-    color: string;
-    licensePlate: string;
+    make?: string;
+    model?: string;
+    year?: string;
+    color?: string;
+    licensePlate?: string;
+  };
+  
+  // Payment Details
+  paymentDetails?: {
+    accountHolderName?: string;
+    bankName?: string;
+    accountNumber?: string;
+    confirmAccountNumber?: string;
+    ifscCode?: string;
+    branchName?: string;
+  };
+  
+  // Document file references (would normally store file paths/references)
+  documentFiles?: {
+    aadharFile?: string;
+    licenseFile?: string;
+    profilePicture?: string;
+    rcFile?: string;
+    insuranceFile?: string;
+    vehicleFrontImage?: string;
+    vehicleBackImage?: string;
+    vehicleRightImage?: string;
+    vehicleLeftImage?: string;
   };
 }
 

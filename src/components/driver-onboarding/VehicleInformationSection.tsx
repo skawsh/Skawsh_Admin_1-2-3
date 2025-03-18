@@ -19,6 +19,10 @@ interface VehicleInformationSectionProps {
   setVehicleRightImage: React.Dispatch<React.SetStateAction<File | null>>;
   vehicleLeftImage: File | null;
   setVehicleLeftImage: React.Dispatch<React.SetStateAction<File | null>>;
+  vehicleModel: string;
+  setVehicleModel: React.Dispatch<React.SetStateAction<string>>;
+  licensePlate: string;
+  setLicensePlate: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const VehicleInformationSection = ({
@@ -33,7 +37,11 @@ const VehicleInformationSection = ({
   vehicleRightImage,
   setVehicleRightImage,
   vehicleLeftImage,
-  setVehicleLeftImage
+  setVehicleLeftImage,
+  vehicleModel,
+  setVehicleModel,
+  licensePlate,
+  setLicensePlate
 }: VehicleInformationSectionProps) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-6">
@@ -45,12 +53,24 @@ const VehicleInformationSection = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="vehicleModel">Vehicle Model</Label>
-          <Input id="vehicleModel" placeholder="Enter vehicle model" required />
+          <Input 
+            id="vehicleModel" 
+            placeholder="Enter vehicle model" 
+            value={vehicleModel}
+            onChange={(e) => setVehicleModel(e.target.value)}
+            required 
+          />
         </div>
         
         <div className="space-y-2">
           <Label htmlFor="licensePlate">License Plate</Label>
-          <Input id="licensePlate" placeholder="Enter license plate" required />
+          <Input 
+            id="licensePlate" 
+            placeholder="Enter license plate" 
+            value={licensePlate}
+            onChange={(e) => setLicensePlate(e.target.value)}
+            required 
+          />
         </div>
         
         <div className="md:col-span-2 mt-4">

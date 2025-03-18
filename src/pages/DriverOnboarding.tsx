@@ -20,9 +20,37 @@ const DriverOnboarding = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Driver details state
+  // Personal Information fields
   const [driverName, setDriverName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [otp, setOtp] = useState('');
+  const [secondaryPhone, setSecondaryPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [emergencyName, setEmergencyName] = useState('');
+  const [emergencyRelation, setEmergencyRelation] = useState('');
+  const [emergencyPhone, setEmergencyPhone] = useState('');
+  const [currentAddress, setCurrentAddress] = useState('');
+  const [permanentAddress, setPermanentAddress] = useState('');
+  
+  // Driver Documentation fields
+  const [aadharNumber, setAadharNumber] = useState('');
+  const [licenseNumber, setLicenseNumber] = useState('');
+  const [licenseExpiry, setLicenseExpiry] = useState('');
+  
+  // Vehicle Information fields
+  const [vehicleModel, setVehicleModel] = useState('');
+  const [licensePlate, setLicensePlate] = useState('');
+  
+  // Payment Details fields
+  const [accountHolderName, setAccountHolderName] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [confirmAccountNumber, setConfirmAccountNumber] = useState('');
+  const [ifscCode, setIfscCode] = useState('');
+  const [branchName, setBranchName] = useState('');
   
   // File upload states
   const [aadharFile, setAadharFile] = useState<File | null>(null);
@@ -51,7 +79,7 @@ const DriverOnboarding = () => {
     // Generate a unique ID for the new driver
     const newDriverId = `new-${Date.now()}`;
     
-    // Create new driver object
+    // Create new driver object with all fields
     const newDriver = {
       id: newDriverId,
       name: driverName || 'New Driver', // Fallback in case name is empty
@@ -59,7 +87,54 @@ const DriverOnboarding = () => {
       phoneNumber: phoneNumber || '--',
       assignedOrders: 0,
       totalDeliveries: 0,
-      rating: 0
+      rating: 0,
+      
+      // Personal Information
+      dateOfBirth,
+      secondaryPhone,
+      email,
+      otp,
+      password,
+      confirmPassword,
+      emergencyContactName: emergencyName,
+      emergencyContactRelation: emergencyRelation,
+      emergencyContact: emergencyPhone,
+      currentAddress,
+      permanentAddress,
+      
+      // Driver Documentation
+      aadharNumber,
+      licenseNumber,
+      licenseExpiry,
+      
+      // Vehicle Information
+      vehicleDetails: {
+        model: vehicleModel,
+        licensePlate,
+      },
+      
+      // Payment Details
+      paymentDetails: {
+        accountHolderName,
+        bankName,
+        accountNumber,
+        confirmAccountNumber,
+        ifscCode,
+        branchName
+      },
+      
+      // Document file references - in a real app, we'd upload these and store paths
+      documentFiles: {
+        aadharFile: aadharFile ? aadharFile.name : '',
+        licenseFile: licenseFile ? licenseFile.name : '',
+        profilePicture: profilePicture ? profilePicture.name : '',
+        rcFile: rcFile ? rcFile.name : '',
+        insuranceFile: insuranceFile ? insuranceFile.name : '',
+        vehicleFrontImage: vehicleFrontImage ? vehicleFrontImage.name : '',
+        vehicleBackImage: vehicleBackImage ? vehicleBackImage.name : '',
+        vehicleRightImage: vehicleRightImage ? vehicleRightImage.name : '',
+        vehicleLeftImage: vehicleLeftImage ? vehicleLeftImage.name : ''
+      }
     };
     
     // Get existing drivers from localStorage or use empty array
@@ -131,6 +206,12 @@ const DriverOnboarding = () => {
                 setLicenseFile={setLicenseFile}
                 profilePicture={profilePicture}
                 setProfilePicture={setProfilePicture}
+                aadharNumber={aadharNumber}
+                setAadharNumber={setAadharNumber}
+                licenseNumber={licenseNumber}
+                setLicenseNumber={setLicenseNumber}
+                licenseExpiry={licenseExpiry}
+                setLicenseExpiry={setLicenseExpiry}
               />
               
               <VehicleInformationSection 
@@ -146,9 +227,26 @@ const DriverOnboarding = () => {
                 setVehicleRightImage={setVehicleRightImage}
                 vehicleLeftImage={vehicleLeftImage}
                 setVehicleLeftImage={setVehicleLeftImage}
+                vehicleModel={vehicleModel}
+                setVehicleModel={setVehicleModel}
+                licensePlate={licensePlate}
+                setLicensePlate={setLicensePlate}
               />
               
-              <PaymentDetailsSection />
+              <PaymentDetailsSection 
+                accountHolderName={accountHolderName}
+                setAccountHolderName={setAccountHolderName}
+                bankName={bankName}
+                setBankName={setBankName}
+                accountNumber={accountNumber}
+                setAccountNumber={setAccountNumber}
+                confirmAccountNumber={confirmAccountNumber}
+                setConfirmAccountNumber={setConfirmAccountNumber}
+                ifscCode={ifscCode}
+                setIfscCode={setIfscCode}
+                branchName={branchName}
+                setBranchName={setBranchName}
+              />
               
               <div className="flex justify-end gap-3">
                 <Button 

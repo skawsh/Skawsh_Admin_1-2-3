@@ -8,30 +8,15 @@ import { sampleDrivers } from '@/components/drivers/mockData';
 import { Driver } from '@/components/drivers/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, User, Home, Car, ArrowLeft, Pencil, Save, X } from 'lucide-react';
+import { Phone, User, Home, Car, ArrowLeft, Pencil, Save, X, CreditCard, IdCard, Calendar, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-// Extended driver type with all the fields from the add new driver form
+// Extended driver type with all the fields
 interface ExtendedDriver extends Driver {
-  emergencyContact?: string;
-  address?: string;
-  vehicleDetails?: {
-    make: string;
-    model: string;
-    year: string;
-    color: string;
-    licensePlate: string;
-  };
-  dateOfBirth?: string;
-  secondaryPhone?: string;
-  email?: string;
-  emergencyContactName?: string;
-  emergencyContactRelation?: string;
-  currentAddress?: string;
-  permanentAddress?: string;
+  // All fields are already included in the updated Driver interface
 }
 
 const DriverDetails = () => {
@@ -43,6 +28,7 @@ const DriverDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedDriver, setEditedDriver] = useState<ExtendedDriver | null>(null);
   const { toast } = useToast();
+  const [activeSection, setActiveSection] = useState<string>('personal');
   
   useEffect(() => {
     setSidebarOpen(!isMobile);
@@ -74,8 +60,20 @@ const DriverDetails = () => {
       // Set default values for any missing fields to avoid undefined errors
       const extendedDriver: ExtendedDriver = {
         ...foundDriver,
+        dateOfBirth: foundDriver.dateOfBirth || "",
+        secondaryPhone: foundDriver.secondaryPhone || "",
+        email: foundDriver.email || "",
+        otp: foundDriver.otp || "",
+        password: foundDriver.password || "",
+        confirmPassword: foundDriver.confirmPassword || "",
+        emergencyContactName: foundDriver.emergencyContactName || "",
+        emergencyContactRelation: foundDriver.emergencyContactRelation || "",
         emergencyContact: foundDriver.emergencyContact || "",
-        address: foundDriver.address || "",
+        currentAddress: foundDriver.currentAddress || "",
+        permanentAddress: foundDriver.permanentAddress || "",
+        aadharNumber: foundDriver.aadharNumber || "",
+        licenseNumber: foundDriver.licenseNumber || "",
+        licenseExpiry: foundDriver.licenseExpiry || "",
         vehicleDetails: foundDriver.vehicleDetails || {
           make: "",
           model: "",
@@ -83,13 +81,25 @@ const DriverDetails = () => {
           color: "",
           licensePlate: ""
         },
-        dateOfBirth: foundDriver.dateOfBirth || "",
-        secondaryPhone: foundDriver.secondaryPhone || "",
-        email: foundDriver.email || "",
-        emergencyContactName: foundDriver.emergencyContactName || "",
-        emergencyContactRelation: foundDriver.emergencyContactRelation || "",
-        currentAddress: foundDriver.currentAddress || "",
-        permanentAddress: foundDriver.permanentAddress || ""
+        paymentDetails: foundDriver.paymentDetails || {
+          accountHolderName: "",
+          bankName: "",
+          accountNumber: "",
+          confirmAccountNumber: "",
+          ifscCode: "",
+          branchName: ""
+        },
+        documentFiles: foundDriver.documentFiles || {
+          aadharFile: "",
+          licenseFile: "",
+          profilePicture: "",
+          rcFile: "",
+          insuranceFile: "",
+          vehicleFrontImage: "",
+          vehicleBackImage: "",
+          vehicleRightImage: "",
+          vehicleLeftImage: ""
+        }
       };
       
       setDriver(extendedDriver);
@@ -166,8 +176,10 @@ const DriverDetails = () => {
     // Handle nested properties
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      // Fix: Use type assertion to avoid TypeScript error with spread operator
-      const parentObj = editedDriver[parent as keyof ExtendedDriver] as Record<string, any> || {};
+      
+      // Use type assertion to treat the property as a Record to avoid TypeScript error
+      // and provide fallback empty object if the property doesn't exist
+      const parentObj = (editedDriver[parent as keyof ExtendedDriver] as Record<string, any>) || {};
       
       setEditedDriver({
         ...editedDriver,
@@ -182,6 +194,10 @@ const DriverDetails = () => {
         [name]: value
       });
     }
+  };
+  
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
   };
   
   if (!driver) {
@@ -259,390 +275,621 @@ const DriverDetails = () => {
               </Button>
             )}
           </div>
+
+          {/* Section Navigation */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Button 
+              variant={activeSection === 'personal' ? 'default' : 'outline'} 
+              size="sm"
+              onClick={() => handleSectionChange('personal')}
+            >
+              <User size={16} className="mr-1" />
+              Personal Information
+            </Button>
+            <Button 
+              variant={activeSection === 'documentation' ? 'default' : 'outline'} 
+              size="sm"
+              onClick={() => handleSectionChange('documentation')}
+            >
+              <IdCard size={16} className="mr-1" />
+              Documentation
+            </Button>
+            <Button 
+              variant={activeSection === 'vehicle' ? 'default' : 'outline'} 
+              size="sm"
+              onClick={() => handleSectionChange('vehicle')}
+            >
+              <Car size={16} className="mr-1" />
+              Vehicle
+            </Button>
+            <Button 
+              variant={activeSection === 'payment' ? 'default' : 'outline'} 
+              size="sm"
+              onClick={() => handleSectionChange('payment')}
+            >
+              <CreditCard size={16} className="mr-1" />
+              Payment
+            </Button>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-laundry-blue" />
-                  Personal Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="name">Name</Label>
+          {/* Personal Information Section */}
+          {activeSection === 'personal' && (
+            <div className="grid grid-cols-1 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-laundry-blue" />
+                    Personal Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    {isEditing ? (
                       <Input 
                         id="name"
                         name="name"
                         value={editedDriver?.name || ''}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        placeholder="Enter full name"
                       />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Name</span>
-                      <span className="font-medium">{driver.name}</span>
-                    </>
-                  )}
-                </div>
-                
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.name || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                    {isEditing ? (
                       <Input 
                         id="dateOfBirth"
                         name="dateOfBirth"
+                        type="date"
                         value={editedDriver?.dateOfBirth || ''}
                         onChange={handleInputChange}
-                        className="mt-1"
                       />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Date of Birth</span>
-                      <span className="font-medium">{driver.dateOfBirth}</span>
-                    </>
-                  )}
-                </div>
-                
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="email">Email</Label>
-                      <Input 
-                        id="email"
-                        name="email"
-                        value={editedDriver?.email || ''}
-                        onChange={handleInputChange}
-                        className="mt-1"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Email</span>
-                      <span className="font-medium">{driver.email}</span>
-                    </>
-                  )}
-                </div>
-                
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="status">Status</Label>
-                      <select
-                        id="status"
-                        name="status"
-                        value={editedDriver?.status || 'active'}
-                        onChange={(e) => handleInputChange(e as any)}
-                        className="mt-1 rounded-md border border-input px-3 py-2"
-                      >
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                      </select>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Status</span>
-                      <span className={`font-medium ${driver.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-                        {driver.status.charAt(0).toUpperCase() + driver.status.slice(1)}
-                      </span>
-                    </>
-                  )}
-                </div>
-                
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="currentAddress">Current Address</Label>
-                      <Textarea 
-                        id="currentAddress"
-                        name="currentAddress"
-                        value={editedDriver?.currentAddress || ''}
-                        onChange={handleInputChange}
-                        className="mt-1"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Current Address</span>
-                      <span className="font-medium">{driver.currentAddress}</span>
-                    </>
-                  )}
-                </div>
-                
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="permanentAddress">Permanent Address</Label>
-                      <Textarea 
-                        id="permanentAddress"
-                        name="permanentAddress"
-                        value={editedDriver?.permanentAddress || ''}
-                        onChange={handleInputChange}
-                        className="mt-1"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Permanent Address</span>
-                      <span className="font-medium">{driver.permanentAddress}</span>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 text-laundry-blue" />
-                  Contact Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="phoneNumber">Phone Number</Label>
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.dateOfBirth || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="phoneNumber">Primary Contact Number</Label>
+                    {isEditing ? (
                       <Input 
                         id="phoneNumber"
                         name="phoneNumber"
                         value={editedDriver?.phoneNumber || ''}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        placeholder="Enter primary phone number"
                       />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Phone Number</span>
-                      <span className="font-medium">{driver.phoneNumber}</span>
-                    </>
-                  )}
-                </div>
-                
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="secondaryPhone">Secondary Phone</Label>
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.phoneNumber || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="otp">OTP</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="otp"
+                        name="otp"
+                        value={editedDriver?.otp || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter OTP"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.otp || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="secondaryPhone">Secondary Contact Number</Label>
+                    {isEditing ? (
                       <Input 
                         id="secondaryPhone"
                         name="secondaryPhone"
                         value={editedDriver?.secondaryPhone || ''}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        placeholder="Enter secondary phone number"
                       />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Secondary Phone</span>
-                      <span className="font-medium">{driver.secondaryPhone}</span>
-                    </>
-                  )}
-                </div>
-                
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="emergencyContactName">Emergency Contact Name</Label>
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.secondaryPhone || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={editedDriver?.email || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter email address"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.email || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="password"
+                        name="password"
+                        type="password"
+                        value={editedDriver?.password || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter password"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">••••••••</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        value={editedDriver?.confirmPassword || ''}
+                        onChange={handleInputChange}
+                        placeholder="Confirm password"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">••••••••</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="emergencyContactName">Emergency Contact Name</Label>
+                    {isEditing ? (
                       <Input 
                         id="emergencyContactName"
                         name="emergencyContactName"
                         value={editedDriver?.emergencyContactName || ''}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        placeholder="Enter emergency contact name"
                       />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Emergency Contact Name</span>
-                      <span className="font-medium">{driver.emergencyContactName}</span>
-                    </>
-                  )}
-                </div>
-                
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="emergencyContactRelation">Relation with Driver</Label>
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.emergencyContactName || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="emergencyContactRelation">Relation with Driver</Label>
+                    {isEditing ? (
                       <Input 
                         id="emergencyContactRelation"
                         name="emergencyContactRelation"
                         value={editedDriver?.emergencyContactRelation || ''}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        placeholder="Enter relation"
                       />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Relation with Driver</span>
-                      <span className="font-medium">{driver.emergencyContactRelation}</span>
-                    </>
-                  )}
-                </div>
-                
-                <div className="flex flex-col">
-                  {isEditing ? (
-                    <>
-                      <Label htmlFor="emergencyContact">Emergency Contact Number</Label>
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.emergencyContactRelation || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="emergencyContact">Emergency Contact Number</Label>
+                    {isEditing ? (
                       <Input 
                         id="emergencyContact"
                         name="emergencyContact"
                         value={editedDriver?.emergencyContact || ''}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        placeholder="Enter emergency contact number"
                       />
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-sm text-gray-500">Emergency Contact Number</span>
-                      <span className="font-medium">{driver.emergencyContact}</span>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Car className="h-5 w-5 text-laundry-blue" />
-                  Vehicle Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="flex flex-col">
-                    {isEditing ? (
-                      <>
-                        <Label htmlFor="vehicleDetails.make">Make</Label>
-                        <Input 
-                          id="vehicleDetails.make"
-                          name="vehicleDetails.make"
-                          value={editedDriver?.vehicleDetails?.make || ''}
-                          onChange={handleInputChange}
-                          className="mt-1"
-                        />
-                      </>
                     ) : (
-                      <>
-                        <span className="text-sm text-gray-500">Make</span>
-                        <span className="font-medium">{driver.vehicleDetails?.make}</span>
-                      </>
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.emergencyContact || 'Not provided'}</div>
                     )}
                   </div>
                   
-                  <div className="flex flex-col">
+                  <div className="flex flex-col space-y-2 col-span-2">
+                    <Label htmlFor="currentAddress">Current Address</Label>
                     {isEditing ? (
-                      <>
-                        <Label htmlFor="vehicleDetails.model">Model</Label>
+                      <Textarea 
+                        id="currentAddress"
+                        name="currentAddress"
+                        value={editedDriver?.currentAddress || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter current address"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.currentAddress || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2 col-span-2">
+                    <Label htmlFor="permanentAddress">Permanent Address</Label>
+                    {isEditing ? (
+                      <Textarea 
+                        id="permanentAddress"
+                        name="permanentAddress"
+                        value={editedDriver?.permanentAddress || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter permanent address"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.permanentAddress || 'Not provided'}</div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+          
+          {/* Documentation Section */}
+          {activeSection === 'documentation' && (
+            <div className="grid grid-cols-1 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <IdCard className="h-5 w-5 text-laundry-blue" />
+                    Driver Documentation
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="aadharNumber">Aadhar Number</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="aadharNumber"
+                        name="aadharNumber"
+                        value={editedDriver?.aadharNumber || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter Aadhar number"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.aadharNumber || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="documentFiles.aadharFile">Aadhar Card Image</Label>
+                    {isEditing ? (
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" className="w-full flex justify-center items-center gap-2">
+                          <Upload size={16} />
+                          Upload Aadhar Card Image
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">
+                        {driver.documentFiles?.aadharFile ? 'Uploaded' : 'Not uploaded'}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="licenseNumber">License Number</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="licenseNumber"
+                        name="licenseNumber"
+                        value={editedDriver?.licenseNumber || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter license number"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.licenseNumber || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="licenseExpiry">License Expiry Date</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="licenseExpiry"
+                        name="licenseExpiry"
+                        type="date"
+                        value={editedDriver?.licenseExpiry || ''}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.licenseExpiry || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="documentFiles.licenseFile">Driving License Image</Label>
+                    {isEditing ? (
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" className="w-full flex justify-center items-center gap-2">
+                          <Upload size={16} />
+                          Upload Driving License Image
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">
+                        {driver.documentFiles?.licenseFile ? 'Uploaded' : 'Not uploaded'}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="documentFiles.profilePicture">Driver Profile Picture</Label>
+                    {isEditing ? (
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" className="w-full flex justify-center items-center gap-2">
+                          <Upload size={16} />
+                          Upload Driver Profile Picture
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">
+                        {driver.documentFiles?.profilePicture ? 'Uploaded' : 'Not uploaded'}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+          
+          {/* Vehicle Information Section */}
+          {activeSection === 'vehicle' && (
+            <div className="grid grid-cols-1 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Car className="h-5 w-5 text-laundry-blue" />
+                    Vehicle Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col space-y-2">
+                      <Label htmlFor="vehicleDetails.model">Vehicle Model</Label>
+                      {isEditing ? (
                         <Input 
                           id="vehicleDetails.model"
                           name="vehicleDetails.model"
                           value={editedDriver?.vehicleDetails?.model || ''}
                           onChange={handleInputChange}
-                          className="mt-1"
+                          placeholder="Enter vehicle model"
                         />
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-sm text-gray-500">Model</span>
-                        <span className="font-medium">{driver.vehicleDetails?.model}</span>
-                      </>
-                    )}
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    {isEditing ? (
-                      <>
-                        <Label htmlFor="vehicleDetails.year">Year</Label>
-                        <Input 
-                          id="vehicleDetails.year"
-                          name="vehicleDetails.year"
-                          value={editedDriver?.vehicleDetails?.year || ''}
-                          onChange={handleInputChange}
-                          className="mt-1"
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-sm text-gray-500">Year</span>
-                        <span className="font-medium">{driver.vehicleDetails?.year}</span>
-                      </>
-                    )}
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    {isEditing ? (
-                      <>
-                        <Label htmlFor="vehicleDetails.color">Color</Label>
-                        <Input 
-                          id="vehicleDetails.color"
-                          name="vehicleDetails.color"
-                          value={editedDriver?.vehicleDetails?.color || ''}
-                          onChange={handleInputChange}
-                          className="mt-1"
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-sm text-gray-500">Color</span>
-                        <span className="font-medium">{driver.vehicleDetails?.color}</span>
-                      </>
-                    )}
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    {isEditing ? (
-                      <>
-                        <Label htmlFor="vehicleDetails.licensePlate">License Plate</Label>
+                      ) : (
+                        <div className="p-2 border rounded-md bg-gray-50">{driver.vehicleDetails?.model || 'Not provided'}</div>
+                      )}
+                    </div>
+                    
+                    <div className="flex flex-col space-y-2">
+                      <Label htmlFor="vehicleDetails.licensePlate">License Plate</Label>
+                      {isEditing ? (
                         <Input 
                           id="vehicleDetails.licensePlate"
                           name="vehicleDetails.licensePlate"
                           value={editedDriver?.vehicleDetails?.licensePlate || ''}
                           onChange={handleInputChange}
-                          className="mt-1"
+                          placeholder="Enter license plate"
                         />
-                      </>
+                      ) : (
+                        <div className="p-2 border rounded-md bg-gray-50">{driver.vehicleDetails?.licensePlate || 'Not provided'}</div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-base font-medium mb-4">Upload Images</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex flex-col space-y-2">
+                        <Label htmlFor="documentFiles.rcFile">RC (Registration Certificate)</Label>
+                        {isEditing ? (
+                          <div className="flex items-center gap-2">
+                            <Button variant="outline" className="w-full flex justify-center items-center gap-2">
+                              <Upload size={16} />
+                              Upload RC
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="p-2 border rounded-md bg-gray-50">
+                            {driver.documentFiles?.rcFile ? 'Uploaded' : 'Not uploaded'}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col space-y-2">
+                        <Label htmlFor="documentFiles.insuranceFile">Insurance Copy</Label>
+                        {isEditing ? (
+                          <div className="flex items-center gap-2">
+                            <Button variant="outline" className="w-full flex justify-center items-center gap-2">
+                              <Upload size={16} />
+                              Upload Insurance
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="p-2 border rounded-md bg-gray-50">
+                            {driver.documentFiles?.insuranceFile ? 'Uploaded' : 'Not uploaded'}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-base font-medium mb-4">Vehicle Images</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex flex-col space-y-2">
+                        <Label htmlFor="documentFiles.vehicleFrontImage">Vehicle Front side Image</Label>
+                        {isEditing ? (
+                          <div className="flex items-center gap-2">
+                            <Button variant="outline" className="w-full flex justify-center items-center gap-2">
+                              <Upload size={16} />
+                              Upload Front Image
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="p-2 border rounded-md bg-gray-50">
+                            {driver.documentFiles?.vehicleFrontImage ? 'Uploaded' : 'Not uploaded'}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col space-y-2">
+                        <Label htmlFor="documentFiles.vehicleBackImage">Vehicle Back side Image</Label>
+                        {isEditing ? (
+                          <div className="flex items-center gap-2">
+                            <Button variant="outline" className="w-full flex justify-center items-center gap-2">
+                              <Upload size={16} />
+                              Upload Back Image
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="p-2 border rounded-md bg-gray-50">
+                            {driver.documentFiles?.vehicleBackImage ? 'Uploaded' : 'Not uploaded'}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col space-y-2">
+                        <Label htmlFor="documentFiles.vehicleRightImage">Vehicle Right side Image</Label>
+                        {isEditing ? (
+                          <div className="flex items-center gap-2">
+                            <Button variant="outline" className="w-full flex justify-center items-center gap-2">
+                              <Upload size={16} />
+                              Upload Right Image
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="p-2 border rounded-md bg-gray-50">
+                            {driver.documentFiles?.vehicleRightImage ? 'Uploaded' : 'Not uploaded'}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col space-y-2">
+                        <Label htmlFor="documentFiles.vehicleLeftImage">Vehicle Left side Image</Label>
+                        {isEditing ? (
+                          <div className="flex items-center gap-2">
+                            <Button variant="outline" className="w-full flex justify-center items-center gap-2">
+                              <Upload size={16} />
+                              Upload Left Image
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="p-2 border rounded-md bg-gray-50">
+                            {driver.documentFiles?.vehicleLeftImage ? 'Uploaded' : 'Not uploaded'}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+          
+          {/* Payment Details Section */}
+          {activeSection === 'payment' && (
+            <div className="grid grid-cols-1 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5 text-laundry-blue" />
+                    Payment Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="paymentDetails.accountHolderName">Account Holder Name</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="paymentDetails.accountHolderName"
+                        name="paymentDetails.accountHolderName"
+                        value={editedDriver?.paymentDetails?.accountHolderName || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter account holder name"
+                      />
                     ) : (
-                      <>
-                        <span className="text-sm text-gray-500">License Plate</span>
-                        <span className="font-medium">{driver.vehicleDetails?.licensePlate}</span>
-                      </>
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.paymentDetails?.accountHolderName || 'Not provided'}</div>
                     )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Home className="h-5 w-5 text-laundry-blue" />
-                  Delivery Statistics
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Assigned Orders</span>
-                    <span className="font-medium">{driver.assignedOrders || 0}</span>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="paymentDetails.bankName">Bank Name</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="paymentDetails.bankName"
+                        name="paymentDetails.bankName"
+                        value={editedDriver?.paymentDetails?.bankName || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter bank name"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.paymentDetails?.bankName || 'Not provided'}</div>
+                    )}
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Total Deliveries</span>
-                    <span className="font-medium">{driver.totalDeliveries || 0}</span>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="paymentDetails.accountNumber">Account Number</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="paymentDetails.accountNumber"
+                        name="paymentDetails.accountNumber"
+                        value={editedDriver?.paymentDetails?.accountNumber || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter account number"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.paymentDetails?.accountNumber || 'Not provided'}</div>
+                    )}
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Rating</span>
-                    <span className="font-medium">{driver.rating || 'N/A'} {driver.rating ? '⭐' : ''}</span>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="paymentDetails.confirmAccountNumber">Confirm Account Number</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="paymentDetails.confirmAccountNumber"
+                        name="paymentDetails.confirmAccountNumber"
+                        value={editedDriver?.paymentDetails?.confirmAccountNumber || ''}
+                        onChange={handleInputChange}
+                        placeholder="Re-enter account number"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.paymentDetails?.confirmAccountNumber || 'Not provided'}</div>
+                    )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="paymentDetails.ifscCode">IFSC Code</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="paymentDetails.ifscCode"
+                        name="paymentDetails.ifscCode"
+                        value={editedDriver?.paymentDetails?.ifscCode || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter IFSC code"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.paymentDetails?.ifscCode || 'Not provided'}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="paymentDetails.branchName">Branch Name</Label>
+                    {isEditing ? (
+                      <Input 
+                        id="paymentDetails.branchName"
+                        name="paymentDetails.branchName"
+                        value={editedDriver?.paymentDetails?.branchName || ''}
+                        onChange={handleInputChange}
+                        placeholder="Enter branch name"
+                      />
+                    ) : (
+                      <div className="p-2 border rounded-md bg-gray-50">{driver.paymentDetails?.branchName || 'Not provided'}</div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </main>
       </div>
     </div>
