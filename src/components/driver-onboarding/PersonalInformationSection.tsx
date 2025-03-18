@@ -36,6 +36,8 @@ const PersonalInformationSection = ({
   const [emergencyPhone, setEmergencyPhone] = React.useState('');
   const [currentAddress, setCurrentAddress] = React.useState('');
   const [permanentAddress, setPermanentAddress] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-6">
@@ -126,6 +128,28 @@ const PersonalInformationSection = ({
         </div>
         
         <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input 
+            id="password" 
+            type="password" 
+            placeholder="Enter password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input 
+            id="confirmPassword" 
+            type="password" 
+            placeholder="Confirm password" 
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </div>
+        
+        <div className="space-y-2">
           <Label htmlFor="emergencyName">Emergency Contact Name</Label>
           <Input 
             id="emergencyName" 
@@ -136,7 +160,7 @@ const PersonalInformationSection = ({
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="relation">Relation to you</Label>
+          <Label htmlFor="relation">Relation with driver</Label>
           <Input 
             id="relation" 
             placeholder="Enter relation" 
