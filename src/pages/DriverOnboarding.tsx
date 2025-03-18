@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Save, UserCheck, IdCard, Car, CircleCheck } from 'lucide-react';
+import { ChevronLeft, Save, UserCheck, IdCard, Car, CircleCheck, Upload } from 'lucide-react';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -11,12 +11,18 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
+import { Card, CardContent } from '@/components/ui/card';
 
 const DriverOnboarding = () => {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  // File upload states
+  const [aadharFile, setAadharFile] = useState<File | null>(null);
+  const [licenseFile, setLicenseFile] = useState<File | null>(null);
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
   
   useEffect(() => {
     setSidebarOpen(!isMobile);
@@ -34,6 +40,60 @@ const DriverOnboarding = () => {
     });
     navigate('/drivers');
   };
+  
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>, 
+    setFileFn: React.Dispatch<React.SetStateAction<File | null>>
+  ) => {
+    if (event.target.files && event.target.files[0]) {
+      setFileFn(event.target.files[0]);
+    }
+  };
+  
+  // Custom file input component
+  const FileUploadField = ({ 
+    id, 
+    label, 
+    file, 
+    setFile 
+  }: { 
+    id: string; 
+    label: string; 
+    file: File | null; 
+    setFile: React.Dispatch<React.SetStateAction<File | null>> 
+  }) => (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <div className="flex items-center gap-2">
+        <Button 
+          type="button"
+          variant="outline"
+          onClick={() => document.getElementById(id)?.click()}
+          className="flex-1 text-gray-500 hover:text-gray-700"
+        >
+          <Upload className="h-4 w-4 mr-2" />
+          {file ? file.name : `Upload ${label}`}
+        </Button>
+        {file && (
+          <Button 
+            type="button" 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setFile(null)}
+            className="h-8 w-8"
+          >
+            ✕
+          </Button>
+        )}
+      </div>
+      <input
+        id={id}
+        type="file"
+        className="hidden"
+        onChange={(e) => handleFileChange(e, setFile)}
+      />
+    </div>
+  );
   
   return (
     <div className="flex h-screen bg-gray-50">
@@ -76,6 +136,7 @@ const DriverOnboarding = () => {
                   <h2 className="text-lg font-semibold">Personal Information</h2>
                 </div>
                 
+                {/* Personal Information Section - kept the same */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="fullName">Full Name</Label>
@@ -161,6 +222,20 @@ const DriverOnboarding = () => {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Aadhar Number and Upload */}
+                  <div className="space-y-2">
+                    <Label htmlFor="aadharNumber">Aadhar Number</Label>
+                    <Input id="aadharNumber" placeholder="Enter Aadhar number" required />
+                  </div>
+                  
+                  <FileUploadField 
+                    id="aadharUpload" 
+                    label="Aadhar Card Image" 
+                    file={aadharFile} 
+                    setFile={setAadharFile} 
+                  />
+                  
+                  {/* License Number and Expiry - kept the same */}
                   <div className="space-y-2">
                     <Label htmlFor="licenseNumber">License Number</Label>
                     <Input id="licenseNumber" placeholder="Enter license number" required />
@@ -170,6 +245,21 @@ const DriverOnboarding = () => {
                     <Label htmlFor="licenseExpiry">License Expiry Date</Label>
                     <Input id="licenseExpiry" type="date" required />
                   </div>
+                  
+                  {/* License Upload and Driver Picture */}
+                  <FileUploadField 
+                    id="licenseUpload" 
+                    label="Driving License Image" 
+                    file={licenseFile} 
+                    setFile={setLicenseFile} 
+                  />
+                  
+                  <FileUploadField 
+                    id="profilePicture" 
+                    label="Driver Profile Picture" 
+                    file={profilePicture} 
+                    setFile={setProfilePicture} 
+                  />
                 </div>
               </div>
               
