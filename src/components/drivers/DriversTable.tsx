@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Table, 
@@ -9,13 +10,27 @@ import {
 } from '@/components/ui/table';
 import { DriversTableProps } from './types';
 import { sampleDrivers } from './mockData';
-import { MoreHorizontal, Package, User, FileText } from 'lucide-react';
+import { 
+  MoreHorizontal, 
+  Package, 
+  User, 
+  FileText, 
+  Eye, 
+  History, 
+  Trash2 
+} from 'lucide-react';
 import DriverStatusBadge from './DriverStatusBadge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Driver } from './types';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 
 // Define a type for assigned orders
 interface AssignedOrder {
@@ -244,6 +259,29 @@ const DriversTable = ({ className }: DriversTableProps) => {
     navigate(`/driver/${driverId}`);
   };
   
+  const handleDeleteDriver = (driverId: string, driverName: string) => {
+    // Remove the driver from the drivers array
+    setDrivers(drivers.filter(driver => driver.id !== driverId));
+    
+    // Update localStorage
+    const savedDriversJson = localStorage.getItem('driversList');
+    if (savedDriversJson) {
+      try {
+        const savedDrivers = JSON.parse(savedDriversJson);
+        const updatedDrivers = savedDrivers.filter((driver: Driver) => driver.id !== driverId);
+        localStorage.setItem('driversList', JSON.stringify(updatedDrivers));
+      } catch (error) {
+        console.error('Failed to update drivers list in localStorage:', error);
+      }
+    }
+    
+    // Show toast notification
+    toast({
+      title: "Driver Deleted",
+      description: `${driverName} has been removed from the system`,
+    });
+  };
+  
   return (
     <div className="bg-white rounded-md shadow-sm">
       <Tabs defaultValue="all" onValueChange={setActiveTab}>
@@ -307,9 +345,30 @@ const DriversTable = ({ className }: DriversTableProps) => {
                   <TableCell>{driver.phoneNumber}</TableCell>
                   <TableCell>{driver.assignedOrders || 0}</TableCell>
                   <TableCell className="text-right">
-                    <button className="text-gray-500 hover:text-gray-700">
-                      <MoreHorizontal size={20} />
-                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
+                          <MoreHorizontal size={20} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => viewDriverDetails(driver.id)} className="cursor-pointer">
+                          <Eye className="mr-2 h-4 w-4" />
+                          <span>View/Edit Details</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => viewOrderDetails(driver.id)} className="cursor-pointer">
+                          <History className="mr-2 h-4 w-4" />
+                          <span>View Order History</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => handleDeleteDriver(driver.id, driver.name)}
+                          className="cursor-pointer text-red-600 hover:text-red-800 focus:text-red-800"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Delete Driver</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
@@ -410,9 +469,30 @@ const DriversTable = ({ className }: DriversTableProps) => {
                     <TableCell>{driver.phoneNumber}</TableCell>
                     <TableCell>{driver.totalDeliveries || 0}</TableCell>
                     <TableCell className="text-right">
-                      <button className="text-gray-500 hover:text-gray-700">
-                        <MoreHorizontal size={20} />
-                      </button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
+                            <MoreHorizontal size={20} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem onClick={() => viewDriverDetails(driver.id)} className="cursor-pointer">
+                            <Eye className="mr-2 h-4 w-4" />
+                            <span>View/Edit Details</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => viewOrderDetails(driver.id)} className="cursor-pointer">
+                            <History className="mr-2 h-4 w-4" />
+                            <span>View Order History</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleDeleteDriver(driver.id, driver.name)}
+                            className="cursor-pointer text-red-600 hover:text-red-800 focus:text-red-800"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            <span>Delete Driver</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))
