@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Package, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -130,16 +129,9 @@ export const OrdersAssignmentTable: React.FC<OrdersAssignmentTableProps> = ({
                       {order.status && (
                         <StatusBadge 
                           status={
-                            // If in rescheduled tab and status is "ready-for-collect", show as "new"
-                            isRescheduledTab && order.status === "ready-for-collect" 
-                              ? "new" 
-                              : order.status
+                            order.status
                           } 
-                          showNewOrder={
-                            // Show New Order badge for the original showNewOrder OR 
-                            // for ready-for-collect orders in the rescheduled tab
-                            showNewOrder || (isRescheduledTab && order.status === "ready-for-collect")
-                          }
+                          showNewOrder={showNewOrder}
                           isRescheduledTab={isRescheduledTab}
                         />
                       )}
