@@ -71,9 +71,10 @@ const StatusBadge = ({
     return <span className="status-badge status-ready">Ready for collection</span>;
   }
   
-  // If in rescheduled tab, always show "Ready for collection" instead of "Ready for pickup"
-  // This is the key fix - making sure this check happens before the next block
-  if (isRescheduledTab && (status === "new" || status === "ready-for-collect")) {
+  // If in rescheduled tab and status is "ready-for-collect", always show "Ready for collection"
+  // This is the key fix - show "Ready for collection" only for "ready-for-collect" status orders,
+  // while respecting the original status for "new" orders
+  if (isRescheduledTab && status === "ready-for-collect") {
     return <span className="status-badge status-ready">Ready for collection</span>;
   }
   
