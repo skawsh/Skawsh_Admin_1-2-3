@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -15,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 
 interface ExtendedDriver extends Driver {
-  // All fields are already included in the updated Driver interface
+  // No need for additional fields as everything is already in Driver interface
 }
 
 const DriverDetails = () => {
@@ -62,9 +63,6 @@ const DriverDetails = () => {
         dateOfBirth: foundDriver.dateOfBirth || "",
         secondaryPhone: foundDriver.secondaryPhone || "",
         email: foundDriver.email || "",
-        otp: foundDriver.otp || "",
-        password: foundDriver.password || "",
-        confirmPassword: foundDriver.confirmPassword || "",
         emergencyContactName: foundDriver.emergencyContactName || "",
         emergencyContactRelation: foundDriver.emergencyContactRelation || "",
         emergencyContact: foundDriver.emergencyContact || "",
@@ -205,13 +203,25 @@ const DriverDetails = () => {
         const driverIndex = savedDrivers.findIndex((d: Driver) => d.id === driver.id);
         
         if (driverIndex !== -1) {
-          savedDrivers[driverIndex].password = newPassword;
+          // Update the password in localStorage
+          if (!savedDrivers[driverIndex].password) {
+            savedDrivers[driverIndex].password = newPassword;
+          } else {
+            savedDrivers[driverIndex] = {
+              ...savedDrivers[driverIndex],
+              password: newPassword
+            };
+          }
+          
           localStorage.setItem('driversList', JSON.stringify(savedDrivers));
           
-          setDriver({
-            ...driver,
-            password: newPassword
-          });
+          // Update local state if needed
+          if (driver) {
+            setDriver({
+              ...driver,
+              password: newPassword
+            });
+          }
           
           if (editedDriver) {
             setEditedDriver({

@@ -58,6 +58,11 @@ export interface Driver {
     vehicleRightImage?: string;
     vehicleLeftImage?: string;
   };
+  
+  // These fields are used internally in the app but not displayed in the UI
+  password?: string;
+  otp?: string;
+  confirmPassword?: string;
 }
 
 // Component props types
