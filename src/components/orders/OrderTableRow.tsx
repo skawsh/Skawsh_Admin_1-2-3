@@ -5,6 +5,7 @@ import { Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from './StatusBadge';
 import { Order } from './types';
+import { useNavigate } from 'react-router-dom';
 
 interface OrderTableRowProps {
   order: Order;
@@ -21,6 +22,15 @@ const OrderTableRow = ({
   formatCurrency, 
   onViewDetails 
 }: OrderTableRowProps) => {
+  const navigate = useNavigate();
+
+  const handleViewDetails = () => {
+    // Navigate to the order details page
+    navigate(`/order/${order.id}`);
+    // Also call the original handler if needed
+    onViewDetails(order.id);
+  };
+
   return (
     <tr 
       className={cn(
@@ -51,7 +61,7 @@ const OrderTableRow = ({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onViewDetails(order.id)}
+          onClick={handleViewDetails}
           className="flex items-center gap-1 text-laundry-blue hover:text-laundry-blue-dark hover:bg-blue-50 border-gray-200"
         >
           <Eye size={14} />
