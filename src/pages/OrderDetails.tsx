@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, CircleDollarSign, Package, Truck, User } from 'lucide-react';
+import { ArrowLeft, CircleDollarSign, Package, Truck, User, Store } from 'lucide-react';
 import { sampleOrders } from '@/components/orders/mockData';
 import { Order } from '@/components/orders/types';
 import { formatDate, formatCurrency } from '@/components/orders/formatUtils';
@@ -54,6 +54,19 @@ const OrderDetails = () => {
       </div>
     );
   }
+
+  // Calculate service costs and taxes
+  const standardServiceCost = order.washType === 'standard' || order.washType === 'both' ? 122.5 : 0;
+  const expressServiceCost = order.washType === 'express' || order.washType === 'both' ? 180 : 0;
+  const deliveryFee = 50;
+  const serviceTaxRate = 0.18; // 18% GST on services
+  const deliveryTaxRate = 0.05; // 5% GST on delivery
+  
+  const serviceTax = (standardServiceCost + expressServiceCost) * serviceTaxRate;
+  const deliveryTax = deliveryFee * deliveryTaxRate;
+  
+  // Calculate total
+  const calculatedTotal = standardServiceCost + expressServiceCost + deliveryFee + serviceTax + deliveryTax;
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -115,7 +128,11 @@ const OrderDetails = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Wash Type</p>
-                  <p className="font-medium text-red-600">{order.washType.charAt(0).toUpperCase() + order.washType.slice(1)} Wash</p>
+                  <p className="font-medium text-red-600">
+                    {order.washType === 'both' 
+                      ? 'Standard & Express Wash' 
+                      : order.washType.charAt(0).toUpperCase() + order.washType.slice(1) + ' Wash'}
+                  </p>
                 </div>
               </div>
             </Card>
@@ -144,6 +161,30 @@ const OrderDetails = () => {
               </div>
             </Card>
 
+            {/* Studio Information */}
+            <Card className="mb-6 overflow-hidden border-none shadow-sm">
+              <div className="bg-indigo-50 p-4 border-l-4 border-indigo-500">
+                <div className="flex items-center">
+                  <Store className="h-5 w-5 text-indigo-600 mr-2" />
+                  <h2 className="text-lg font-semibold text-indigo-800">Studio Information</h2>
+                </div>
+              </div>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Studio Name</p>
+                  <p className="font-medium">{order.studio}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Contact</p>
+                  <p className="font-medium">040-23456789</p>
+                </div>
+                <div className="col-span-1 md:col-span-2">
+                  <p className="text-sm text-gray-500">Address</p>
+                  <p className="font-medium">{order.studioAddress || `${order.studio}, Jubilee Hills, Hyderabad-500033`}</p>
+                </div>
+              </div>
+            </Card>
+
             {/* Services Information */}
             <Card className="mb-6 overflow-hidden border-none shadow-sm">
               <div className="bg-yellow-50 p-4 border-l-4 border-yellow-500">
@@ -154,32 +195,84 @@ const OrderDetails = () => {
               </div>
               <div className="p-6">
                 <p className="text-sm text-gray-500 mb-2">Wash Type</p>
-                <p className="font-medium text-red-600 mb-4">{order.washType.charAt(0).toUpperCase() + order.washType.slice(1)} Wash</p>
+                <p className="font-medium text-red-600 mb-4">
+                  {order.washType === 'both' 
+                    ? 'Standard & Express Wash' 
+                    : order.washType.charAt(0).toUpperCase() + order.washType.slice(1) + ' Wash'}
+                </p>
                 
-                <p className="text-blue-600 font-medium mb-4">Standard Wash</p>
+                {/* Standard Wash Services */}
+                {(order.washType === 'standard' || order.washType === 'both') && (
+                  <>
+                    <p className="text-blue-600 font-medium mb-4">Standard Wash</p>
+                    
+                    <div className="border-b pb-4 mb-4">
+                      <div className="flex justify-between mb-2">
+                        <div className="font-medium">Services</div>
+                        <div className="font-medium">Quantity</div>
+                        <div className="font-medium">Price</div>
+                      </div>
+                      <div className="flex justify-between mb-2">
+                        <div>1. Wash & Fold</div>
+                        <div>2.5 X 49/kg</div>
+                        <div>₹122.5</div>
+                      </div>
+                    </div>
+                  </>
+                )}
                 
-                <div className="border-b pb-4 mb-4">
-                  <div className="flex justify-between mb-2">
-                    <div className="font-medium">Services</div>
-                    <div className="font-medium">Quantity</div>
-                    <div className="font-medium">Price</div>
-                  </div>
-                  <div className="flex justify-between mb-2">
-                    <div>1. Wash & Fold</div>
-                    <div>2.5 X 49/kg</div>
-                    <div>₹122.5</div>
-                  </div>
-                </div>
+                {/* Express Wash Services */}
+                {(order.washType === 'express' || order.washType === 'both') && (
+                  <>
+                    <p className="text-orange-600 font-medium mb-4">Express Wash</p>
+                    
+                    <div className="border-b pb-4 mb-4">
+                      <div className="flex justify-between mb-2">
+                        <div className="font-medium">Services</div>
+                        <div className="font-medium">Quantity</div>
+                        <div className="font-medium">Price</div>
+                      </div>
+                      <div className="flex justify-between mb-2">
+                        <div>1. Express Wash & Fold</div>
+                        <div>3.0 X 60/kg</div>
+                        <div>₹180</div>
+                      </div>
+                    </div>
+                  </>
+                )}
                 
+                {/* Clothing Items */}
                 <div className="border-b pb-4 mb-4">
                   <div className="font-medium mb-2">Clothing Items</div>
                   <div className="pl-4 mb-1">1. Shirt (1)</div>
-                  <div className="pl-4">2. Pant (1)</div>
+                  <div className="pl-4 mb-4">2. Pant (1)</div>
                 </div>
                 
+                {/* Delivery Fee */}
+                <div className="border-b pb-4 mb-4">
+                  <div className="flex justify-between mb-2">
+                    <div>Delivery Fee</div>
+                    <div>₹50</div>
+                  </div>
+                </div>
+                
+                {/* Taxes */}
+                <div className="border-b pb-4 mb-4">
+                  <div className="font-medium mb-2">Taxes</div>
+                  <div className="flex justify-between mb-2">
+                    <div>GST on Services (18%)</div>
+                    <div>₹{serviceTax.toFixed(2)}</div>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <div>GST on Delivery (5%)</div>
+                    <div>₹{deliveryTax.toFixed(2)}</div>
+                  </div>
+                </div>
+                
+                {/* Total */}
                 <div className="flex justify-between font-bold">
                   <div>Total</div>
-                  <div>{formatCurrency(order.total)}</div>
+                  <div>{formatCurrency(calculatedTotal)}</div>
                 </div>
               </div>
             </Card>
