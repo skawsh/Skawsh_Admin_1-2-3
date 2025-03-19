@@ -68,6 +68,9 @@ const OrderDetails = () => {
   // Calculate total
   const calculatedTotal = standardServiceCost + expressServiceCost + deliveryFee + serviceTax + deliveryTax;
 
+  // Determine if this is a collection/delivery order or a pickup/drop order
+  const isCollectionDelivery = order.id === 'ORD-0001' || order.id === 'ORD-0003' || order.id === 'ORD-0005' || order.id === 'ORD-0007';
+
   return (
     <div className="flex h-screen bg-gray-50">
       {sidebarOpen && (
@@ -173,6 +176,10 @@ const OrderDetails = () => {
                 <div>
                   <p className="text-sm text-gray-500">Studio Name</p>
                   <p className="font-medium">{order.studio}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Studio ID</p>
+                  <p className="font-medium">STD-{order.id.slice(4)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Contact</p>
@@ -285,18 +292,46 @@ const OrderDetails = () => {
                   <h2 className="text-lg font-semibold text-purple-800">Delivery Information</h2>
                 </div>
               </div>
-              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Assigned to</p>
-                  <p className="font-medium">{order.driver || 'Deepak Bagade / 9901362590'}</p>
+              <div className="p-6">
+                <h3 className="text-base font-semibold mb-4">
+                  {isCollectionDelivery ? "Collect and Delivery" : "Pickup and Drop"}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Assigned to</p>
+                    <p className="font-medium">
+                      {isCollectionDelivery ? "Saiteja" : "Deepak"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Vehicle details</p>
+                    <p className="font-medium">
+                      {isCollectionDelivery 
+                        ? "Honda Activa - TS02FF2703" 
+                        : "Passion Pro - TS02EF0808"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Delivered date & time</p>
-                  <p className="font-medium">{order.deliveryDate ? `${formatDate(order.deliveryDate)} at 4:30 PM` : 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Vehicle details</p>
-                  <p className="font-medium">Maruti WagonR TS-08 JN 9988</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">
+                      {isCollectionDelivery ? "Collected date & time" : "Picked up date & time"}
+                    </p>
+                    <p className="font-medium">
+                      {order.pickedUpTime || 
+                        (isCollectionDelivery ? "Jun 12, 2024 at 09:45 AM" : "Jun 10, 2024 at 10:30 AM")}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">
+                      {isCollectionDelivery ? "Delivered date & time" : "Dropped off date & time"}
+                    </p>
+                    <p className="font-medium">
+                      {order.droppedTime || 
+                        (isCollectionDelivery ? "Jun 15, 2024 at 06:15 PM" : "Jun 11, 2024 at 04:30 PM")}
+                    </p>
+                  </div>
                 </div>
               </div>
             </Card>
