@@ -228,10 +228,12 @@ const OrderDetails = () => {
                   <>
                     <p className="text-blue-600 font-medium mb-4">Standard Wash</p>
                     
-                    {/* Core Laundry Services */}
+                    {/* Core Laundry Services - Updated layout */}
                     <div className="border border-green-300 rounded-lg mb-6 overflow-hidden">
                       <div className="p-4">
-                        <h3 className="font-medium text-lg mb-4">Core Laundry Services</h3>
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="font-medium text-lg">Core Laundry Services</h3>
+                        </div>
                         
                         <div className="grid grid-cols-3 border-b py-2">
                           <div className="col-span-1 font-medium">Services</div>
