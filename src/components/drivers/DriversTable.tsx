@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Table, 
@@ -30,6 +31,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import DeleteDriverDialog from './DeleteDriverDialog';
 
 // Define a type for assigned orders
 interface AssignedOrder {
@@ -49,6 +51,8 @@ const DriversTable = ({ className }: DriversTableProps) => {
   const [assignedOrders, setAssignedOrders] = useState<Record<string, AssignedOrder[]>>({});
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [driverToDelete, setDriverToDelete] = useState<{id: string, name: string} | null>(null);
   
   // Initialize with driver data and load assignments
   useEffect(() => {
@@ -258,16 +262,24 @@ const DriversTable = ({ className }: DriversTableProps) => {
     navigate(`/driver/${driverId}`);
   };
   
-  const handleDeleteDriver = (driverId: string, driverName: string) => {
+  const confirmDeleteDriver = (driverId: string, driverName: string) => {
+    // Set the driver to delete and open the confirmation dialog
+    setDriverToDelete({ id: driverId, name: driverName });
+    setDeleteDialogOpen(true);
+  };
+  
+  const handleDeleteDriver = () => {
+    if (!driverToDelete) return;
+    
     // Remove the driver from the drivers array
-    setDrivers(drivers.filter(driver => driver.id !== driverId));
+    setDrivers(drivers.filter(driver => driver.id !== driverToDelete.id));
     
     // Update localStorage
     const savedDriversJson = localStorage.getItem('driversList');
     if (savedDriversJson) {
       try {
         const savedDrivers = JSON.parse(savedDriversJson);
-        const updatedDrivers = savedDrivers.filter((driver: Driver) => driver.id !== driverId);
+        const updatedDrivers = savedDrivers.filter((driver: Driver) => driver.id !== driverToDelete.id);
         localStorage.setItem('driversList', JSON.stringify(updatedDrivers));
       } catch (error) {
         console.error('Failed to update drivers list in localStorage:', error);
@@ -277,8 +289,12 @@ const DriversTable = ({ className }: DriversTableProps) => {
     // Show toast notification
     toast({
       title: "Driver Deleted",
-      description: `${driverName} has been removed from the system`,
+      description: `${driverToDelete.name} has been removed from the system`,
     });
+    
+    // Reset the driver to delete and close the dialog
+    setDriverToDelete(null);
+    setDeleteDialogOpen(false);
   };
   
   return (
@@ -360,7 +376,7 @@ const DriversTable = ({ className }: DriversTableProps) => {
                           <span>View Order History</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem 
-                          onClick={() => handleDeleteDriver(driver.id, driver.name)}
+                          onClick={() => confirmDeleteDriver(driver.id, driver.name)}
                           className="cursor-pointer text-red-600 hover:text-red-800 focus:text-red-800"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
@@ -484,7 +500,7 @@ const DriversTable = ({ className }: DriversTableProps) => {
                             <span>View Order History</span>
                           </DropdownMenuItem>
                           <DropdownMenuItem 
-                            onClick={() => handleDeleteDriver(driver.id, driver.name)}
+                            onClick={() => confirmDeleteDriver(driver.id, driver.name)}
                             className="cursor-pointer text-red-600 hover:text-red-800 focus:text-red-800"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
@@ -500,6 +516,13 @@ const DriversTable = ({ className }: DriversTableProps) => {
           </Table>
         </TabsContent>
       </Tabs>
+      
+      <DeleteDriverDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        driverName={driverToDelete?.name || ''}
+        onConfirm={handleDeleteDriver}
+      />
     </div>
   );
 };
