@@ -293,44 +293,55 @@ const OrderDetails = () => {
                 </div>
               </div>
               <div className="p-6">
-                <h3 className="text-base font-semibold mb-4">
-                  {isCollectionDelivery ? "Collect and Delivery" : "Pickup and Drop"}
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Assigned to</p>
-                    <p className="font-medium">
-                      {isCollectionDelivery ? "Saiteja" : "Deepak"}
-                    </p>
+                {/* Pickup and Drop Section */}
+                <div className="mb-6 pb-6 border-b">
+                  <h3 className="text-base font-semibold mb-4">Pickup and Drop</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Assigned to</p>
+                      <p className="font-medium">Deepak</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Vehicle details</p>
+                      <p className="font-medium">Passion Pro - TS02EF0808</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Vehicle details</p>
-                    <p className="font-medium">
-                      {isCollectionDelivery 
-                        ? "Honda Activa - TS02FF2703" 
-                        : "Passion Pro - TS02EF0808"}
-                    </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Picked up date & time</p>
+                      <p className="font-medium">Jun 10, 2024 at 10:30 AM</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Dropped off date & time</p>
+                      <p className="font-medium">Jun 11, 2024 at 04:30 PM</p>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      {isCollectionDelivery ? "Collected date & time" : "Picked up date & time"}
-                    </p>
-                    <p className="font-medium">
-                      {order.pickedUpTime || 
-                        (isCollectionDelivery ? "Jun 12, 2024 at 09:45 AM" : "Jun 10, 2024 at 10:30 AM")}
-                    </p>
+                {/* Collect and Delivery Section */}
+                <div>
+                  <h3 className="text-base font-semibold mb-4">Collect and Delivery</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Assigned to</p>
+                      <p className="font-medium">Saiteja</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Vehicle details</p>
+                      <p className="font-medium">Honda Activa - TS02FF2703</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      {isCollectionDelivery ? "Delivered date & time" : "Dropped off date & time"}
-                    </p>
-                    <p className="font-medium">
-                      {order.droppedTime || 
-                        (isCollectionDelivery ? "Jun 15, 2024 at 06:15 PM" : "Jun 11, 2024 at 04:30 PM")}
-                    </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Collected date & time</p>
+                      <p className="font-medium">Jun 12, 2024 at 09:45 AM</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Delivered date & time</p>
+                      <p className="font-medium">Jun 15, 2024 at 06:15 PM</p>
+                    </div>
                   </div>
                 </div>
               </div>
