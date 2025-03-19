@@ -244,13 +244,13 @@ const OrderDetails = () => {
                         <div className="grid grid-cols-3 border-b py-2">
                           <div className="col-span-1">Wash & Fold</div>
                           <div className="col-span-1 text-center">1.3 X 64/KG</div>
-                          <div className="col-span-1 text-right">83</div>
+                          <div className="col-span-1 text-right">₹83</div>
                         </div>
                         
                         <div className="grid grid-cols-3 border-b py-2">
                           <div className="col-span-1">Wash & Iron</div>
                           <div className="col-span-1 text-center">1 X 99/KG</div>
-                          <div className="col-span-1 text-right">99</div>
+                          <div className="col-span-1 text-right">₹99</div>
                         </div>
                         
                         <div className="py-2 border-b">
@@ -265,12 +265,12 @@ const OrderDetails = () => {
                           <div className="grid grid-cols-3 py-1">
                             <div className="col-span-1">1) Saree with Ornament</div>
                             <div className="col-span-1 text-center">1 X 50</div>
-                            <div className="col-span-1 text-right">50</div>
+                            <div className="col-span-1 text-right">₹50</div>
                           </div>
                           <div className="grid grid-cols-3 py-1">
                             <div className="col-span-1">2) Blouse with Ornament</div>
                             <div className="col-span-1 text-center">2 X 25</div>
-                            <div className="col-span-1 text-right">50</div>
+                            <div className="col-span-1 text-right">₹50</div>
                           </div>
                         </div>
                       </div>
@@ -284,7 +284,7 @@ const OrderDetails = () => {
                         <div className="grid grid-cols-3 py-1">
                           <div className="col-span-1">1) Shirt</div>
                           <div className="col-span-1 text-center">2 X 310</div>
-                          <div className="col-span-1 text-right">620</div>
+                          <div className="col-span-1 text-right">₹620</div>
                         </div>
                       </div>
                     </div>
@@ -304,7 +304,7 @@ const OrderDetails = () => {
                         <div className="grid grid-cols-3 py-1">
                           <div className="col-span-1">1) Jeans</div>
                           <div className="col-span-1 text-center">2 X 200</div>
-                          <div className="col-span-1 text-right">400</div>
+                          <div className="col-span-1 text-right">₹400</div>
                         </div>
                       </div>
                     </div>
@@ -317,7 +317,7 @@ const OrderDetails = () => {
                         <div className="grid grid-cols-3 py-1">
                           <div className="col-span-1"></div>
                           <div className="col-span-1 text-center">2 X 598/Pair</div>
-                          <div className="col-span-1 text-right">1196</div>
+                          <div className="col-span-1 text-right">₹1196</div>
                         </div>
                       </div>
                     </div>
