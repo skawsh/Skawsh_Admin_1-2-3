@@ -56,9 +56,24 @@ const OrderDetails = () => {
   }
 
   // Calculate service costs and taxes
-  const standardServiceCost = order.washType === 'standard' || order.washType === 'both' ? 122.5 : 0;
-  const expressServiceCost = order.washType === 'express' || order.washType === 'both' ? 180 : 0;
+  // Core Laundry Services
+  const washFoldCost = 83;
+  const washIronCost = 99;
+  // Clothing Items
+  const sareeWithOrnamentCost = 50;
+  const blouseWithOrnamentCost = 50;
+  // Dry Cleaning Services - Standard
+  const shirtDryCleaningCost = 620;
+  // Express Wash - Dry Cleaning
+  const jeansDryCleaningCost = 400;
+  // Shoe Cleaning Services
+  const shoeCleaningCost = 1196;
+  
   const deliveryFee = 50;
+  
+  const standardServiceCost = washFoldCost + washIronCost + sareeWithOrnamentCost + blouseWithOrnamentCost + shirtDryCleaningCost;
+  const expressServiceCost = jeansDryCleaningCost + shoeCleaningCost;
+  
   const serviceTaxRate = 0.18; // 18% GST on services
   const deliveryTaxRate = 0.05; // 5% GST on delivery
   
@@ -213,16 +228,62 @@ const OrderDetails = () => {
                   <>
                     <p className="text-blue-600 font-medium mb-4">Standard Wash</p>
                     
-                    <div className="border-b pb-4 mb-4">
-                      <div className="flex justify-between mb-2">
-                        <div className="font-medium">Services</div>
-                        <div className="font-medium">Quantity</div>
-                        <div className="font-medium">Price</div>
+                    {/* Core Laundry Services */}
+                    <div className="border border-green-300 rounded-lg mb-6 overflow-hidden">
+                      <div className="p-4">
+                        <h3 className="font-medium text-lg mb-4">Core Laundry Services</h3>
+                        
+                        <div className="grid grid-cols-3 border-b py-2">
+                          <div className="col-span-1 font-medium">Services</div>
+                          <div className="col-span-1 text-center font-medium">Quantity</div>
+                          <div className="col-span-1 text-right font-medium">Price</div>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 border-b py-2">
+                          <div className="col-span-1">Wash & Fold</div>
+                          <div className="col-span-1 text-center">1.3 X 64/KG</div>
+                          <div className="col-span-1 text-right">83</div>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 border-b py-2">
+                          <div className="col-span-1">Wash & Iron</div>
+                          <div className="col-span-1 text-center">1 X 99/KG</div>
+                          <div className="col-span-1 text-right">99</div>
+                        </div>
+                        
+                        <div className="py-2 border-b">
+                          <div className="font-medium mb-2">Selected Items</div>
+                          <div className="pl-4">1) ShirtX1</div>
+                          <div className="pl-4">2) T-Shirt X1</div>
+                          <div className="pl-4">3) Cotton SareeX1</div>
+                        </div>
+                        
+                        <div className="border-t border-dashed py-2">
+                          <div className="font-medium mb-2">Clothing Items</div>
+                          <div className="grid grid-cols-3 py-1">
+                            <div className="col-span-1">1) Saree with Ornament</div>
+                            <div className="col-span-1 text-center">1 X 50</div>
+                            <div className="col-span-1 text-right">50</div>
+                          </div>
+                          <div className="grid grid-cols-3 py-1">
+                            <div className="col-span-1">2) Blouse with Ornament</div>
+                            <div className="col-span-1 text-center">2 X 25</div>
+                            <div className="col-span-1 text-right">50</div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex justify-between mb-2">
-                        <div>1. Wash & Fold</div>
-                        <div>2.5 X 49/kg</div>
-                        <div>₹122.5</div>
+                    </div>
+                    
+                    {/* Dry Cleaning Services - Standard */}
+                    <div className="border border-green-300 rounded-lg mb-6 overflow-hidden">
+                      <div className="p-4">
+                        <h3 className="font-medium text-lg mb-4">Dry Cleaning Services</h3>
+                        <div className="font-medium mb-2">Upper Wear</div>
+                        <div className="grid grid-cols-3 py-1">
+                          <div className="col-span-1">1) Shirt</div>
+                          <div className="col-span-1 text-center">2 X 310</div>
+                          <div className="col-span-1 text-right">620</div>
+                        </div>
                       </div>
                     </div>
                   </>
@@ -233,38 +294,42 @@ const OrderDetails = () => {
                   <>
                     <p className="text-orange-600 font-medium mb-4">Express Wash</p>
                     
-                    <div className="border-b pb-4 mb-4">
-                      <div className="flex justify-between mb-2">
-                        <div className="font-medium">Services</div>
-                        <div className="font-medium">Quantity</div>
-                        <div className="font-medium">Price</div>
+                    {/* Dry Cleaning Services - Express */}
+                    <div className="border border-green-300 rounded-lg mb-6 overflow-hidden">
+                      <div className="p-4">
+                        <h3 className="font-medium text-lg mb-4">Dry Cleaning Services</h3>
+                        <div className="font-medium mb-2">Bottom Wear</div>
+                        <div className="grid grid-cols-3 py-1">
+                          <div className="col-span-1">1) Jeans</div>
+                          <div className="col-span-1 text-center">2 X 200</div>
+                          <div className="col-span-1 text-right">400</div>
+                        </div>
                       </div>
-                      <div className="flex justify-between mb-2">
-                        <div>1. Express Wash & Fold</div>
-                        <div>3.0 X 60/kg</div>
-                        <div>₹180</div>
+                    </div>
+                    
+                    {/* Shoe Cleaning Services */}
+                    <div className="border border-green-300 rounded-lg mb-6 overflow-hidden">
+                      <div className="p-4">
+                        <h3 className="font-medium text-lg mb-4">Shoe Cleaning Services</h3>
+                        <div className="font-medium mb-2">Regular</div>
+                        <div className="grid grid-cols-3 py-1">
+                          <div className="col-span-1"></div>
+                          <div className="col-span-1 text-center">2 X 598/Pair</div>
+                          <div className="col-span-1 text-right">1196</div>
+                        </div>
                       </div>
                     </div>
                   </>
                 )}
                 
-                {/* Clothing Items */}
-                <div className="border-b pb-4 mb-4">
-                  <div className="font-medium mb-2">Clothing Items</div>
-                  <div className="pl-4 mb-1">1. Shirt (1)</div>
-                  <div className="pl-4 mb-4">2. Pant (1)</div>
-                </div>
-                
                 {/* Delivery Fee */}
-                <div className="border-b pb-4 mb-4">
-                  <div className="flex justify-between mb-2">
-                    <div>Delivery Fee</div>
-                    <div>₹50</div>
-                  </div>
+                <div className="flex justify-between py-3 border-t">
+                  <div>Delivery Fee</div>
+                  <div>₹{deliveryFee}</div>
                 </div>
                 
                 {/* Taxes */}
-                <div className="border-b pb-4 mb-4">
+                <div className="py-3 border-t">
                   <div className="font-medium mb-2">Taxes</div>
                   <div className="flex justify-between mb-2">
                     <div>GST on Services (18%)</div>
@@ -277,9 +342,9 @@ const OrderDetails = () => {
                 </div>
                 
                 {/* Total */}
-                <div className="flex justify-between font-bold">
+                <div className="flex justify-between font-bold py-3 border-t">
                   <div>Total</div>
-                  <div>{formatCurrency(calculatedTotal)}</div>
+                  <div>₹{Math.round(calculatedTotal)}</div>
                 </div>
               </div>
             </Card>
