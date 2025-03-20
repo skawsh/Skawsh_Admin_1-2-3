@@ -34,3 +34,10 @@ export const formatDateTime = (dateString: string | Date) => {
   
   return `${hours}:${minutes} on ${day}/${month}/${year}`;
 };
+
+// Get current time as a formatted string
+export const getCurrentTime = () => {
+  const now = new Date();
+  return formatDateTime(now);
+};
+

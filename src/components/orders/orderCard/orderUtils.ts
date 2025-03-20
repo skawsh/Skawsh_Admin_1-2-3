@@ -7,6 +7,10 @@ export function determinePickupTime(orderId: string, defaultTime: string | null 
     case 'ORD-0012':
     case 'ORD-R002':
       return "12:40 on 17/03/2025";
+    case 'ORD-RT005':
+      return "09:15 on " + formatCurrentDate();
+    case 'ORD-RTC004':
+      return "10:30 on " + formatCurrentDate();
     default:
       return defaultTime;
   }
@@ -29,6 +33,8 @@ export function determinePickedUpStatus(orderId: string, defaultStatus: boolean 
     case 'ORD-R001':
     case 'ORD-0012':
     case 'ORD-R002':
+    case 'ORD-RT005':
+    case 'ORD-RTC004':
       return true;
     default:
       return defaultStatus || false;
@@ -44,3 +50,13 @@ export function determineDroppedStatus(orderId: string, defaultStatus: boolean |
       return defaultStatus || false;
   }
 }
+
+// Helper function to format current date as DD/MM/YYYY
+function formatCurrentDate(): string {
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+

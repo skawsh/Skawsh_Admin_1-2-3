@@ -14,9 +14,10 @@ export const generateSampleOrders = (): Order[] => {
   const standardOrders = generateStandardOrders();
   const additionalOrders = generateAdditionalOrders();
   const realtimeOrders = generateRealtimeOrders();
+  const rescheduledOrders = generateRescheduledOrders();
   
   // Combine all order types
-  const allOrders = combineOrders(standardOrders, additionalOrders, realtimeOrders);
+  const allOrders = combineOrders(standardOrders, additionalOrders, realtimeOrders, rescheduledOrders);
   
   // Process orders to ensure all data is consistent
   return processOrders(allOrders);
@@ -26,3 +27,4 @@ export const generateSampleOrders = (): Order[] => {
 export const generateExclusiveRescheduledOrders = (): Order[] => {
   return generateRescheduledOrders();
 };
+

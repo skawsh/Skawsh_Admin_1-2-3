@@ -23,12 +23,20 @@ const OrderManagement = () => {
     navigate('/order-assignment');
   };
 
+  // Calculate current time for display
+  const currentTime = new Date();
+  const hours = currentTime.getHours().toString().padStart(2, '0');
+  const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+  const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+  const timeString = `${hours}:${minutes}:${seconds}`;
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-1">Order Management</h1>
           <p className="text-gray-500">View and manage all customer orders</p>
+          <p className="text-sm text-gray-400 mt-1">Last updated: {timeString}</p>
         </div>
         
         <div className="flex gap-3 w-full md:w-auto">

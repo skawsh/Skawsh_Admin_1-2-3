@@ -13,6 +13,7 @@ export const generateRealtimeOrders = (): Order[] => {
   const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
   const twentyMinutesAgo = new Date(now.getTime() - 20 * 60 * 1000);
   const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000);
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
   // Add real-time new orders
   orders.push(
@@ -75,6 +76,21 @@ export const generateRealtimeOrders = (): Order[] => {
       phone: '+91 6667778880',
       customerAddress: '78, Oakridge Residency, Kondapur, Hyderabad',
       studioAddress: 'TidyTowels, Skyview Complex, Kondapur'
+    },
+    {
+      id: 'ORD-RT005',
+      orderDate: formatDateString(oneHourAgo),
+      customer: 'Anand Sharma',
+      status: 'in-progress',
+      studio: 'WashKing',
+      driver: 'Rajesh Kumar',
+      total: 1175,
+      deliveryDate: null,
+      washType: 'both',
+      assigned: true,
+      phone: '+91 9990001110',
+      customerAddress: '42, Cyber Pearl, Hitec City, Hyderabad',
+      studioAddress: 'WashKing, Cyber Gateway, Hitech City'
     }
   );
 
@@ -124,8 +140,24 @@ export const generateRealtimeOrders = (): Order[] => {
       phone: '+91 7778889990',
       customerAddress: '89, Green Meadows, Gachibowli, Hyderabad',
       studioAddress: 'LuxWash, DLF Cyber City, Gachibowli'
+    },
+    {
+      id: 'ORD-RTC004',
+      orderDate: formatDateString(thirtyMinutesAgo),
+      customer: 'Priya Mehta',
+      status: 'ready-for-collect',
+      studio: 'CleanExpress',
+      driver: 'Srinivas Kumar',
+      total: 1350,
+      deliveryDate: null,
+      washType: 'both',
+      assigned: true,
+      phone: '+91 8880001112',
+      customerAddress: '75, Lake Shore Apartments, Kothaguda, Hyderabad',
+      studioAddress: 'CleanExpress, Galaxy Mall, Kondapur'
     }
   );
   
   return orders;
 };
+
