@@ -47,9 +47,9 @@ const Sidebar = ({ className }: SidebarProps) => {
   ];
 
   return (
-    <aside className={cn("w-[250px] h-screen border-r border-gray-200 flex flex-col py-4 animate-fade-in", className)}>
+    <aside className={cn("w-[250px] h-screen bg-white border-r border-gray-200 flex flex-col py-4 animate-fade-in", className)}>
       <div className="px-6 mb-8">
-        <h1 className="text-2xl font-bold text-laundry-blue">Laundry Link</h1>
+        <h1 className="text-2xl font-bold text-laundry-blue bg-gradient-to-r from-laundry-blue to-laundry-blue-light bg-clip-text text-transparent">Laundry Link</h1>
       </div>
       
       <nav className="flex-1 px-3 space-y-1">
@@ -58,11 +58,19 @@ const Sidebar = ({ className }: SidebarProps) => {
             key={item.id}
             to={item.path}
             className={cn(
-              "nav-item group flex items-center text-sm text-gray-700 rounded-md px-3 py-2 hover:bg-gray-100",
-              activePage === item.id && "active bg-blue-50 text-laundry-blue font-medium"
+              "nav-item group flex items-center text-sm rounded-md px-3 py-2 transition-all duration-200",
+              activePage === item.id 
+                ? "bg-blue-50 text-laundry-blue font-medium border-l-4 border-laundry-blue shadow-sm" 
+                : "text-gray-700 hover:bg-blue-50/50 hover:text-laundry-blue"
             )}
           >
-            <item.icon size={20} className="flex-shrink-0 mr-3" />
+            <item.icon 
+              size={20} 
+              className={cn(
+                "flex-shrink-0 mr-3 transition-colors",
+                activePage === item.id ? "text-laundry-blue" : "text-gray-500 group-hover:text-laundry-blue"
+              )} 
+            />
             <span>{item.label}</span>
             {item.hasChildren && (
               <span className="ml-auto transform transition-transform">›</span>
@@ -73,7 +81,7 @@ const Sidebar = ({ className }: SidebarProps) => {
       
       <div className="px-4 mt-auto pt-4 border-t border-gray-200">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-laundry-blue text-white flex items-center justify-center font-medium">
+          <div className="h-9 w-9 rounded-full bg-gradient-to-r from-laundry-blue to-laundry-blue-light text-white flex items-center justify-center font-medium shadow-blue-glow">
             S
           </div>
           <div className="flex flex-col">

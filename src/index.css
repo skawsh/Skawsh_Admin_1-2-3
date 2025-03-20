@@ -102,6 +102,10 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-medium tracking-tight;
   }
+
+  input, select, textarea {
+    @apply focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all duration-200;
+  }
 }
 
 @layer components {
@@ -196,6 +200,40 @@
   .slide-up {
     @apply animate-slide-up;
   }
+
+  /* Gradient buttons */
+  .btn-gradient-blue {
+    @apply bg-gradient-to-r from-laundry-blue to-laundry-blue-light text-white hover:shadow-blue-glow;
+  }
+  
+  .btn-gradient-green {
+    @apply bg-gradient-to-r from-laundry-green to-green-400 text-white hover:shadow-green-glow;
+  }
+  
+  .btn-gradient-purple {
+    @apply bg-gradient-to-r from-laundry-purple to-purple-400 text-white hover:shadow-purple-glow;
+  }
+  
+  /* Card styles */
+  .card-gradient {
+    @apply bg-gradient-to-br from-white to-gray-50 hover:shadow-lg transition-all duration-300;
+  }
+  
+  .card-blue {
+    @apply bg-gradient-card-blue border-blue-200 hover:shadow-blue-glow;
+  }
+  
+  .card-green {
+    @apply bg-gradient-card-green border-green-200 hover:shadow-green-glow;
+  }
+  
+  .card-purple {
+    @apply bg-gradient-card-purple border-purple-200 hover:shadow-purple-glow;
+  }
+  
+  .card-pink {
+    @apply bg-gradient-card-pink border-pink-200 hover:shadow-pink-glow;
+  }
 }
 
 /* Animation utilities */
@@ -215,4 +253,34 @@
   background: linear-gradient(-45deg, #3490dc, #6574cd, #9561e2, #f66d9b);
   background-size: 400% 400%;
   animation: gradient-shift 15s ease infinite;
+}
+
+/* Colorful cards */
+.card-accent-blue {
+  @apply border-t-4 border-laundry-blue;
+}
+
+.card-accent-green {
+  @apply border-t-4 border-laundry-green;
+}
+
+.card-accent-purple {
+  @apply border-t-4 border-laundry-purple;
+}
+
+.card-accent-orange {
+  @apply border-t-4 border-laundry-orange;
+}
+
+.card-accent-pink {
+  @apply border-t-4 border-laundry-pink;
+}
+
+/* Glassmorphism effects */
+.glass-card {
+  @apply bg-white/80 backdrop-blur-sm border border-white;
+}
+
+.color-border-animate {
+  @apply animate-color-cycle;
 }
