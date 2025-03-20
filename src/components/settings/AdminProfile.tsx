@@ -66,9 +66,9 @@ const AdminProfile = () => {
   };
 
   return (
-    <Card className="animate-fade-in shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-card-blue border-none">
+    <Card className="animate-fade-in shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-card-green border-none">
       <CardHeader className="pb-2">
-        <CardTitle className="text-2xl font-semibold text-laundry-blue">Admin Profile</CardTitle>
+        <CardTitle className="text-2xl font-semibold text-gray-800">Admin Profile</CardTitle>
         <CardDescription className="text-muted-foreground">
           View and manage your admin profile information
         </CardDescription>
@@ -76,20 +76,20 @@ const AdminProfile = () => {
       <CardContent>
         <div className="flex flex-col md:flex-row gap-8 items-start">
           <div className="flex flex-col items-center space-y-3">
-            <Avatar className="h-32 w-32 border-4 border-primary/10 shadow-blue-glow">
+            <Avatar className="h-32 w-32 border-4 border-primary/10 shadow-green-glow">
               <AvatarImage src="" alt={profile.username} />
-              <AvatarFallback className="text-2xl bg-gradient-to-r from-laundry-blue to-laundry-blue-light text-white">
+              <AvatarFallback className="text-2xl bg-gradient-to-r from-laundry-green to-green-400 text-white">
                 {getInitials(profile.username)}
               </AvatarFallback>
             </Avatar>
-            <p className="text-sm text-muted-foreground font-medium bg-blue-100 px-3 py-1 rounded-full">Admin</p>
+            <p className="text-sm text-muted-foreground font-medium bg-green-100 px-3 py-1 rounded-full">Admin</p>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-6 flex-1">
             <div className="space-y-4">
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="username" className="flex items-center gap-2 text-base">
-                  <User className="h-4 w-4 text-laundry-blue" /> Admin Name
+                  <User className="h-4 w-4 text-gray-700" /> Admin Name
                 </Label>
                 {isEditing ? (
                   <Input
@@ -97,11 +97,11 @@ const AdminProfile = () => {
                     name="username"
                     value={formData.username}
                     onChange={handleChange}
-                    className="max-w-md input-enhanced bg-white/50 backdrop-blur-sm shadow-sm focus:shadow-blue-glow transition-all"
+                    className="max-w-md input-enhanced bg-white/50 backdrop-blur-sm shadow-sm focus:shadow-green-glow transition-all"
                     required
                   />
                 ) : (
-                  <div className="flex items-center h-10 px-3 text-base rounded-md border border-blue-100 bg-white/60 backdrop-blur-sm">
+                  <div className="flex items-center h-10 px-3 text-base rounded-md border border-green-100 bg-white/60 backdrop-blur-sm">
                     {profile.username}
                   </div>
                 )}
@@ -109,7 +109,7 @@ const AdminProfile = () => {
 
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="email" className="flex items-center gap-2 text-base">
-                  <Mail className="h-4 w-4 text-laundry-blue" /> Email
+                  <Mail className="h-4 w-4 text-gray-700" /> Email
                 </Label>
                 {isEditing ? (
                   <Input
@@ -118,11 +118,11 @@ const AdminProfile = () => {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="max-w-md input-enhanced bg-white/50 backdrop-blur-sm shadow-sm focus:shadow-blue-glow transition-all"
+                    className="max-w-md input-enhanced bg-white/50 backdrop-blur-sm shadow-sm focus:shadow-green-glow transition-all"
                     required
                   />
                 ) : (
-                  <div className="flex items-center h-10 px-3 text-base rounded-md border border-blue-100 bg-white/60 backdrop-blur-sm">
+                  <div className="flex items-center h-10 px-3 text-base rounded-md border border-green-100 bg-white/60 backdrop-blur-sm">
                     {profile.email}
                   </div>
                 )}
@@ -130,7 +130,7 @@ const AdminProfile = () => {
 
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="phone" className="flex items-center gap-2 text-base">
-                  <Phone className="h-4 w-4 text-laundry-blue" /> Phone Number
+                  <Phone className="h-4 w-4 text-gray-700" /> Phone Number
                 </Label>
                 {isEditing ? (
                   <Input
@@ -138,11 +138,11 @@ const AdminProfile = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="max-w-md input-enhanced bg-white/50 backdrop-blur-sm shadow-sm focus:shadow-blue-glow transition-all"
+                    className="max-w-md input-enhanced bg-white/50 backdrop-blur-sm shadow-sm focus:shadow-green-glow transition-all"
                     required
                   />
                 ) : (
-                  <div className="flex items-center h-10 px-3 text-base rounded-md border border-blue-100 bg-white/60 backdrop-blur-sm">
+                  <div className="flex items-center h-10 px-3 text-base rounded-md border border-green-100 bg-white/60 backdrop-blur-sm">
                     {profile.phone}
                   </div>
                 )}
@@ -152,13 +152,13 @@ const AdminProfile = () => {
             <div className="flex gap-2 pt-2">
               {isEditing ? (
                 <>
-                  <Button type="submit" className="button-enhanced bg-laundry-blue hover:bg-laundry-blue-dark flex items-center gap-2 shadow-sm hover:shadow-blue-glow">
+                  <Button type="submit" className="button-enhanced bg-laundry-green hover:bg-green-600 flex items-center gap-2 shadow-sm hover:shadow-green-glow">
                     <Save size={18} /> Save Changes
                   </Button>
                   <Button 
                     type="button" 
                     variant="outline" 
-                    className="button-enhanced border-blue-200 hover:bg-blue-50"
+                    className="button-enhanced border-green-200 hover:bg-green-50"
                     onClick={() => {
                       setIsEditing(false);
                       setFormData(profile);
@@ -171,7 +171,7 @@ const AdminProfile = () => {
                 <Button 
                   type="button" 
                   onClick={() => setIsEditing(true)}
-                  className="button-enhanced bg-laundry-blue hover:bg-laundry-blue-dark flex items-center gap-2 shadow-sm hover:shadow-blue-glow"
+                  className="button-enhanced bg-laundry-green hover:bg-green-600 flex items-center gap-2 shadow-sm hover:shadow-green-glow"
                 >
                   <Edit2 size={18} /> Edit Profile
                 </Button>
