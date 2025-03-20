@@ -48,12 +48,6 @@ const OrderManagement = () => {
             <Users size={18} />
             Order Assignment
           </Button>
-          
-          <Button
-            className="px-4 h-10 bg-laundry-blue hover:bg-laundry-blue-dark transition-colors"
-          >
-            Add New Order
-          </Button>
         </div>
       </div>
       
