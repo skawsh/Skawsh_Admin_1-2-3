@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -9,13 +9,13 @@ import { useToast } from "@/hooks/use-toast";
 
 const AdminProfile = () => {
   const { toast } = useToast();
-  const [profile, setProfile] = React.useState({
+  const [profile, setProfile] = useState({
     username: "Saiteja Samala",
     email: "saitejasamala@skawsh.com",
     phone: "+918099830308"
   });
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [formData, setFormData] = React.useState(profile);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(profile);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,12 +24,38 @@ const AdminProfile = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Simple validation
+    if (!formData.username.trim() || !formData.email.trim() || !formData.phone.trim()) {
+      toast({
+        title: "Missing information",
+        description: "All fields are required",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setProfile(formData);
     setIsEditing(false);
+    
     toast({
       title: "Profile updated",
       description: "Your profile has been updated successfully."
     });
+    
+    // Update sidebar user info (in a real app, this would be handled by a global state or context)
+    // This is a simplified example
   };
 
   return (
@@ -52,6 +78,7 @@ const AdminProfile = () => {
                   value={formData.username}
                   onChange={handleChange}
                   className="max-w-md"
+                  required
                 />
               ) : (
                 <div className="flex items-center h-10 px-3 text-base rounded-md border border-input bg-background">
@@ -72,6 +99,7 @@ const AdminProfile = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="max-w-md"
+                  required
                 />
               ) : (
                 <div className="flex items-center h-10 px-3 text-base rounded-md border border-input bg-background">
@@ -91,6 +119,7 @@ const AdminProfile = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   className="max-w-md"
+                  required
                 />
               ) : (
                 <div className="flex items-center h-10 px-3 text-base rounded-md border border-input bg-background">

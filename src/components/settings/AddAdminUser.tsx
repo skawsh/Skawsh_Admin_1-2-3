@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { User, Mail, Phone, Lock } from "lucide-react";
+import { User, Mail, Phone, Lock, Trash2 } from "lucide-react";
 
 const AddAdminUser = () => {
   const { toast } = useToast();
@@ -18,7 +18,10 @@ const AddAdminUser = () => {
   });
   
   const [admins, setAdmins] = useState([
-    { id: "1", username: "Saiteja Samala", email: "saitejasamala@skawsh.com", phone: "+918099830308" }
+    { id: "1", username: "Saiteja Samala", email: "saitejasamala@skawsh.com", phone: "+918099830308" },
+    { id: "2", username: "Chetan Sangundi", email: "chetansangundi@skawsh.com", phone: "+919999988888" },
+    { id: "3", username: "Saumya Tripathi", email: "saumyatripathi@skawsh.com", phone: "+918888899999" },
+    { id: "4", username: "Racheal Mosini", email: "rachealmosini@skawsh.com", phone: "+919898989898" }
   ]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +73,28 @@ const AddAdminUser = () => {
       phone: "",
       password: "",
       confirmPassword: ""
+    });
+  };
+
+  const handleDeleteAdmin = (id: string) => {
+    // Don't allow deleting the main admin account
+    if (id === "1") {
+      toast({
+        title: "Cannot delete primary admin",
+        description: "The primary admin account cannot be deleted",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const adminToDelete = admins.find(admin => admin.id === id);
+    if (!adminToDelete) return;
+    
+    setAdmins(admins.filter(admin => admin.id !== id));
+    
+    toast({
+      title: "Admin user deleted",
+      description: `${adminToDelete.username} has been removed as an admin user.`
     });
   };
 
@@ -167,6 +192,18 @@ const AddAdminUser = () => {
                     <p className="font-medium">{admin.username}</p>
                     <p className="text-sm text-gray-500">{admin.email}</p>
                     <p className="text-sm text-gray-500">{admin.phone}</p>
+                  </div>
+                  <div className="mt-2 sm:mt-0">
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      className="flex items-center gap-1"
+                      onClick={() => handleDeleteAdmin(admin.id)}
+                      disabled={admin.id === "1"} // Disable for the main admin
+                    >
+                      <Trash2 size={16} />
+                      {admin.id === "1" ? "Primary Admin" : "Delete"}
+                    </Button>
                   </div>
                 </div>
               ))}
