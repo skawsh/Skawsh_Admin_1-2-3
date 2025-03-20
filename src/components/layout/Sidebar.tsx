@@ -49,7 +49,7 @@ const Sidebar = ({ className }: SidebarProps) => {
   return (
     <aside className={cn("w-[250px] h-screen bg-white border-r border-gray-200 flex flex-col py-4 animate-fade-in", className)}>
       <div className="px-6 mb-8">
-        <h1 className="text-2xl font-bold text-laundry-blue bg-gradient-to-r from-laundry-blue to-laundry-blue-light bg-clip-text text-transparent">Laundry Link</h1>
+        <h1 className="text-2xl font-bold text-laundry-blue bg-gradient-to-r from-laundry-blue to-laundry-blue-light bg-clip-text text-transparent">Admin Panel</h1>
       </div>
       
       <nav className="flex-1 px-3 space-y-1">
