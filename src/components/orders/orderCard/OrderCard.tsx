@@ -85,6 +85,17 @@ const OrderCard: React.FC<OrderCardProps> = ({
   // Get card styling based on wash type or status
   const getCardStyle = () => {
     if (reported) return "border-red-300 shadow-md";
+    
+    // Always apply colorful styles for driver order views
+    if (isDriverOrdersView) {
+      if (washType === 'premium') return "bg-gradient-card-purple border-none shadow-md";
+      if (washType === 'express') return "bg-gradient-card-orange border-none shadow-md";
+      if (status === 'new' || status === 'received') return "bg-gradient-card-blue border-none shadow-md";
+      if (status === 'ready-for-collect') return "bg-gradient-card-green border-none shadow-md";
+      return "bg-gradient-card-pink border-none shadow-md"; // Default for driver orders
+    }
+    
+    // Regular styling for non-driver views
     if (washType === 'premium') return "bg-gradient-card-purple border-none shadow-md";
     if (washType === 'express') return "bg-gradient-card-orange border-none shadow-md";
     if (status === 'new') return "bg-gradient-card-blue border-none shadow-md";

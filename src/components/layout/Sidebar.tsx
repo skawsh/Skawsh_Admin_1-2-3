@@ -7,7 +7,7 @@ import {
   Truck, 
   ClipboardList, 
   BarChart2, 
-  DollarSign, 
+  IndianRupee, 
   Users, 
   Settings 
 } from 'lucide-react';
@@ -41,7 +41,7 @@ const Sidebar = ({ className }: SidebarProps) => {
     { id: 'drivers', label: 'Drivers', icon: Truck, path: '/drivers' },
     { id: 'orders', label: 'Orders', icon: ClipboardList, path: '/' },
     { id: 'analytics', label: 'Analytics', icon: BarChart2, hasChildren: true, path: '/analytics' },
-    { id: 'revenue', label: 'Revenue', icon: DollarSign, path: '/revenue' },
+    { id: 'revenue', label: 'Revenue', icon: IndianRupee, path: '/revenue' },
     { id: 'users', label: 'Users', icon: Users, path: '/users' },
     { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
   ];
@@ -61,14 +61,14 @@ const Sidebar = ({ className }: SidebarProps) => {
               "nav-item group flex items-center text-sm rounded-md px-3 py-2 transition-all duration-200",
               activePage === item.id 
                 ? "bg-blue-50 text-laundry-blue font-medium border-l-4 border-laundry-blue shadow-sm" 
-                : "text-gray-700 hover:bg-blue-50/50 hover:text-laundry-blue"
+                : "text-gray-700"
             )}
           >
             <item.icon 
               size={20} 
               className={cn(
                 "flex-shrink-0 mr-3 transition-colors",
-                activePage === item.id ? "text-laundry-blue" : "text-gray-500 group-hover:text-laundry-blue"
+                activePage === item.id ? "text-laundry-blue" : "text-gray-500"
               )} 
             />
             <span>{item.label}</span>
