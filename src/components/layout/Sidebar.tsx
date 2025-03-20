@@ -28,7 +28,8 @@ const Sidebar = ({ className }: SidebarProps) => {
     if (currentPath.includes('/drivers')) return 'drivers';
     if (currentPath === '/') return 'orders';
     if (currentPath.includes('/settings')) return 'settings';
-    return '';
+    // Add more conditions as needed
+    return currentPath.split('/')[1] || '';
   };
   
   const activePage = getActivePage();
