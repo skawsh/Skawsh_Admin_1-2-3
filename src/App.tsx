@@ -12,6 +12,7 @@ import DriverDetails from "./pages/DriverDetails";
 import DriverOrdersDetails from "./pages/DriverOrdersDetails";
 import DriverOnboarding from "./pages/DriverOnboarding";
 import OrderDetails from "./pages/OrderDetails";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/driver/onboarding" element={<DriverOnboarding />} />
           <Route path="/order-assignment" element={<OrderAssignment />} />
           <Route path="/order/:orderId" element={<OrderDetails />} />
+          <Route path="/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
