@@ -11,7 +11,7 @@ import { Lock } from "lucide-react";
 const UpdatePassword = () => {
   const { toast } = useToast();
   const [adminDrivers, setAdminDrivers] = useState([
-    { id: "1", name: "John Doe", email: "john@example.com" },
+    { id: "1", name: "Saiteja Samala", email: "saitejasamala@skawsh.com" },
     { id: "2", name: "Jane Smith", email: "jane@example.com" },
     { id: "3", name: "Mike Johnson", email: "mike@example.com" }
   ]);

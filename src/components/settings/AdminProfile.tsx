@@ -10,9 +10,9 @@ import { useToast } from "@/hooks/use-toast";
 const AdminProfile = () => {
   const { toast } = useToast();
   const [profile, setProfile] = React.useState({
-    username: "AdminUser",
-    email: "admin@example.com",
-    phone: "+1 (555) 123-4567"
+    username: "Saiteja Samala",
+    email: "saitejasamala@skawsh.com",
+    phone: "+918099830308"
   });
   const [isEditing, setIsEditing] = React.useState(false);
   const [formData, setFormData] = React.useState(profile);
@@ -43,7 +43,7 @@ const AdminProfile = () => {
           <div className="space-y-4">
             <div className="flex flex-col space-y-2">
               <Label htmlFor="username" className="flex items-center gap-2">
-                <User className="h-4 w-4" /> Username
+                <User className="h-4 w-4" /> Admin Name
               </Label>
               {isEditing ? (
                 <Input

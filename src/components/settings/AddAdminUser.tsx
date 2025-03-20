@@ -16,6 +16,10 @@ const AddAdminUser = () => {
     password: "",
     confirmPassword: ""
   });
+  
+  const [admins, setAdmins] = useState([
+    { id: "1", username: "Saiteja Samala", email: "saitejasamala@skawsh.com", phone: "+918099830308" }
+  ]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,7 +38,26 @@ const AddAdminUser = () => {
       return;
     }
     
-    // In a real app, you would submit to an API
+    // Check if email already exists
+    if (admins.some(admin => admin.email === formData.email)) {
+      toast({
+        title: "Email already exists",
+        description: "An admin with this email already exists",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Add new admin to the list
+    const newAdmin = {
+      id: (admins.length + 1).toString(),
+      username: formData.username,
+      email: formData.email,
+      phone: formData.phone
+    };
+    
+    setAdmins([...admins, newAdmin]);
+    
     toast({
       title: "Admin user added",
       description: `${formData.username} has been added as an admin user.`
@@ -60,7 +83,7 @@ const AddAdminUser = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="username" className="flex items-center gap-2">
-              <User className="h-4 w-4" /> Username
+              <User className="h-4 w-4" /> Admin Name
             </Label>
             <Input
               id="username"
@@ -133,6 +156,23 @@ const AddAdminUser = () => {
           
           <Button type="submit">Add Admin User</Button>
         </form>
+        
+        {admins.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-lg font-medium mb-4">Current Admin Users</h3>
+            <div className="border rounded-md divide-y">
+              {admins.map(admin => (
+                <div key={admin.id} className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="font-medium">{admin.username}</p>
+                    <p className="text-sm text-gray-500">{admin.email}</p>
+                    <p className="text-sm text-gray-500">{admin.phone}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

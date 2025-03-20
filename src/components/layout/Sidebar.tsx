@@ -27,6 +27,7 @@ const Sidebar = ({ className }: SidebarProps) => {
   const getActivePage = () => {
     if (currentPath.includes('/drivers')) return 'drivers';
     if (currentPath === '/') return 'orders';
+    if (currentPath.includes('/settings')) return 'settings';
     return '';
   };
   
@@ -72,11 +73,11 @@ const Sidebar = ({ className }: SidebarProps) => {
       <div className="px-4 mt-auto pt-4 border-t border-gray-200">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-full bg-laundry-blue text-white flex items-center justify-center font-medium">
-            A
+            S
           </div>
           <div className="flex flex-col">
-            <span className="font-medium text-sm">Admin User</span>
-            <span className="text-xs text-gray-500">admin@example.com</span>
+            <span className="font-medium text-sm">Saiteja Samala</span>
+            <span className="text-xs text-gray-500">saitejasamala@skawsh.com</span>
           </div>
         </div>
       </div>

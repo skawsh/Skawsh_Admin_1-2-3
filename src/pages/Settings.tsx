@@ -4,12 +4,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminProfile from "@/components/settings/AdminProfile";
 import UpdatePassword from "@/components/settings/UpdatePassword";
 import AddAdminUser from "@/components/settings/AddAdminUser";
+import { Settings as SettingsIcon } from "lucide-react";
 
 const Settings = () => {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+          <SettingsIcon className="h-8 w-8" />
+          Settings
+        </h1>
       </div>
       
       <Tabs defaultValue="profile" className="w-full">
