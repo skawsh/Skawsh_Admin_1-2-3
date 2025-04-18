@@ -10,9 +10,10 @@ import {
 
 interface SidebarProps {
   collapsed: boolean;
+  className?: string; // Added className as an optional prop
 }
 
-const Sidebar = ({ collapsed }: SidebarProps) => {
+const Sidebar = ({ collapsed, className }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,7 +42,8 @@ const Sidebar = ({ collapsed }: SidebarProps) => {
   return (
     <div className={cn(
       'bg-white border-r border-gray-200 h-full transition-all duration-300',
-      collapsed ? 'w-[80px]' : 'w-[280px]'
+      collapsed ? 'w-[80px]' : 'w-[280px]',
+      className // Added className to the className string
     )}>
       <div className="flex flex-col h-full">
         <div className="p-6">
