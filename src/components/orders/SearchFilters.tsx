@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Filter, Search, CalendarIcon, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -264,7 +263,6 @@ const SearchFilters = ({
             <SelectItem value="all">All Types</SelectItem>
             <SelectItem value="standard">Standard</SelectItem>
             <SelectItem value="express">Express</SelectItem>
-            <SelectItem value="both">Express & Standard</SelectItem>
           </SelectContent>
         </Select>
       </div>

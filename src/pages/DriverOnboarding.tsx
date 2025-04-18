@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Save } from 'lucide-react';
@@ -8,7 +7,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
-// Import refactored components
 import PersonalInformationSection from '@/components/driver-onboarding/PersonalInformationSection';
 import DriverDocumentationSection from '@/components/driver-onboarding/DriverDocumentationSection';
 import VehicleInformationSection from '@/components/driver-onboarding/VehicleInformationSection';
@@ -20,7 +18,6 @@ const DriverOnboarding = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Personal Information fields
   const [driverName, setDriverName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
@@ -35,16 +32,13 @@ const DriverOnboarding = () => {
   const [currentAddress, setCurrentAddress] = useState('');
   const [permanentAddress, setPermanentAddress] = useState('');
   
-  // Driver Documentation fields
   const [aadharNumber, setAadharNumber] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
   const [licenseExpiry, setLicenseExpiry] = useState('');
   
-  // Vehicle Information fields
   const [vehicleModel, setVehicleModel] = useState('');
   const [licensePlate, setLicensePlate] = useState('');
   
-  // Payment Details fields
   const [accountHolderName, setAccountHolderName] = useState('');
   const [bankName, setBankName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
@@ -52,12 +46,10 @@ const DriverOnboarding = () => {
   const [ifscCode, setIfscCode] = useState('');
   const [branchName, setBranchName] = useState('');
   
-  // File upload states
   const [aadharFile, setAadharFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   
-  // Vehicle document states
   const [rcFile, setRcFile] = useState<File | null>(null);
   const [insuranceFile, setInsuranceFile] = useState<File | null>(null);
   const [vehicleFrontImage, setVehicleFrontImage] = useState<File | null>(null);
@@ -76,20 +68,17 @@ const DriverOnboarding = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Generate a unique ID for the new driver
     const newDriverId = `new-${Date.now()}`;
     
-    // Create new driver object with all fields
     const newDriver = {
       id: newDriverId,
-      name: driverName || 'New Driver', // Fallback in case name is empty
+      name: driverName || 'New Driver',
       status: 'active' as const,
       phoneNumber: phoneNumber || '--',
       assignedOrders: 0,
       totalDeliveries: 0,
       rating: 0,
       
-      // Personal Information
       dateOfBirth,
       secondaryPhone,
       email,
@@ -102,18 +91,15 @@ const DriverOnboarding = () => {
       currentAddress,
       permanentAddress,
       
-      // Driver Documentation
       aadharNumber,
       licenseNumber,
       licenseExpiry,
       
-      // Vehicle Information
       vehicleDetails: {
         model: vehicleModel,
         licensePlate,
       },
       
-      // Payment Details
       paymentDetails: {
         accountHolderName,
         bankName,
@@ -123,7 +109,6 @@ const DriverOnboarding = () => {
         branchName
       },
       
-      // Document file references - in a real app, we'd upload these and store paths
       documentFiles: {
         aadharFile: aadharFile ? aadharFile.name : '',
         licenseFile: licenseFile ? licenseFile.name : '',
@@ -137,23 +122,18 @@ const DriverOnboarding = () => {
       }
     };
     
-    // Get existing drivers from localStorage or use empty array
     const existingDriversJson = localStorage.getItem('driversList');
     const existingDrivers = existingDriversJson ? JSON.parse(existingDriversJson) : [];
     
-    // Add new driver to the list
     const updatedDrivers = [...existingDrivers, newDriver];
     
-    // Save updated drivers list to localStorage
     localStorage.setItem('driversList', JSON.stringify(updatedDrivers));
     
-    // Show success toast
     toast({
       title: "Driver Created",
       description: "New driver has been successfully added to the list",
     });
     
-    // Navigate back to drivers page
     navigate('/drivers');
   };
   
@@ -167,6 +147,7 @@ const DriverOnboarding = () => {
       )}
       
       <Sidebar 
+        collapsed={!sidebarOpen}
         className={`fixed z-20 lg:static transition-transform duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`} 

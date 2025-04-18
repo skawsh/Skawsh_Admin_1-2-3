@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -49,6 +48,7 @@ const DriverOrdersDetails = () => {
       )}
       
       <Sidebar 
+        collapsed={!sidebarOpen}
         className={`fixed z-20 lg:static transition-transform duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`} 

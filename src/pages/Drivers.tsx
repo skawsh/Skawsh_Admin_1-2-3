@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
@@ -27,6 +26,7 @@ const Drivers = () => {
       )}
       
       <Sidebar 
+        collapsed={!sidebarOpen}
         className={`fixed z-20 lg:static transition-transform duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`} 
