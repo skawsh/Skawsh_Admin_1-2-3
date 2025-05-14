@@ -40,7 +40,7 @@ const DriverDetailsComponent: React.FC<DriverDetailsComponentProps> = ({ driverI
   return (
     <div className="p-4 md:p-6">
       <DriverActionsHeader
-        title={`Driver: ${driver.name}`}
+        driverName={driver.name}
         onBackClick={() => navigate('/drivers')}
         isEditing={isEditing}
         onEdit={handleEdit}
@@ -51,8 +51,8 @@ const DriverDetailsComponent: React.FC<DriverDetailsComponentProps> = ({ driverI
 
       <div className="mt-6">
         <DriverDetailsSectionTabs
-          driver={driver}
-          editedDriver={editedDriver}
+          driverData={driver}
+          editedDriverData={editedDriver}
           isEditing={isEditing}
           activeSection={activeSection}
           onSectionChange={handleSectionChange}
@@ -62,7 +62,7 @@ const DriverDetailsComponent: React.FC<DriverDetailsComponentProps> = ({ driverI
 
       <PasswordResetDialog
         open={passwordDialogOpen}
-        onClose={() => setPasswordDialogOpen(false)}
+        onOpenChange={setPasswordDialogOpen}
         onPasswordReset={handlePasswordReset}
       />
     </div>

@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StatusBadge from '../StatusBadge';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import TripStatusIndicator from './TripStatusIndicator';
 import WashTypeBadge from './WashTypeBadge';
 import LocationInfo from './LocationInfo';
 import TripDetailsDialog from './TripDetailsDialog';
-import { determinePickedUpStatus, determinePickupTime, determineDroppedStatus } from './orderUtils';
+import OrderDetailsDialog from '../OrderDetailsDialog';
+import { determinePickedUpStatus, determinePickupTime } from './orderUtils';
 import { cn } from '@/lib/utils';
 
 interface OrderCardProps {
@@ -57,7 +58,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   reportedIssue = 'Customer Not Responding',
   reportedDescription = ''
 }) => {
-  const [showDetails, setShowDetails] = useState(false);
+  const [showTripDetails, setShowTripDetails] = useState(false);
+  const [showOrderDetails, setShowOrderDetails] = useState(false);
 
   // Determine pickup and delivery information based on order status
   const isReadyForCollection = status === 'ready-for-collect';
@@ -103,6 +105,17 @@ const OrderCard: React.FC<OrderCardProps> = ({
     return "bg-white border-gray-100 shadow-sm";
   };
 
+  const handleViewTripDetails = () => {
+    setShowTripDetails(true);
+  };
+
+  const handleViewOrderDetails = () => {
+    if (onViewDetails) {
+      onViewDetails();
+    }
+    setShowOrderDetails(true);
+  };
+
   return (
     <>
       <Card className={cn(
@@ -138,15 +151,48 @@ const OrderCard: React.FC<OrderCardProps> = ({
           <div>
             <span className="text-sm font-bold text-gray-800">Trip Details</span>
           </div>
-          <Button variant="outline" size="sm" className="flex items-center gap-1 hover:bg-laundry-blue hover:text-white transition-colors duration-300" onClick={() => setShowDetails(true)}>
-            <Eye size={16} />
-            View
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-1 hover:bg-laundry-blue hover:text-white transition-colors duration-300" onClick={handleViewTripDetails}>
+              <Eye size={16} />
+              Trip
+            </Button>
+            <Button variant="outline" size="sm" className="flex items-center gap-1 hover:bg-laundry-blue hover:text-white transition-colors duration-300" onClick={handleViewOrderDetails}>
+              <Eye size={16} />
+              Details
+            </Button>
+          </div>
         </div>
       </Card>
 
       {/* Trip Details Dialog */}
-      <TripDetailsDialog open={showDetails} onOpenChange={setShowDetails} orderId={orderId} date={date} status={status} customer={customer} customerAddress={customerAddress} studio={studio} studioAddress={studioAddress} pickedUp={pickedUp} pickedUpTime={pickedUpTime} dropped={dropped} droppedTime={droppedTime} isReadyForCollection={isReadyForCollection} showOriginalStatus={showOriginalStatus} washType={washType} reported={reported} reportedIssue={reportedIssue} reportedDescription={reportedDescription} />
+      <TripDetailsDialog 
+        open={showTripDetails} 
+        onOpenChange={setShowTripDetails} 
+        orderId={orderId} 
+        date={date} 
+        status={status} 
+        customer={customer} 
+        customerAddress={customerAddress} 
+        studio={studio} 
+        studioAddress={studioAddress} 
+        pickedUp={pickedUp} 
+        pickedUpTime={pickedUpTime} 
+        dropped={dropped} 
+        droppedTime={droppedTime} 
+        isReadyForCollection={isReadyForCollection} 
+        showOriginalStatus={showOriginalStatus} 
+        washType={washType} 
+        reported={reported} 
+        reportedIssue={reportedIssue} 
+        reportedDescription={reportedDescription} 
+      />
+
+      {/* Order Details Dialog */}
+      <OrderDetailsDialog
+        open={showOrderDetails}
+        onOpenChange={setShowOrderDetails}
+        orderId={orderId}
+      />
     </>
   );
 };
