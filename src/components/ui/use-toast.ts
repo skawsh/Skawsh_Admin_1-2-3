@@ -1,5 +1,5 @@
 
-// This is a bridging file that re-exports from hooks
+// Re-export the toast hook from our custom implementation
 import { useToast, toast } from "@/hooks/use-toast";
 
 export { useToast, toast };
