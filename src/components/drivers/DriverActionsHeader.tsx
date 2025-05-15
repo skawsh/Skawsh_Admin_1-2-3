@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { KeyRound, X, Save, Pencil, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 interface DriverActionsHeaderProps {
   isEditing: boolean;
@@ -10,7 +9,8 @@ interface DriverActionsHeaderProps {
   onEdit: () => void;
   onCancel: () => void;
   onSave: () => void;
-  openPasswordDialog: () => void;
+  onBackClick: () => void; // Added this prop
+  onPasswordReset: () => void; // Changed to openPasswordDialog
 }
 
 const DriverActionsHeader = ({ 
@@ -19,10 +19,9 @@ const DriverActionsHeader = ({
   onEdit, 
   onCancel, 
   onSave, 
-  openPasswordDialog 
+  onBackClick, 
+  onPasswordReset 
 }: DriverActionsHeaderProps) => {
-  const navigate = useNavigate();
-  
   return (
     <div className="mb-6 flex items-center justify-between">
       <div className="flex items-center">
@@ -30,7 +29,7 @@ const DriverActionsHeader = ({
           variant="outline" 
           size="sm" 
           className="mr-4"
-          onClick={() => navigate('/drivers')}
+          onClick={onBackClick}
         >
           <ArrowLeft size={16} className="mr-1" />
           Back to Drivers
@@ -42,7 +41,7 @@ const DriverActionsHeader = ({
         <Button 
           variant="outline" 
           size="sm"
-          onClick={openPasswordDialog}
+          onClick={onPasswordReset}
         >
           <KeyRound size={16} className="mr-1" />
           Reset Password

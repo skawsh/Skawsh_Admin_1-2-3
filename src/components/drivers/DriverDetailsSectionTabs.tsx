@@ -3,13 +3,26 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { User, IdCard, Car, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Driver } from './types';
+import { ChangeEvent } from 'react';
 
 interface DriverDetailsSectionTabsProps {
   activeSection: string;
   onSectionChange: (section: string) => void;
+  driverData: Driver; // Added this prop
+  editedDriverData: Driver; // Added this prop
+  isEditing: boolean; // Added this prop
+  onInputChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; // Added this prop
 }
 
-const DriverDetailsSectionTabs = ({ activeSection, onSectionChange }: DriverDetailsSectionTabsProps) => {
+const DriverDetailsSectionTabs = ({ 
+  activeSection, 
+  onSectionChange,
+  driverData,
+  editedDriverData,
+  isEditing,
+  onInputChange
+}: DriverDetailsSectionTabsProps) => {
   // Tab configuration with colors
   const tabs = [
     { 

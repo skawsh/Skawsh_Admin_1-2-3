@@ -16,10 +16,10 @@ import { Label } from '@/components/ui/label';
 interface PasswordResetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onResetPassword: (newPassword: string) => void;
+  onPasswordReset: (newPassword: string) => void; // Changed from onResetPassword
 }
 
-const PasswordResetDialog = ({ open, onOpenChange, onResetPassword }: PasswordResetDialogProps) => {
+const PasswordResetDialog = ({ open, onOpenChange, onPasswordReset }: PasswordResetDialogProps) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -35,7 +35,7 @@ const PasswordResetDialog = ({ open, onOpenChange, onResetPassword }: PasswordRe
       return;
     }
     
-    onResetPassword(newPassword);
+    onPasswordReset(newPassword);
     
     // Reset form
     setNewPassword('');
